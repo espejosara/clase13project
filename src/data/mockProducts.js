@@ -1,4 +1,4 @@
-export const MOCK_PRODUCTS = [
+export const mockProducts = [
 	{
 		id: '1',
 		name: 'El Samurai Futurista',
