@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { mockProducts } from '../../data/mockProducts'
+import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import './ProductDetailPage.css'
 
 function ProductDetailPage() {
@@ -7,11 +8,7 @@ function ProductDetailPage() {
 	const product = mockProducts.find((item) => item.id === productId)
 
 	if (!product) {
-		return (
-			<main className="product-detail-page">
-				<p className="product-detail-page__error">Producto no encontrado</p>
-			</main>
-		)
+		return <NotFoundPage />
 	}
 
 	return (
