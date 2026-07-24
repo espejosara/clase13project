@@ -28,8 +28,12 @@ function ProductsPage() {
 	return (
 		<section className="products-page">
 			<header className="products-page__header">
-				<p className="products-page__eyebrow">Catalogo</p>
-				<h1 className="products-page__title">Figuras por categoria</h1>
+				<p className="products-page__eyebrow">Catalogo oficial</p>
+				<h1 className="products-page__title">Descubre todas las figuras</h1>
+				<p className="products-page__intro">
+					Busca por nombre o filtra por categoria para encontrar la pieza que
+					mejor encaja con tu coleccion.
+				</p>
 			</header>
 
 			<section className="products-page__toolbar">

@@ -16,8 +16,12 @@ function ProductDetailPage() {
 
 	return (
 		<main className="product-detail-page">
-			<p className="product-detail-page__label">Detalle</p>
+			<p className="product-detail-page__label">Ficha del producto</p>
 			<h1 className="product-detail-page__title">{product.name}</h1>
+			<p className="product-detail-page__intro">
+				Figura original de coleccion con acabados detallados y estilo
+				inspirado en el universo {product.category}.
+			</p>
 			<img
 				className="product-detail-page__image"
 				src={product.imageUrl}
@@ -25,8 +29,12 @@ function ProductDetailPage() {
 			/>
 			<p className="product-detail-page__description">{product.description}</p>
 			<p className="product-detail-page__meta">Categoría: {product.category}</p>
-			<p className="product-detail-page__meta">Precio: {product.price.toFixed(2)} EUR</p>
-			<p className="product-detail-page__meta">Stock: {product.stock}</p>
+			<p className="product-detail-page__meta">
+				Precio oficial: {product.price.toFixed(2)} EUR
+			</p>
+			<p className="product-detail-page__meta">
+				Disponibilidad: {product.stock} unidades en stock
+			</p>
 		</main>
 	)
 }

@@ -2,4 +2,10 @@
 	min-height: 100vh;
 	background: var(--color-bg);
 	color: var(--color-text);
+	display: flex;
+	flex-direction: column;
+}
+
+.layout__main {
+	flex: 1;
 }

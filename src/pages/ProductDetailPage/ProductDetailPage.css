@@ -19,6 +19,13 @@
 	font-size: clamp(2rem, 4vw, 3rem);
 }
 
+.product-detail-page__intro {
+	margin: 0;
+	max-width: 50rem;
+	color: var(--color-text-soft);
+	line-height: 1.6;
+}
+
 .product-detail-page__image {
 	width: 100%;
 	max-width: 520px;
@@ -37,6 +44,7 @@
 .product-detail-page__meta {
 	margin: 0;
 	font-weight: 600;
+	color: var(--color-text);
 }
 
 .product-detail-page__error {

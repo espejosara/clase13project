@@ -7,12 +7,12 @@ function HomePage() {
 	return (
 		<section className="home-page">
 			<div className="home-page__hero">
-				<p className="home-page__eyebrow">Coleccion destacada</p>
-				<h1 className="home-page__title">Figuras anime para coleccionistas</h1>
+				<p className="home-page__eyebrow">Coleccion oficial</p>
+				<h1 className="home-page__title">Figuras para fans y coleccionistas</h1>
 				<p className="home-page__description">
-					Descubre personajes originales con estetica fantastica,
-					cyberpunk y steampunk en una coleccion pensada para fans del
-					detalle.
+					Explora figuras originales inspiradas en mundos de accion,
+					magia y tecnologia. Cada pieza esta pensada para vitrinas,
+					regalos y colecciones personales.
 				</p>
 			</div>
 

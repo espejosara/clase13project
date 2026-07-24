@@ -1,0 +1,22 @@
+.footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.25rem 1.5rem;
+	border-top: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text-soft);
+	flex-wrap: wrap;
+}
+
+.footer__text,
+.footer__copy {
+	margin: 0;
+	font-size: 0.95rem;
+}
+
+.footer__copy {
+	font-weight: 700;
+	color: var(--color-text);
+}
