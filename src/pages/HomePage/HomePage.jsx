@@ -2,7 +2,7 @@ import './HomePage.css'
 import { mockProducts } from '../../data/mockProducts'
 
 function HomePage() {
-	const featuredProducts = mockProducts.slice(0, 6)
+	const featuredProducts = mockProducts.slice(0, 4)
 
 	return (
 		<section className="home-page">

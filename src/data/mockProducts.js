@@ -2,6 +2,7 @@ export const mockProducts = [
 	{
 		id: '1',
 		name: 'El Samurai Futurista',
+		category: 'accion',
 		description:
 			'Guerrero con armadura azul y naranja de estetica cyberpunk, con katana de luz azul y pose dinamica sobre una base gris sencilla.',
 		price: 24.99,
@@ -12,6 +13,7 @@ export const mockProducts = [
 	{
 		id: '2',
 		name: 'La Hechicera Carmesi',
+		category: 'magia',
 		description:
 			'Personaje femenino con cabello purpura, tunica detallada en carmesi y oro, y baston magico con gema azul.',
 		price: 26.99,
@@ -22,6 +24,7 @@ export const mockProducts = [
 	{
 		id: '3',
 		name: 'El Mecha de Vanguardia',
+		category: 'tecnologia',
 		description:
 			'Robot estilizado con placas angulares en blanco, azul profundo y amarillo, con escudo grande y rifle de haz.',
 		price: 39.99,
@@ -32,6 +35,7 @@ export const mockProducts = [
 	{
 		id: '4',
 		name: 'La Arquera Elfa',
+		category: 'naturaleza',
 		description:
 			'Joven elfa con cabello verde en coleta, armadura practica en verde y marron, y arco compuesto detallado.',
 		price: 22.99,
@@ -42,6 +46,7 @@ export const mockProducts = [
 	{
 		id: '5',
 		name: 'El Asesino de las Sombras',
+		category: 'sigilo',
 		description:
 			'Personaje con cabello azul oscuro, armadura ajustada en gris y azul medianoche, y dos dagas en pose de combate.',
 		price: 23.99,
@@ -52,6 +57,7 @@ export const mockProducts = [
 	{
 		id: '6',
 		name: 'La Invocadora de Dragones',
+		category: 'magia',
 		description:
 			'Personaje femenino con cabello rosa, tunica blanca y rosa con detalles dorados, libro de hechizos y dragon en el hombro.',
 		price: 27.99,
@@ -62,6 +68,7 @@ export const mockProducts = [
 	{
 		id: '7',
 		name: 'La Ingeniera Mecanica',
+		category: 'tecnologia',
 		description:
 			'Joven con cabello verde azulado, delantal de cuero, martillo-llave inglesa estilizado y gran guantelete mecanico.',
 		price: 25.99,
@@ -72,6 +79,7 @@ export const mockProducts = [
 	{
 		id: '8',
 		name: 'La Barda Melodica',
+		category: 'magia',
 		description:
 			'Personaje femenino con cabello lavanda, traje de interprete en purpura, blanco y oro, sosteniendo un laud.',
 		price: 24.49,
@@ -82,6 +90,7 @@ export const mockProducts = [
 	{
 		id: '9',
 		name: 'La Clerigo Radiante',
+		category: 'sagrado',
 		description:
 			'Joven con cabello blanco corto, habito en blanco y azul palido, baston alto y aura curativa alrededor de sus pies.',
 		price: 28.99,
@@ -92,6 +101,7 @@ export const mockProducts = [
 	{
 		id: '10',
 		name: 'La Paladin Juramentada',
+		category: 'sagrado',
 		description:
 			'Figura femenina con armadura plateada con detalles azules y dorados, espada larga y escudo con emblema de leon.',
 		price: 31.99,
@@ -102,6 +112,7 @@ export const mockProducts = [
 	{
 		id: '11',
 		name: 'La Pistolaera Steampunk',
+		category: 'tecnologia',
 		description:
 			'Figura con estetica steampunk, cabello castaño corto, chaleco de cuero marron y dos pistolas de chispa de laton.',
 		price: 29.99,
@@ -112,6 +123,7 @@ export const mockProducts = [
 	{
 		id: '12',
 		name: 'El Monje Guerrero',
+		category: 'accion',
 		description:
 			'Personaje masculino con cabello plateado, gi desgarrado azul oscuro y blanco, y energia naranja en manos y tobillos.',
 		price: 21.99,
@@ -122,6 +134,7 @@ export const mockProducts = [
 	{
 		id: '13',
 		name: 'La Druida Elemental',
+		category: 'naturaleza',
 		description:
 			'Personaje femenina con cabello verde esmeralda, ropajes de hojas y corteza, invocando raices y acompanada por un espiritu del bosque.',
 		price: 26.49,
@@ -132,6 +145,7 @@ export const mockProducts = [
 	{
 		id: '14',
 		name: 'El Caballero Oscuro',
+		category: 'oscuro',
 		description:
 			'Figura imponente con armadura negra mate y bordes plateados, yelmo de calavera y espadon enorme con runas.',
 		price: 34.99,
@@ -142,6 +156,7 @@ export const mockProducts = [
 	{
 		id: '15',
 		name: 'La Bailarina de Batalla',
+		category: 'accion',
 		description:
 			'Personaje femenino con coleta alta rosa, traje fluido en carmesi y oro, dos cimitarras y pose acrobatica sobre base de marmol.',
 		price: 30.99,
@@ -152,6 +167,7 @@ export const mockProducts = [
 	{
 		id: '16',
 		name: 'El Ninja del Viento',
+		category: 'sigilo',
 		description:
 			'Personaje masculino con mascara parcial, traje shinobi en azul medianoche y gris, pose de sigilo y shuriken gigante.',
 		price: 23.49,
@@ -162,6 +178,7 @@ export const mockProducts = [
 	{
 		id: '17',
 		name: 'La Valquiria Celestial',
+		category: 'sagrado',
 		description:
 			'Figura femenina con armadura dorada y blanca, alas mecanicas estilizadas, lanza dorada y base de nubes.',
 		price: 36.99,
@@ -172,6 +189,7 @@ export const mockProducts = [
 	{
 		id: '18',
 		name: 'El Alquimista Loco',
+		category: 'tecnologia',
 		description:
 			'Personaje masculino con gafas verdes, bata de laboratorio sobre ropa victoriana y matraz con liquido verde brillante.',
 		price: 28.49,
@@ -182,6 +200,7 @@ export const mockProducts = [
 	{
 		id: '19',
 		name: 'La Ilusionista de Cartas',
+		category: 'magia',
 		description:
 			'Figura femenina con sombrero de copa pequeno, chaqueta azul zafiro y cartas translucidas flotando alrededor.',
 		price: 27.49,
@@ -192,6 +211,7 @@ export const mockProducts = [
 	{
 		id: '20',
 		name: 'El Samurai de Armadura Pesada',
+		category: 'accion',
 		description:
 			'Version mas imponente del samurai, con armadura roja y negra, casco con cuernos dorados y naginata en mano.',
 		price: 38.99,
