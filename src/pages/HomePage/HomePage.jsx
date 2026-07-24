@@ -1,5 +1,6 @@
 import './HomePage.css'
 import { mockProducts } from '../../data/mockProducts'
+import ProductsGrid from '../../components/ProductsGrid/ProductsGrid'
 
 function HomePage() {
 	const featuredProducts = mockProducts.slice(0, 4)
@@ -16,22 +17,7 @@ function HomePage() {
 				</p>
 			</div>
 
-			<div className="home-page__featured">
-				{featuredProducts.map((product) => (
-					<article key={product.id} className="home-page__card">
-						<img
-							className="home-page__image"
-							src={product.imageUrl}
-							alt={product.name}
-						/>
-						<div className="home-page__card-content">
-							<h2>{product.name}</h2>
-							<p>{product.description}</p>
-							<span>{product.price.toFixed(2)} EUR</span>
-						</div>
-					</article>
-				))}
-			</div>
+			<ProductsGrid products={featuredProducts} />
 		</section>
 	)
 }

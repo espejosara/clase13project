@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { mockProducts } from '../../data/mockProducts'
+import ProductsGrid from '../../components/ProductsGrid/ProductsGrid'
 import './ProductsPage.css'
 
 function ProductsPage() {
@@ -74,25 +75,7 @@ function ProductsPage() {
 				Mostrando {visibleProducts.length} producto(s)
 			</p>
 
-			<div className="products-page__grid">
-				{visibleProducts.map((product) => (
-					<article key={product.id} className="products-page__card">
-						<img
-							className="products-page__image"
-							src={product.imageUrl}
-							alt={product.name}
-						/>
-						<div className="products-page__card-content">
-							<h2>{product.name}</h2>
-							<p>{product.description}</p>
-							<div className="products-page__meta">
-								<span>{product.price.toFixed(2)} EUR</span>
-								<small>Stock: {product.stock}</small>
-							</div>
-						</div>
-					</article>
-				))}
-			</div>
+			<ProductsGrid products={visibleProducts} />
 		</section>
 	)
 }
