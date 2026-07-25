@@ -28,54 +28,56 @@ function ProductsPage() {
 
 	return (
 		<section className="products-page">
-			<header className="products-page__header products-page__panel">
-				<p className="products-page__eyebrow">Catalogo oficial</p>
-				<h1 className="products-page__title">Catalogo NeoKensei Chronicles</h1>
-				<p className="products-page__intro">
-					Busca por nombre o filtra por categoria para encontrar la pieza que
-					mejor encaja con tu coleccion.
-				</p>
+			<header className="products-page__panel products-page__hero">
+				<div className="products-page__hero-copy">
+					<p className="products-page__eyebrow">Catalogo oficial</p>
+					<h1 className="products-page__title">Catalogo NeoKensei Chronicles</h1>
+					<p className="products-page__intro">
+						Busca por nombre o filtra por categoria para encontrar la pieza que
+						mejor encaja con tu coleccion.
+					</p>
+				</div>
+
+				<div className="products-page__toolbar">
+					<div className="products-page__field products-page__field--search">
+						<label className="products-page__filter-label" htmlFor="search-filter">
+							Buscar producto
+						</label>
+						<input
+							id="search-filter"
+							className="products-page__input"
+							type="text"
+							placeholder="Escribe para buscar por nombre o categoria"
+							value={searchTerm}
+							onChange={(event) => setSearchTerm(event.target.value)}
+						/>
+					</div>
+
+					<div className="products-page__field products-page__field--category">
+						<label className="products-page__filter-label" htmlFor="category-filter">
+							Filtrar por categoria
+						</label>
+						<select
+							id="category-filter"
+							className="products-page__select"
+							value={selectedCategory}
+							onChange={(event) => setSelectedCategory(event.target.value)}
+						>
+							{categories.map((category) => (
+								<option key={category} value={category}>
+									{category}
+								</option>
+							))}
+						</select>
+					</div>
+				</div>
+
+				<div className="products-page__results-bar">
+					<p className="products-page__count">
+						Mostrando {visibleProducts.length} producto(s)
+					</p>
+				</div>
 			</header>
-
-			<section className="products-page__toolbar products-page__panel">
-				<div className="products-page__field">
-					<label className="products-page__filter-label" htmlFor="search-filter">
-						Buscar producto
-					</label>
-					<input
-						id="search-filter"
-						className="products-page__input"
-						type="text"
-						placeholder="Escribe para filtrar por nombre o categoria..."
-						value={searchTerm}
-						onChange={(event) => setSearchTerm(event.target.value)}
-					/>
-				</div>
-
-				<div className="products-page__field">
-					<label className="products-page__filter-label" htmlFor="category-filter">
-						Filtrar por categoria
-					</label>
-					<select
-						id="category-filter"
-						className="products-page__select"
-						value={selectedCategory}
-						onChange={(event) => setSelectedCategory(event.target.value)}
-					>
-						{categories.map((category) => (
-							<option key={category} value={category}>
-								{category}
-							</option>
-						))}
-					</select>
-				</div>
-			</section>
-
-			<div className="products-page__results-bar products-page__panel">
-				<p className="products-page__count">
-					Mostrando {visibleProducts.length} producto(s)
-				</p>
-			</div>
 
 			<ProductsGrid products={visibleProducts} />
 		</section>
