@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { mockProducts } from '../../data/mockProducts'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import './ProductDetailPage.css'
@@ -13,6 +13,9 @@ function ProductDetailPage() {
 
 	return (
 		<main className="product-detail-page">
+            <Link to="/products" className="product-detail-page__back">
+              ← Volver al catálogo
+            </Link>
 			<p className="product-detail-page__label">Ficha del producto</p>
 			<h1 className="product-detail-page__title">{product.name}</h1>
 			<p className="product-detail-page__intro">
