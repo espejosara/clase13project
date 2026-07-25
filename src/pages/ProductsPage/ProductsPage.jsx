@@ -30,7 +30,7 @@ function ProductsPage() {
 		<section className="products-page">
 			<header className="products-page__header">
 				<p className="products-page__eyebrow">Catalogo oficial</p>
-				<h1 className="products-page__title">Descubre todas las figuras</h1>
+				<h1 className="products-page__title">Catalogo NeoKensei Chronicles</h1>
 				<p className="products-page__intro">
 					Busca por nombre o filtra por categoria para encontrar la pieza que
 					mejor encaja con tu coleccion.

@@ -1,10 +1,12 @@
 :root {
-	--color-bg: #f8fafc;
+	--color-bg: #f4f7ff;
 	--color-surface: #ffffff;
-	--color-text: #1f2937;
-	--color-text-soft: #4b5563;
-	--color-border: #dbe4ee;
-	--color-primary: #2563eb;
-	--font-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--color-text: #111b34;
+	--color-text-soft: #4f5d80;
+	--color-border: #d2dcf5;
+	--color-primary: #ff5b3d;
+	--color-primary-soft: #ffe3de;
+	--color-accent: #2f6fff;
+	--font-base: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
 	--container-width: 1200px;
 }

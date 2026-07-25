@@ -5,8 +5,8 @@ function Header() {
 	return (
 		<header className="header">
 			<div className="header__brand">
-				<p className="header__eyebrow">Tienda oficial</p>
-				<h1 className="header__title">Anime Figures</h1>
+				<p className="header__eyebrow">Universo oficial</p>
+				<h1 className="header__title">NeoKensei Chronicles</h1>
 			</div>
 
 			<nav className="header__nav" aria-label="Navegacion principal">

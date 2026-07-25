@@ -9,7 +9,7 @@ function HomePage() {
 		<section className="home-page">
 			<div className="home-page__hero">
 				<p className="home-page__eyebrow">Coleccion oficial</p>
-				<h1 className="home-page__title">Figuras para fans y coleccionistas</h1>
+				<h1 className="home-page__title">Figuras de NeoKensei Chronicles</h1>
 				<p className="home-page__description">
 					Explora figuras originales inspiradas en mundos de accion,
 					magia y tecnologia. Cada pieza esta pensada para vitrinas,
