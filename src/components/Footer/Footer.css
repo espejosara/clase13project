@@ -5,7 +5,7 @@
 	gap: 1rem;
 	padding: 1.25rem 1.5rem;
 	border-top: 1px solid var(--color-border);
-	background: var(--color-surface);
+	background: linear-gradient(90deg, #ffffff 0%, #f6f9ff 100%);
 	color: var(--color-text-soft);
 	flex-wrap: wrap;
 }
@@ -18,5 +18,5 @@
 
 .footer__copy {
 	font-weight: 700;
-	color: var(--color-text);
+	color: var(--color-accent);
 }

@@ -28,7 +28,7 @@ function ProductsPage() {
 
 	return (
 		<section className="products-page">
-			<header className="products-page__header">
+			<header className="products-page__header products-page__panel">
 				<p className="products-page__eyebrow">Catalogo oficial</p>
 				<h1 className="products-page__title">Catalogo NeoKensei Chronicles</h1>
 				<p className="products-page__intro">
@@ -37,7 +37,7 @@ function ProductsPage() {
 				</p>
 			</header>
 
-			<section className="products-page__toolbar">
+			<section className="products-page__toolbar products-page__panel">
 				<div className="products-page__field">
 					<label className="products-page__filter-label" htmlFor="search-filter">
 						Buscar producto
@@ -71,9 +71,11 @@ function ProductsPage() {
 				</div>
 			</section>
 
-			<p className="products-page__count">
-				Mostrando {visibleProducts.length} producto(s)
-			</p>
+			<div className="products-page__results-bar products-page__panel">
+				<p className="products-page__count">
+					Mostrando {visibleProducts.length} producto(s)
+				</p>
+			</div>
 
 			<ProductsGrid products={visibleProducts} />
 		</section>

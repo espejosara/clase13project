@@ -1,12 +1,17 @@
 :root {
-	--color-bg: #f4f7ff;
+	--color-bg: #e6ecff;
 	--color-surface: #ffffff;
-	--color-text: #111b34;
-	--color-text-soft: #4f5d80;
-	--color-border: #d2dcf5;
-	--color-primary: #ff5b3d;
-	--color-primary-soft: #ffe3de;
-	--color-accent: #2f6fff;
+	--color-surface-alt: #f5f8ff;
+	--color-text: #0f1730;
+	--color-text-soft: #4a5b86;
+	--color-border: #c9d7f7;
+	--color-primary: #ff5a3a;
+	--color-primary-soft: #ffe7df;
+	--color-accent: #2b78ff;
+	--color-accent-2: #a54eff;
+	--color-glow: rgba(165, 78, 255, 0.22);
+	--shadow-soft: 0 12px 26px rgba(15, 23, 48, 0.1);
+	--shadow-strong: 0 18px 40px rgba(15, 23, 48, 0.18);
 	--font-base: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
 	--container-width: 1200px;
 }

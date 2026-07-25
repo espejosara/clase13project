@@ -2,16 +2,16 @@
 	overflow: hidden;
 	border: 1px solid var(--color-border);
 	border-radius: 0.9rem;
-	background: var(--color-surface);
+	background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 	width: 260px;
 	height: 460px;
-	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	box-shadow: var(--shadow-soft);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .product-card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+	box-shadow: var(--shadow-strong);
 }
 
 .product-card__link {
@@ -43,6 +43,10 @@
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: var(--color-primary);
+	background: var(--color-primary-soft);
+	justify-self: start;
+	padding: 0.2rem 0.45rem;
+	border-radius: 999px;
 }
 
 .product-card__title {

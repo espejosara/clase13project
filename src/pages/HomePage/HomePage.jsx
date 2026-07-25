@@ -7,7 +7,7 @@ function HomePage() {
 
 	return (
 		<section className="home-page">
-			<div className="home-page__hero">
+			<div className="home-page__hero home-page__panel">
 				<p className="home-page__eyebrow">Coleccion oficial</p>
 				<h1 className="home-page__title">Figuras de NeoKensei Chronicles</h1>
 				<p className="home-page__description">
@@ -17,7 +17,15 @@ function HomePage() {
 				</p>
 			</div>
 
-			<ProductsGrid products={featuredProducts} />
+			<section className="home-page__featured home-page__panel">
+				<div className="home-page__featured-header">
+					<h2 className="home-page__featured-title">Destacados de temporada</h2>
+					<p className="home-page__featured-copy">
+						Selección recomendada para empezar tu colección.
+					</p>
+				</div>
+				<ProductsGrid products={featuredProducts} />
+			</section>
 		</section>
 	)
 }

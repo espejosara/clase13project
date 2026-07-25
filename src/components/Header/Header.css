@@ -5,7 +5,8 @@
 	gap: 1.5rem;
 	padding: 1.25rem 1.5rem;
 	border-bottom: 1px solid var(--color-border);
-	background: var(--color-surface);
+	background: linear-gradient(105deg, #ffffff 8%, #f8f8ff 54%, #eef3ff 100%);
+	box-shadow: var(--shadow-soft);
 }
 
 .header__brand {
@@ -23,8 +24,12 @@
 
 .header__title {
 	margin: 0;
-	font-size: 1.25rem;
+	font-size: 1.4rem;
 	line-height: 1.1;
+	background: linear-gradient(95deg, var(--color-accent) 0%, var(--color-accent-2) 45%, var(--color-primary) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 
 .header__nav {
@@ -38,15 +43,18 @@
 	border-radius: 999px;
 	font-weight: 600;
 	color: var(--color-text);
+	border: 1px solid transparent;
 	text-decoration: none;
-	transition: background-color 0.2s ease, color 0.2s ease;
+	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .header__link:hover {
-	background: rgba(37, 99, 235, 0.08);
+	background: var(--color-primary-soft);
+	border-color: rgba(255, 99, 61, 0.35);
 }
 
 .header__link--active {
-	background: var(--color-primary);
+	background: linear-gradient(95deg, var(--color-primary) 0%, var(--color-accent-2) 100%);
 	color: #ffffff;
+	box-shadow: 0 8px 18px var(--color-glow);
 }
