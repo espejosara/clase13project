@@ -2,6 +2,9 @@ import { NavLink } from 'react-router-dom'
 import './Header.css'
 
 function Header() {
+	const getNavLinkClass = ({ isActive }) =>
+		isActive ? 'header__link header__link--active' : 'header__link'
+
 	return (
 		<header className="header">
 			<div className="header__brand">
@@ -10,20 +13,10 @@ function Header() {
 			</div>
 
 			<nav className="header__nav" aria-label="Navegacion principal">
-				<NavLink
-					to="/"
-					className={({ isActive }) =>
-						isActive ? 'header__link header__link--active' : 'header__link'
-					}
-				>
+				<NavLink to="/" className={getNavLinkClass}>
 					Tienda
 				</NavLink>
-				<NavLink
-					to="/products"
-					className={({ isActive }) =>
-						isActive ? 'header__link header__link--active' : 'header__link'
-					}
-				>
+				<NavLink to="/products" className={getNavLinkClass}>
 					Catalogo
 				</NavLink>
 			</nav>
