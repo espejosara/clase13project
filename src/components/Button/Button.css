@@ -1,0 +1,32 @@
+.button {
+	border: none;
+	border-radius: 0.65rem;
+	padding: 0.65rem 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.button:not(:disabled):hover {
+	transform: translateY(-1px);
+}
+
+.button--primary {
+	background: #1d4ed8;
+	color: #ffffff;
+}
+
+.button--secondary {
+	background: #334155;
+	color: #ffffff;
+}
+
+.button--danger {
+	background: #dc2626;
+	color: #ffffff;
+}

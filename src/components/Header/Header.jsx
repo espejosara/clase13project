@@ -19,6 +19,12 @@ function Header() {
 				<NavLink to="/products" className={getNavLinkClass}>
 					Catalogo
 				</NavLink>
+				<NavLink to="/login" className={getNavLinkClass}>
+					Login
+				</NavLink>
+				<NavLink to="/register" className={getNavLinkClass}>
+					Registro
+				</NavLink>
 			</nav>
 		</header>
 	)

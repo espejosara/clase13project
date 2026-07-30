@@ -1,0 +1,31 @@
+.form-input {
+	display: grid;
+	gap: 0.35rem;
+}
+
+.form-input__label {
+	font-weight: 600;
+	color: #111827;
+}
+
+.form-input__control {
+	padding: 0.65rem 0.75rem;
+	border-radius: 0.6rem;
+	border: 1px solid #cbd5e1;
+	font: inherit;
+}
+
+.form-input__control:focus {
+	outline: 2px solid #2563eb;
+	outline-offset: 1px;
+}
+
+.form-input__control--error {
+	border-color: #dc2626;
+}
+
+.form-input__error {
+	margin: 0;
+	color: #dc2626;
+	font-size: 0.875rem;
+}
