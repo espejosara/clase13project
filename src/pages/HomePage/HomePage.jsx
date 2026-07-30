@@ -1,9 +1,18 @@
 import './HomePage.css'
-import { mockProducts } from '../../data/mockProducts'
-import ProductsGrid from '../../components/ProductsGrid/ProductsGrid'
+import ProductGrid from '../../components/ProductGrid/ProductGrid'
+import { useProducts } from '../../hooks/useProducts'
 
 function HomePage() {
-	const featuredProducts = mockProducts.slice(0, 4)
+	const { data: products, loading, error } = useProducts()
+	const featuredProducts = products.slice(0, 4)
+
+	if (loading) {
+		return <p>Cargando productos destacados...</p>
+	}
+
+	if (error) {
+		return <p>Error al cargar productos: {error}</p>
+	}
 
 	return (
 		<section className="home-page">
@@ -24,7 +33,7 @@ function HomePage() {
 						Selección recomendada para empezar tu colección.
 					</p>
 				</div>
-				<ProductsGrid products={featuredProducts} />
+				<ProductGrid products={featuredProducts} />
 			</section>
 		</section>
 	)

@@ -1,21 +1,22 @@
 import { useMemo, useState } from 'react'
-import { mockProducts } from '../../data/mockProducts'
-import ProductsGrid from '../../components/ProductsGrid/ProductsGrid'
+import ProductGrid from '../../components/ProductGrid/ProductGrid'
+import { useProducts } from '../../hooks/useProducts'
 import './ProductsPage.css'
 
 function ProductsPage() {
 	const [selectedCategory, setSelectedCategory] = useState('todas')
 	const [searchTerm, setSearchTerm] = useState('')
+	const { data: products, loading, error } = useProducts()
 
 	const categories = useMemo(() => {
-		const uniqueCategories = new Set(mockProducts.map((product) => product.category))
+		const uniqueCategories = new Set(products.map((product) => product.category))
 		return ['todas', ...Array.from(uniqueCategories)]
-	}, [])
+	}, [products])
 
 	const visibleProducts = useMemo(() => {
 		const normalizedSearch = searchTerm.trim().toLowerCase()
 
-		return mockProducts.filter((product) => {
+		return products.filter((product) => {
 			const matchesCategory =
 				selectedCategory === 'todas' || product.category === selectedCategory
 			const matchesSearch =
@@ -24,7 +25,15 @@ function ProductsPage() {
 
 			return matchesCategory && matchesSearch
 		})
-	}, [selectedCategory, searchTerm])
+	}, [products, selectedCategory, searchTerm])
+
+	if (loading) {
+		return <p>Cargando catalogo...</p>
+	}
+
+	if (error) {
+		return <p>Error al cargar productos: {error}</p>
+	}
 
 	return (
 		<section className="products-page">
@@ -79,7 +88,7 @@ function ProductsPage() {
 				</div>
 			</header>
 
-			<ProductsGrid products={visibleProducts} />
+			<ProductGrid products={visibleProducts} />
 		</section>
 	)
 }

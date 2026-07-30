@@ -1,0 +1,27 @@
+.review-list {
+	list-style: none;
+	padding: 0;
+	margin: 1rem 0 0;
+	display: grid;
+	gap: 0.75rem;
+}
+
+.review-list__item {
+	padding: 0.9rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.75rem;
+	background: #f8fafc;
+}
+
+.review-list__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.review-list__empty {
+	margin-top: 1rem;
+	color: #4b5563;
+}

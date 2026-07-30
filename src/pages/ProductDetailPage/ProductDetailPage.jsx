@@ -1,11 +1,26 @@
 import { useParams, Link } from 'react-router-dom'
-import { mockProducts } from '../../data/mockProducts'
+import { useProduct } from '../../hooks/useProduct'
+import { useReviews } from '../../hooks/useReviews'
+import ReviewList from '../../components/ReviewList/ReviewList'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import './ProductDetailPage.css'
 
 function ProductDetailPage() {
 	const { productId } = useParams()
-	const product = mockProducts.find((item) => item.id === productId)
+	const { data: product, loading, error } = useProduct(productId)
+	const {
+		data: reviews,
+		loading: reviewsLoading,
+		error: reviewsError,
+	} = useReviews(productId)
+
+	if (loading) {
+		return <p>Cargando detalle del producto...</p>
+	}
+
+	if (error) {
+		return <p>Error al cargar el producto: {error}</p>
+	}
 
 	if (!product) {
 		return <NotFoundPage />
@@ -35,6 +50,13 @@ function ProductDetailPage() {
 			<p className="product-detail-page__meta">
 				Disponibilidad: {product.stock} unidades en stock
 			</p>
+
+			<section>
+				<h2>Reviews</h2>
+				{reviewsLoading ? <p>Cargando reviews...</p> : null}
+				{reviewsError ? <p>Error al cargar reviews: {reviewsError}</p> : null}
+				{!reviewsLoading && !reviewsError ? <ReviewList reviews={reviews} /> : null}
+			</section>
 		</main>
 	)
 }
