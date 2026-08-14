@@ -5,6 +5,11 @@ import ProductsPage from '../pages/ProductsPage/ProductsPage'
 import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage'
 import LoginPage from '../pages/LoginPage/LoginPage'
 import RegisterPage from '../pages/RegisterPage/RegisterPage'
+import PrivateRoute from '../components/PrivateRoute/PrivateRoute'
+import CartPage from '../pages/CartPage/CartPage'
+import WishlistPage from '../pages/WishlistPage/WishlistPage'
+import ProfilePage from '../pages/ProfilePage/ProfilePage'
+import CheckoutPage from '../pages/CheckoutPage/CheckoutPage'
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -31,6 +36,38 @@ export const router = createBrowserRouter([
 			{
 				path: 'register',
 				element: <RegisterPage />,
+			},
+			{
+				path: 'cart',
+				element: (
+					<PrivateRoute>
+						<CartPage />
+					</PrivateRoute>
+				),
+			},
+			{
+				path: 'wishlist',
+				element: (
+					<PrivateRoute>
+						<WishlistPage />
+					</PrivateRoute>
+				),
+			},
+			{
+				path: 'profile',
+				element: (
+					<PrivateRoute>
+						<ProfilePage />
+					</PrivateRoute>
+				),
+			},
+			{
+				path: 'checkout',
+				element: (
+					<PrivateRoute>
+						<CheckoutPage />
+					</PrivateRoute>
+				),
 			},
 			{
 				path: '*',
