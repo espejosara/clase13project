@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { login } from '../../api/auth'
+import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
+import { loginThunk } from '../../store/slices/authSlice'
 import './LoginPage.css'
 
 function LoginPage() {
+	const dispatch = useDispatch()
+	const { loading, error: serverError } = useSelector((state) => state.auth)
+
 	const [formData, setFormData] = useState({ email: '', password: '' })
 	const [errors, setErrors] = useState({})
-	const [loading, setLoading] = useState(false)
-	const [serverError, setServerError] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
 
 	const handleChange = (event) => {
@@ -32,21 +34,18 @@ function LoginPage() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-		setServerError('')
 		setSuccessMessage('')
 
 		if (!validate()) {
 			return
 		}
 
-		setLoading(true)
 		try {
-			const user = await login(formData)
-			setSuccessMessage(`Sesión iniciada como ${user.name}`)
-		} catch (error) {
-			setServerError(error.response?.data?.error || 'No se pudo iniciar sesión')
-		} finally {
-			setLoading(false)
+			const authData = await dispatch(loginThunk(formData)).unwrap()
+			const userName = authData?.user?.name || authData?.name || 'usuario'
+			setSuccessMessage(`Sesión iniciada como ${userName}`)
+		} catch {
+			// El error ya queda reflejado en auth.error.
 		}
 	}
 

@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { register } from '../../api/auth'
+import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
+import { registerThunk } from '../../store/slices/authSlice'
 import './RegisterPage.css'
 
 function RegisterPage() {
+	const dispatch = useDispatch()
+	const { loading, error: serverError } = useSelector((state) => state.auth)
+
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -12,8 +16,6 @@ function RegisterPage() {
 		confirmPassword: '',
 	})
 	const [errors, setErrors] = useState({})
-	const [loading, setLoading] = useState(false)
-	const [serverError, setServerError] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
 
 	const handleChange = (event) => {
@@ -45,26 +47,23 @@ function RegisterPage() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-		setServerError('')
 		setSuccessMessage('')
 
 		if (!validate()) {
 			return
 		}
 
-		setLoading(true)
 		try {
 			const payload = {
 				name: formData.name,
 				email: formData.email,
 				password: formData.password,
 			}
-			const user = await register(payload)
-			setSuccessMessage(`Cuenta creada para ${user.name}`)
-		} catch (error) {
-			setServerError(error.response?.data?.error || 'No se pudo crear la cuenta')
-		} finally {
-			setLoading(false)
+			const authData = await dispatch(registerThunk(payload)).unwrap()
+			const userName = authData?.user?.name || authData?.name || 'usuario'
+			setSuccessMessage(`Cuenta creada para ${userName}`)
+		} catch {
+			// El error ya queda reflejado en auth.error.
 		}
 	}
 
