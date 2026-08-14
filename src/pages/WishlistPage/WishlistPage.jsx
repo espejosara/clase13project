@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
+import { useProducts } from '../../hooks/useProducts'
 import {
 	fetchWishlistThunk,
 	toggleWishlistThunk,
@@ -10,29 +11,44 @@ import {
 function WishlistPage() {
 	const dispatch = useDispatch()
 	const { productIds, loading, error } = useSelector((state) => state.wishlist)
+	const { data: products, loading: productsLoading, error: productsError } = useProducts()
 
 	useEffect(() => {
 		dispatch(fetchWishlistThunk())
 	}, [dispatch])
 
+	const wishlistProducts = useMemo(() => {
+		return productIds
+			.map((productId) => products.find((product) => Number(product.id) === Number(productId)))
+			.filter(Boolean)
+	}, [productIds, products])
+
 	const handleRemove = (productId) => {
 		dispatch(toggleWishlistThunk(productId))
 	}
 
+	const isLoading = loading || productsLoading
+
 	return (
 		<section>
 			<h1>Favoritos</h1>
-			{loading ? <Spinner label="Cargando favoritos..." /> : null}
+			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}
+			{productsError ? <p>No se pudo cargar el catálogo para mostrar los favoritos.</p> : null}
 			{error ? <p>Error: {error}</p> : null}
 
-			{!loading && !productIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
+			{!isLoading && !productIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
 
-			{productIds.length ? (
+			{wishlistProducts.length ? (
 				<ul>
-					{productIds.map((productId) => (
-						<li key={productId}>
-							<Link to={`/products/${productId}`}>Producto {productId}</Link>{' '}
-							<button type="button" onClick={() => handleRemove(productId)} disabled={loading}>
+					{wishlistProducts.map((product) => (
+						<li key={product.id}>
+							<Link to={`/products/${product.id}`}>
+								<img src={product.imageUrl} alt={product.name} width="120" />
+								<h2>{product.name}</h2>
+								<p>{product.category}</p>
+								<p>{product.price.toFixed(2)} EUR</p>
+							</Link>{' '}
+							<button type="button" onClick={() => handleRemove(product.id)} disabled={loading}>
 								Quitar
 							</button>
 						</li>
