@@ -1,4 +1,61 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import {
+	addCartItemRequest,
+	checkoutRequest,
+	fetchCartRequest,
+	removeCartItemRequest,
+} from '../../api/cart'
+
+function extractItems(payload) {
+	if (Array.isArray(payload)) return payload
+	if (Array.isArray(payload?.items)) return payload.items
+	if (Array.isArray(payload?.cart?.items)) return payload.cart.items
+	return []
+}
+
+export const fetchCartThunk = createAsyncThunk(
+	'cart/fetchCart',
+	async (_, { rejectWithValue }) => {
+		try {
+			return await fetchCartRequest()
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo cargar el carrito')
+		}
+	},
+)
+
+export const addCartItemThunk = createAsyncThunk(
+	'cart/addCartItem',
+	async (payload, { rejectWithValue }) => {
+		try {
+			return await addCartItemRequest(payload)
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo añadir al carrito')
+		}
+	},
+)
+
+export const removeCartItemThunk = createAsyncThunk(
+	'cart/removeCartItem',
+	async (itemId, { rejectWithValue }) => {
+		try {
+			return await removeCartItemRequest(itemId)
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo eliminar el item')
+		}
+	},
+)
+
+export const checkoutThunk = createAsyncThunk(
+	'cart/checkout',
+	async (_, { rejectWithValue }) => {
+		try {
+			return await checkoutRequest()
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo completar el checkout')
+		}
+	},
+)
 
 const initialState = {
 	items: [],
@@ -9,7 +66,65 @@ const initialState = {
 const cartSlice = createSlice({
 	name: 'cart',
 	initialState,
-	reducers: {},
+	reducers: {
+		clearCart(state) {
+			state.items = []
+			state.error = null
+		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchCartThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(fetchCartThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.items = extractItems(action.payload)
+			})
+			.addCase(fetchCartThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo cargar el carrito'
+			})
+			.addCase(addCartItemThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(addCartItemThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.items = extractItems(action.payload)
+			})
+			.addCase(addCartItemThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo añadir al carrito'
+			})
+			.addCase(removeCartItemThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(removeCartItemThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.items = extractItems(action.payload)
+			})
+			.addCase(removeCartItemThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo eliminar el item'
+			})
+			.addCase(checkoutThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(checkoutThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.items = extractItems(action.payload)
+			})
+			.addCase(checkoutThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo completar el checkout'
+			})
+	},
 })
+
+export const { clearCart } = cartSlice.actions
 
 export default cartSlice.reducer
