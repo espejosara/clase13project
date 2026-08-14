@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import { useProducts } from '../../hooks/useProducts'
+import { idsAreEqual } from '../../utils/id'
 import {
 	fetchWishlistThunk,
-	toggleWishlistThunk,
+	removeWishlistThunk,
 } from '../../store/slices/wishlistSlice'
 
 function WishlistPage() {
@@ -19,12 +20,12 @@ function WishlistPage() {
 
 	const wishlistProducts = useMemo(() => {
 		return productIds
-			.map((productId) => products.find((product) => Number(product.id) === Number(productId)))
+			.map((productId) => products.find((product) => idsAreEqual(product.id, productId)))
 			.filter(Boolean)
 	}, [productIds, products])
 
 	const handleRemove = (productId) => {
-		dispatch(toggleWishlistThunk(productId))
+		dispatch(removeWishlistThunk(productId))
 	}
 
 	const isLoading = loading || productsLoading
