@@ -3,6 +3,7 @@ import axios from 'axios'
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
 const AUTH_TOKEN_KEY = 'auth_token'
 const AUTH_USER_KEY = 'auth_user'
+const AUTH_EXPIRED_KEY = 'auth_session_expired'
 
 const api = axios.create({
 	baseURL,
@@ -24,6 +25,7 @@ api.interceptors.response.use(
 		if (error.response?.status === 401) {
 			localStorage.removeItem(AUTH_TOKEN_KEY)
 			localStorage.removeItem(AUTH_USER_KEY)
+			sessionStorage.setItem(AUTH_EXPIRED_KEY, '1')
 
 			if (window.location.pathname !== '/login') {
 				window.location.href = '/login'

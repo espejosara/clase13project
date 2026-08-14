@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import Spinner from '../../components/Spinner/Spinner'
 import {
 	checkoutThunk,
 	fetchCartThunk,
@@ -54,7 +55,7 @@ function CartPage() {
 	return (
 		<section>
 			<h1>Carrito</h1>
-			{loading ? <p>Cargando carrito...</p> : null}
+			{loading ? <Spinner label="Cargando carrito..." /> : null}
 			{error ? <p>Error: {error}</p> : null}
 
 			{!loading && !items.length ? <p>Tu carrito está vacío.</p> : null}

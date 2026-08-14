@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import Spinner from '../../components/Spinner/Spinner'
 import {
 	fetchWishlistThunk,
 	toggleWishlistThunk,
@@ -20,8 +21,8 @@ function WishlistPage() {
 
 	return (
 		<section>
-			<h1>Wishlist</h1>
-			{loading ? <p>Cargando wishlist...</p> : null}
+			<h1>Favoritos</h1>
+			{loading ? <Spinner label="Cargando favoritos..." /> : null}
 			{error ? <p>Error: {error}</p> : null}
 
 			{!loading && !productIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}

@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
 import { loginThunk } from '../../store/slices/authSlice'
+
 import './LoginPage.css'
+
+const AUTH_EXPIRED_KEY = 'auth_session_expired'
 
 function LoginPage() {
 	const dispatch = useDispatch()
@@ -15,6 +18,16 @@ function LoginPage() {
 	const [formData, setFormData] = useState({ email: '', password: '' })
 	const [errors, setErrors] = useState({})
 	const [successMessage, setSuccessMessage] = useState('')
+	const [sessionMessage, setSessionMessage] = useState('')
+
+	useEffect(() => {
+		const sessionExpired = sessionStorage.getItem(AUTH_EXPIRED_KEY)
+
+		if (sessionExpired === '1') {
+			setSessionMessage('Tu sesión ha expirado. Vuelve a iniciar sesión.')
+			sessionStorage.removeItem(AUTH_EXPIRED_KEY)
+		}
+	}, [])
 
 	const handleChange = (event) => {
 		const { name, value } = event.target
@@ -47,6 +60,7 @@ function LoginPage() {
 			const authData = await dispatch(loginThunk(formData)).unwrap()
 			const userName = authData?.user?.name || authData?.name || 'usuario'
 			setSuccessMessage(`Sesión iniciada como ${userName}`)
+			setSessionMessage('')
 			const redirectTo = location.state?.from?.pathname || '/profile'
 			navigate(redirectTo, { replace: true })
 		} catch {
@@ -80,6 +94,7 @@ function LoginPage() {
 				<Button type="submit" variant="primary" disabled={loading}>
 					{loading ? 'Enviando...' : 'Entrar'}
 				</Button>
+				{sessionMessage ? <p className="auth-message auth-message--error">{sessionMessage}</p> : null}
 				{serverError ? <p className="auth-message auth-message--error">{serverError}</p> : null}
 				{successMessage ? <p className="auth-message auth-message--success">{successMessage}</p> : null}
 			</form>

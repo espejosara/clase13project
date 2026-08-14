@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
+import Spinner from '../../components/Spinner/Spinner'
 import { useProducts } from '../../hooks/useProducts'
 import './ProductsPage.css'
 
@@ -28,7 +29,7 @@ function ProductsPage() {
 	}, [products, selectedCategory, searchTerm])
 
 	if (loading) {
-		return <p>Cargando catalogo...</p>
+		return <Spinner label="Cargando catálogo..." />
 	}
 
 	if (error) {

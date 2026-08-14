@@ -4,6 +4,7 @@ import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
+import Spinner from '../../components/Spinner/Spinner'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import './ProductDetailPage.css'
 
@@ -26,7 +27,7 @@ function ProductDetailPage() {
 	}
 
 	if (loading) {
-		return <p>Cargando detalle del producto...</p>
+		return <Spinner label="Cargando detalle del producto..." />
 	}
 
 	if (error) {
@@ -65,7 +66,7 @@ function ProductDetailPage() {
 			<section>
 				<h2>Reviews</h2>
 				<ReviewForm productId={productId} onReviewCreated={handleReviewCreated} />
-				{reviewsLoading ? <p>Cargando reviews...</p> : null}
+				{reviewsLoading ? <Spinner label="Cargando reseñas..." /> : null}
 				{reviewsError ? <p>Error al cargar reviews: {reviewsError}</p> : null}
 				{!reviewsLoading && !reviewsError ? <ReviewList reviews={allReviews} /> : null}
 			</section>

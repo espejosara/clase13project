@@ -17,10 +17,10 @@ function Header() {
 					Tienda
 				</NavLink>
 				<NavLink to="/products" className={getNavLinkClass}>
-					Catalogo
+					Catálogo
 				</NavLink>
 				<NavLink to="/login" className={getNavLinkClass}>
-					Login
+					Iniciar sesión
 				</NavLink>
 				<NavLink to="/register" className={getNavLinkClass}>
 					Registro
@@ -29,7 +29,7 @@ function Header() {
 					Carrito
 				</NavLink>
 				<NavLink to="/wishlist" className={getNavLinkClass}>
-					Wishlist
+					Favoritos
 				</NavLink>
 				<NavLink to="/profile" className={getNavLinkClass}>
 					Perfil

@@ -1,5 +1,6 @@
 import './HomePage.css'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
+import Spinner from '../../components/Spinner/Spinner'
 import { useProducts } from '../../hooks/useProducts'
 
 function HomePage() {
@@ -7,7 +8,7 @@ function HomePage() {
 	const featuredProducts = products.slice(0, 4)
 
 	if (loading) {
-		return <p>Cargando productos destacados...</p>
+		return <Spinner label="Cargando productos destacados..." />
 	}
 
 	if (error) {

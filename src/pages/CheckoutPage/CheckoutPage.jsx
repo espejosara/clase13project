@@ -1,8 +1,8 @@
 function CheckoutPage() {
 	return (
 		<section>
-			<h1>Checkout</h1>
-			<p>Ruta privada activa. Aqui irá el flujo de checkout.</p>
+			<h1>Finalizar compra</h1>
+			<p>Revisa tu carrito y completa tu pedido desde esta zona privada.</p>
 		</section>
 	)
 }
