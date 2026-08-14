@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addCartItemThunk } from '../../store/slices/cartSlice'
+import WishlistButton from '../WishlistButton/WishlistButton'
 import './ProductCard.css'
 
 function ProductCard({ product }) {
+	const dispatch = useDispatch()
+
+	const handleAddToCart = () => {
+		dispatch(addCartItemThunk({ productId: product.id, quantity: 1 }))
+	}
+
 	return (
 		<article className="product-card">
 			<Link to={`/products/${product.id}`} className="product-card__link">
@@ -22,6 +31,16 @@ function ProductCard({ product }) {
 					</div>
 				</div>
 			</Link>
+			<div className="product-card__actions">
+				<button
+					type="button"
+					className="product-card__action-button"
+					onClick={handleAddToCart}
+				>
+					Añadir al carrito
+				</button>
+				<WishlistButton productId={product.id} />
+			</div>
 		</article>
 	)
 }
