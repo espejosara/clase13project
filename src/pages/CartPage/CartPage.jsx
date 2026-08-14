@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	checkoutThunk,
@@ -20,6 +21,7 @@ function getItemPrice(item) {
 
 function CartPage() {
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 	const { items, loading, error } = useSelector((state) => state.cart)
 
 	useEffect(() => {
@@ -40,8 +42,13 @@ function CartPage() {
 		}
 	}
 
-	const handleCheckout = () => {
-		dispatch(checkoutThunk())
+	const handleCheckout = async () => {
+		try {
+			await dispatch(checkoutThunk()).unwrap()
+			navigate('/checkout/success')
+		} catch {
+			// El mensaje de error ya queda reflejado en el slice.
+		}
 	}
 
 	return (

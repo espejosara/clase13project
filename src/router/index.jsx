@@ -10,6 +10,7 @@ import CartPage from '../pages/CartPage/CartPage'
 import WishlistPage from '../pages/WishlistPage/WishlistPage'
 import ProfilePage from '../pages/ProfilePage/ProfilePage'
 import CheckoutPage from '../pages/CheckoutPage/CheckoutPage'
+import CheckoutSuccessPage from '../pages/CheckoutSuccessPage/CheckoutSuccessPage'
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -66,6 +67,14 @@ export const router = createBrowserRouter([
 				element: (
 					<PrivateRoute>
 						<CheckoutPage />
+					</PrivateRoute>
+				),
+			},
+			{
+				path: 'checkout/success',
+				element: (
+					<PrivateRoute>
+						<CheckoutSuccessPage />
 					</PrivateRoute>
 				),
 			},

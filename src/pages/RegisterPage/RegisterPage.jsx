@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
@@ -7,6 +8,7 @@ import './RegisterPage.css'
 
 function RegisterPage() {
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 	const { loading, error: serverError } = useSelector((state) => state.auth)
 
 	const [formData, setFormData] = useState({
@@ -62,6 +64,7 @@ function RegisterPage() {
 			const authData = await dispatch(registerThunk(payload)).unwrap()
 			const userName = authData?.user?.name || authData?.name || 'usuario'
 			setSuccessMessage(`Cuenta creada para ${userName}`)
+			navigate('/profile', { replace: true })
 		} catch {
 			// El error ya queda reflejado en auth.error.
 		}

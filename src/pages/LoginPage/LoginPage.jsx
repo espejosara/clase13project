@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
@@ -7,6 +8,8 @@ import './LoginPage.css'
 
 function LoginPage() {
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
+	const location = useLocation()
 	const { loading, error: serverError } = useSelector((state) => state.auth)
 
 	const [formData, setFormData] = useState({ email: '', password: '' })
@@ -44,6 +47,8 @@ function LoginPage() {
 			const authData = await dispatch(loginThunk(formData)).unwrap()
 			const userName = authData?.user?.name || authData?.name || 'usuario'
 			setSuccessMessage(`Sesión iniciada como ${userName}`)
+			const redirectTo = location.state?.from?.pathname || '/profile'
+			navigate(redirectTo, { replace: true })
 		} catch {
 			// El error ya queda reflejado en auth.error.
 		}
