@@ -1,21 +1,35 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
+import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
-import { idsAreEqual } from '../../utils/id'
 import {
-	fetchWishlistThunk,
-	removeWishlistThunk,
+	setLocalWishlist,
+	toggleLocalWishlist,
 } from '../../store/slices/wishlistSlice'
 
 function WishlistPage() {
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState('')
+	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const dispatch = useDispatch()
-	const { productIds, loading, error } = useSelector((state) => state.wishlist)
+	const { productIds } = useSelector((state) => state.wishlist)
 	const { data: products, loading: productsLoading, error: productsError } = useProducts()
 
 	useEffect(() => {
-		dispatch(fetchWishlistThunk())
+		async function loadWishlist() {
+			try {
+				const data = await fetchWishlistRequest()
+				dispatch(setLocalWishlist(data))
+			} catch (fetchError) {
+				setError('No se pudo cargar la wishlist.')
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		loadWishlist()
 	}, [dispatch])
 
 	const productsById = useMemo(() => {
@@ -31,8 +45,24 @@ function WishlistPage() {
 			.filter(Boolean)
 	}, [productIds, productsById])
 
-	const handleRemove = (productId) => {
-		dispatch(removeWishlistThunk(productId))
+	const handleToggleWishlist = async (productId) => {
+		if (togglingWishlist === productId) return
+
+		try {
+			setTogglingWishlist(productId)
+			dispatch(toggleLocalWishlist(productId))
+
+			const syncedWishlist = await toggleWishlistRequest(productId)
+
+			if (Array.isArray(syncedWishlist)) {
+				dispatch(setLocalWishlist(syncedWishlist))
+			}
+		} catch (toggleError) {
+			console.log('No se pudo sincronizar la wishlist con el back', toggleError)
+		}
+		finally {
+			setTogglingWishlist(null)
+		}
 	}
 
 	const isLoading = loading || productsLoading
@@ -56,8 +86,12 @@ function WishlistPage() {
 								<p>{product.category}</p>
 								<p>{product.price.toFixed(2)} EUR</p>
 							</Link>{' '}
-							<button type="button" onClick={() => handleRemove(product.id)} disabled={loading}>
-								Quitar
+							<button
+								type="button"
+								onClick={() => handleToggleWishlist(product.id)}
+								disabled={togglingWishlist === product.id}
+							>
+								Quitar de favoritos
 							</button>
 						</li>
 					))}

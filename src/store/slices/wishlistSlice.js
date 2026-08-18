@@ -1,10 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import {
-	addWishlistRequest,
-	fetchWishlistRequest,
-	removeWishlistRequest,
-} from '../../api/wishlist'
-import { idsAreEqual, normalizeId } from '../../utils/id'
+import { createSlice } from '@reduxjs/toolkit'
+import { normalizeId } from '../../utils/id'
 
 function extractProductIds(payload) {
 	if (Array.isArray(payload)) {
@@ -32,129 +27,36 @@ function extractProductIds(payload) {
 	return []
 }
 
-export const fetchWishlistThunk = createAsyncThunk(
-	'wishlist/fetchWishlist',
-	async (_, { rejectWithValue }) => {
-		try {
-			return await fetchWishlistRequest()
-		} catch (error) {
-			return rejectWithValue(error.response?.data?.error || 'No se pudo cargar la wishlist')
-		}
-	},
-)
-
-export const addWishlistThunk = createAsyncThunk(
-	'wishlist/addWishlist',
-	async (productId, { rejectWithValue }) => {
-		try {
-			await addWishlistRequest(productId)
-			return await fetchWishlistRequest()
-		} catch (error) {
-			return rejectWithValue(error.response?.data?.error || 'No se pudo actualizar la wishlist')
-		}
-	},
-)
-
-export const removeWishlistThunk = createAsyncThunk(
-	'wishlist/removeWishlist',
-	async (productId, { rejectWithValue }) => {
-		try {
-			await removeWishlistRequest(productId)
-			return await fetchWishlistRequest()
-		} catch (error) {
-			return rejectWithValue(error.response?.data?.error || 'No se pudo actualizar la wishlist')
-		}
-	},
-)
-
-export const toggleWishlistThunk = createAsyncThunk(
-	'wishlist/toggleWishlist',
-	async (productId, { getState, rejectWithValue }) => {
-		try {
-			const { wishlist } = getState()
-			const isInWishlist = wishlist.productIds.some((id) => idsAreEqual(id, productId))
-
-			if (isInWishlist) {
-				await removeWishlistRequest(productId)
-			} else {
-				await addWishlistRequest(productId)
-			}
-
-			return await fetchWishlistRequest()
-		} catch (error) {
-			return rejectWithValue(error.response?.data?.error || 'No se pudo actualizar la wishlist')
-		}
-	},
-)
-
 const initialState = {
 	productIds: [],
-	loading: false,
-	error: null,
 }
 
 const wishlistSlice = createSlice({
 	name: 'wishlist',
 	initialState,
 	reducers: {
+		setLocalWishlist(state, action) {
+			state.productIds = extractProductIds(action.payload)
+		},
+		toggleLocalWishlist(state, action) {
+			const productId = normalizeId(action.payload)
+
+			if (productId === null) {
+				return
+			}
+
+			const isInWishlist = state.productIds.includes(productId)
+
+			state.productIds = isInWishlist
+				? state.productIds.filter((id) => id !== productId)
+				: [...state.productIds, productId]
+		},
 		clearWishlist(state) {
 			state.productIds = []
-			state.error = null
 		},
-	},
-	extraReducers: (builder) => {
-		builder
-			.addCase(fetchWishlistThunk.pending, (state) => {
-				state.loading = true
-				state.error = null
-			})
-			.addCase(fetchWishlistThunk.fulfilled, (state, action) => {
-				state.loading = false
-				state.productIds = extractProductIds(action.payload)
-			})
-			.addCase(fetchWishlistThunk.rejected, (state, action) => {
-				state.loading = false
-				state.error = action.payload || 'No se pudo cargar la wishlist'
-			})
-			.addCase(addWishlistThunk.pending, (state) => {
-				state.loading = true
-				state.error = null
-			})
-			.addCase(addWishlistThunk.fulfilled, (state, action) => {
-				state.loading = false
-				state.productIds = extractProductIds(action.payload)
-			})
-			.addCase(addWishlistThunk.rejected, (state, action) => {
-				state.loading = false
-				state.error = action.payload || 'No se pudo actualizar la wishlist'
-			})
-			.addCase(removeWishlistThunk.pending, (state) => {
-				state.loading = true
-				state.error = null
-			})
-			.addCase(removeWishlistThunk.fulfilled, (state, action) => {
-				state.loading = false
-				state.productIds = extractProductIds(action.payload)
-			})
-			.addCase(removeWishlistThunk.rejected, (state, action) => {
-				state.loading = false
-				state.error = action.payload || 'No se pudo actualizar la wishlist'
-			})
-			.addCase(toggleWishlistThunk.pending, (state) => {
-				state.loading = true
-				state.error = null
-			})
-			.addCase(toggleWishlistThunk.fulfilled, (state, action) => {
-				state.loading = false
-				state.productIds = extractProductIds(action.payload)
-			})
-			.addCase(toggleWishlistThunk.rejected, (state, action) => {
-				state.loading = false
-				state.error = action.payload || 'No se pudo actualizar la wishlist'
-			})
 	},
 })
 
-export const { clearWishlist } = wishlistSlice.actions
+export const { setLocalWishlist, toggleLocalWishlist, clearWishlist } = wishlistSlice.actions
 
 export default wishlistSlice.reducer
