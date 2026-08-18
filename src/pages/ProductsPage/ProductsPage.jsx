@@ -7,6 +7,7 @@ import './ProductsPage.css'
 function ProductsPage() {
 	const [selectedCategory, setSelectedCategory] = useState('todas')
 	const [searchTerm, setSearchTerm] = useState('')
+	const [sortBy, setSortBy] = useState('name-asc')
 	const { data: products, loading, error } = useProducts()
 
 	const categories = useMemo(() => {
@@ -16,8 +17,7 @@ function ProductsPage() {
 
 	const visibleProducts = useMemo(() => {
 		const normalizedSearch = searchTerm.trim().toLowerCase()
-
-		return products.filter((product) => {
+		const filteredProducts = products.filter((product) => {
 			const matchesCategory =
 				selectedCategory === 'todas' || product.category === selectedCategory
 			const matchesSearch =
@@ -26,7 +26,21 @@ function ProductsPage() {
 
 			return matchesCategory && matchesSearch
 		})
-	}, [products, selectedCategory, searchTerm])
+
+		return filteredProducts.slice().sort((firstProduct, secondProduct) => {
+			switch (sortBy) {
+				case 'price-asc':
+					return firstProduct.price - secondProduct.price
+				case 'price-desc':
+					return secondProduct.price - firstProduct.price
+				case 'name-desc':
+					return secondProduct.name.localeCompare(firstProduct.name)
+				case 'name-asc':
+				default:
+					return firstProduct.name.localeCompare(secondProduct.name)
+			}
+		})
+	}, [products, selectedCategory, searchTerm, sortBy])
 
 	if (loading) {
 		return <Spinner label="Cargando catálogo..." />
@@ -78,6 +92,23 @@ function ProductsPage() {
 									{category}
 								</option>
 							))}
+						</select>
+					</div>
+
+					<div className="products-page__field products-page__field--sort">
+						<label className="products-page__filter-label" htmlFor="sort-filter">
+							Ordenar por
+						</label>
+						<select
+							id="sort-filter"
+							className="products-page__select"
+							value={sortBy}
+							onChange={(event) => setSortBy(event.target.value)}
+						>
+							<option value="name-asc">Nombre A-Z</option>
+							<option value="name-desc">Nombre Z-A</option>
+							<option value="price-asc">Precio menor a mayor</option>
+							<option value="price-desc">Precio mayor a menor</option>
 						</select>
 					</div>
 				</div>

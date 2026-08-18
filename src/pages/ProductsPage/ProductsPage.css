@@ -44,6 +44,10 @@
 	gap: 0.95rem;
 }
 
+.products-page__field--sort {
+	grid-column: span 1;
+}
+
 .products-page__eyebrow {
 	margin: 0;
 	font-size: 0.76rem;
