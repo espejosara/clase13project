@@ -18,11 +18,18 @@ function WishlistPage() {
 		dispatch(fetchWishlistThunk())
 	}, [dispatch])
 
+	const productsById = useMemo(() => {
+		return products.reduce((lookup, product) => {
+			lookup.set(String(product.id), product)
+			return lookup
+		}, new Map())
+	}, [products])
+
 	const wishlistProducts = useMemo(() => {
 		return productIds
-			.map((productId) => products.find((product) => idsAreEqual(product.id, productId)))
+			.map((productId) => productsById.get(String(productId)))
 			.filter(Boolean)
-	}, [productIds, products])
+	}, [productIds, productsById])
 
 	const handleRemove = (productId) => {
 		dispatch(removeWishlistThunk(productId))
