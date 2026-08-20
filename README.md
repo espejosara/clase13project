@@ -160,6 +160,59 @@ Authorization: Bearer <token>
 - ReviewForm autenticado para crear reseñas.
 - Spinner reutilizable para estados de carga visibles.
 
+## Optimizacion de render y datos derivados
+
+### useMemo aplicado en catalogo
+
+- En ProductsPage, la lista visible se calcula con `useMemo` para combinar filtro + orden sin recalcular en cada render.
+- El orden se aplica sobre copia del array (`slice().sort(...)`) para no mutar el estado base.
+- Dependencias del memo: products, selectedCategory, searchTerm y sortBy.
+
+### useMemo aplicado en wishlist
+
+- En WishlistPage se usa un mapa memoizado de productos por id para evitar `find` repetidos por cada favorito.
+- Los productos mostrados en favoritos se derivan con `useMemo` a partir de ids + mapa.
+
+### Regla de datos derivados
+
+- Estado base: products, cart.items, wishlist.ids.
+- Estado derivado: visibleProducts, wishlistProducts, totales.
+- Los derivados no se guardan en estado adicional; se calculan con memoizacion cuando corresponde.
+
+## Criterio practico para usar useMemo
+
+Usar useMemo cuando:
+
+- Hay recorridos de arrays (filter/map/sort/reduce) que se ejecutan con frecuencia.
+- El componente re-renderiza mucho y el calculo no es trivial.
+
+No usar useMemo cuando:
+
+- El calculo es simple (booleanos o transformaciones pequeñas).
+- No hay impacto real de rendimiento o claridad.
+
+## Contrato wishlist (toggle)
+
+- Endpoint: `POST /wishlist/:productId`.
+- Flujo frontend:
+	1. Toggle optimista local en Redux.
+	2. Sincronizacion con backend.
+	3. Reconciliacion con respuesta final del servidor.
+
+## Flujo de compra end-to-end
+
+1. Usuario navega por `/products`.
+2. Abre detalle en `/products/:productId`.
+3. Añade al carrito y revisa en `/cart`.
+4. Confirma compra en `/checkout`.
+5. Recibe confirmacion en `/checkout/success`.
+
+### UX de estados
+
+- Loading visible con Spinner en vistas principales.
+- Mensajes de error consistentes con accion `Reintentar` en catalogo, wishlist y carrito.
+- Estado separado de checkout (`isCheckingOut`) para evitar doble envio y mostrar feedback claro.
+
 ## Verificación rápida
 
 1. Abrir http://localhost:5173/login y comprobar que puedes iniciar sesión.
@@ -170,6 +223,15 @@ Authorization: Bearer <token>
 6. Ir a /cart y completar checkout.
 7. Comprobar la redirección a /checkout/success.
 8. Abrir un detalle de producto y crear una reseña autenticada.
+
+## Checklist de cierre de sprint
+
+- Filtros y ordenacion de productos funcionando correctamente.
+- Sin mutaciones directas de arrays de estado para ordenar/listar.
+- Wishlist estable al añadir/quitar desde catalogo y pagina de favoritos.
+- Carrito, checkout y confirmacion final operativos.
+- Navegacion fluida en el flujo catalogo → detalle → carrito → checkout → exito.
+- Estados de loading/error consistentes en pantallas clave.
 
 ## Scripts disponibles
 
