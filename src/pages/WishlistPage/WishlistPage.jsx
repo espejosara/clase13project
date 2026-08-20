@@ -14,15 +14,16 @@ function WishlistPage() {
 	const [error, setError] = useState('')
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const dispatch = useDispatch()
-	const { productIds } = useSelector((state) => state.wishlist)
+	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const { data: products, loading: productsLoading, error: productsError } = useProducts()
 
 	useEffect(() => {
+		// Carga inicial de favoritos desde backend y sincronización con Redux.
 		async function loadWishlist() {
 			try {
 				const data = await fetchWishlistRequest()
 				dispatch(setLocalWishlist(data))
-			} catch (fetchError) {
+			} catch {
 				setError('No se pudo cargar la wishlist.')
 			} finally {
 				setLoading(false)
@@ -40,11 +41,12 @@ function WishlistPage() {
 	}, [products])
 
 	const wishlistProducts = useMemo(() => {
-		return productIds
+		return wishlistIds
 			.map((productId) => productsById.get(String(productId)))
 			.filter(Boolean)
-	}, [productIds, productsById])
+	}, [wishlistIds, productsById])
 
+	// Alterna un favorito desde la página y mantiene el estado local sincronizado.
 	const handleToggleWishlist = async (productId) => {
 		if (togglingWishlist === productId) return
 
@@ -59,8 +61,7 @@ function WishlistPage() {
 			}
 		} catch (toggleError) {
 			console.log('No se pudo sincronizar la wishlist con el back', toggleError)
-		}
-		finally {
+		} finally {
 			setTogglingWishlist(null)
 		}
 	}
@@ -74,7 +75,7 @@ function WishlistPage() {
 			{productsError ? <p>No se pudo cargar el catálogo para mostrar los favoritos.</p> : null}
 			{error ? <p>Error: {error}</p> : null}
 
-			{!isLoading && !productIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
+			{!isLoading && !wishlistIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
 
 			{wishlistProducts.length ? (
 				<ul>

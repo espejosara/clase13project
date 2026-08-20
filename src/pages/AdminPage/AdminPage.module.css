@@ -1,0 +1,22 @@
+.page {
+	max-width: var(--container-width);
+	margin: 0 auto;
+	padding: 2.5rem 1.5rem 3rem;
+	display: grid;
+	gap: 1rem;
+}
+
+.label {
+	margin: 0;
+	font-size: 0.76rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-primary);
+	font-weight: 800;
+}
+
+.title {
+	margin: 0;
+	font-size: clamp(2rem, 4vw, 3rem);
+	line-height: 1.1;
+}

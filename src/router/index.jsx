@@ -9,6 +9,7 @@ import PrivateRoute from '../components/PrivateRoute/PrivateRoute'
 import CartPage from '../pages/CartPage/CartPage'
 import WishlistPage from '../pages/WishlistPage/WishlistPage'
 import ProfilePage from '../pages/ProfilePage/ProfilePage'
+import AdminPage from '../pages/AdminPage/AdminPage'
 import CheckoutPage from '../pages/CheckoutPage/CheckoutPage'
 import CheckoutSuccessPage from '../pages/CheckoutSuccessPage/CheckoutSuccessPage'
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage'
@@ -59,6 +60,14 @@ export const router = createBrowserRouter([
 				element: (
 					<PrivateRoute>
 						<ProfilePage />
+					</PrivateRoute>
+				),
+			},
+			{
+				path: 'admin',
+				element: (
+					<PrivateRoute allowedRoles={['admin']}>
+						<AdminPage />
 					</PrivateRoute>
 				),
 			},

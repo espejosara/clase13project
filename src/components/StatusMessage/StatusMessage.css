@@ -1,0 +1,28 @@
+.status-message {
+	padding: 1rem 1.25rem;
+	border-radius: 1rem;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	display: grid;
+	gap: 0.35rem;
+}
+
+.status-message__title {
+	margin: 0;
+	font-size: 1.05rem;
+}
+
+.status-message__description {
+	margin: 0;
+	color: var(--color-text-soft);
+	line-height: 1.5;
+}
+
+.status-message--warning {
+	border-color: rgba(255, 157, 61, 0.45);
+	background: linear-gradient(180deg, rgba(255, 244, 230, 1) 0%, rgba(255, 250, 244, 1) 100%);
+}
+
+.status-message--info {
+	border-color: rgba(42, 125, 255, 0.24);
+}

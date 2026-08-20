@@ -10,10 +10,11 @@ import { idsAreEqual } from '../../utils/id'
 function WishlistButton({ productId }) {
 	const [loading, setLoading] = useState(false)
 	const dispatch = useDispatch()
-	const { productIds } = useSelector((state) => state.wishlist)
-	const isInWishlist = productIds.some((id) => idsAreEqual(id, productId))
+	const wishlistIds = useSelector((state) => state.wishlist.ids)
+	const isInWishlist = wishlistIds.some((id) => idsAreEqual(id, productId))
 
-	const handleToggle = async () => {
+	// Toggle optimista: actualiza la UI primero y luego sincroniza con backend.
+	const handleToggleWishlist = async () => {
 		if (loading) return
 
 		try {
@@ -36,7 +37,7 @@ function WishlistButton({ productId }) {
 		<button
 			type="button"
 			className={isInWishlist ? 'product-card__action-button is-active' : 'product-card__action-button'}
-			onClick={handleToggle}
+			onClick={handleToggleWishlist}
 			disabled={loading}
 		>
 			{isInWishlist ? 'Quitar de wishlist' : 'Añadir a wishlist'}

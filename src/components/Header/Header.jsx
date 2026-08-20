@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import './Header.css'
 
 function Header() {
+	const user = useSelector((state) => state.auth.user)
 	const getNavLinkClass = ({ isActive }) =>
 		isActive ? 'header__link header__link--active' : 'header__link'
 
@@ -34,6 +36,11 @@ function Header() {
 				<NavLink to="/profile" className={getNavLinkClass}>
 					Perfil
 				</NavLink>
+				{user?.role === 'admin' ? (
+					<NavLink to="/admin" className={getNavLinkClass}>
+						Admin
+					</NavLink>
+				) : null}
 			</nav>
 		</header>
 	)

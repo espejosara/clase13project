@@ -28,6 +28,7 @@ function extractProductIds(payload) {
 }
 
 const initialState = {
+	ids: [],
 	productIds: [],
 }
 
@@ -36,7 +37,9 @@ const wishlistSlice = createSlice({
 	initialState,
 	reducers: {
 		setLocalWishlist(state, action) {
-			state.productIds = extractProductIds(action.payload)
+			const ids = extractProductIds(action.payload)
+			state.ids = ids
+			state.productIds = ids
 		},
 		toggleLocalWishlist(state, action) {
 			const productId = normalizeId(action.payload)
@@ -45,13 +48,17 @@ const wishlistSlice = createSlice({
 				return
 			}
 
-			const isInWishlist = state.productIds.includes(productId)
+			const isInWishlist = state.ids.includes(productId)
 
-			state.productIds = isInWishlist
-				? state.productIds.filter((id) => id !== productId)
-				: [...state.productIds, productId]
+			const nextIds = isInWishlist
+				? state.ids.filter((id) => id !== productId)
+				: [...state.ids, productId]
+
+			state.ids = nextIds
+			state.productIds = nextIds
 		},
 		clearWishlist(state) {
+			state.ids = []
 			state.productIds = []
 		},
 	},
