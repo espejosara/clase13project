@@ -15,22 +15,29 @@ function WishlistPage() {
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const dispatch = useDispatch()
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
-	const { data: products, loading: productsLoading, error: productsError } = useProducts()
+	const {
+		data: products,
+		loading: productsLoading,
+		error: productsError,
+		refetch: refetchProducts,
+	} = useProducts()
+
+	async function loadWishlist() {
+		try {
+			setError('')
+			const data = await fetchWishlistRequest()
+			dispatch(setLocalWishlist(data))
+		} catch {
+			setError('No se pudo cargar la wishlist.')
+		} finally {
+			setLoading(false)
+		}
+	}
 
 	useEffect(() => {
 		// Carga inicial de favoritos desde backend y sincronización con Redux.
-		async function loadWishlist() {
-			try {
-				const data = await fetchWishlistRequest()
-				dispatch(setLocalWishlist(data))
-			} catch {
-				setError('No se pudo cargar la wishlist.')
-			} finally {
-				setLoading(false)
-			}
-		}
-
 		loadWishlist()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dispatch])
 
 	const productsById = useMemo(() => {
@@ -67,13 +74,27 @@ function WishlistPage() {
 	}
 
 	const isLoading = loading || productsLoading
+	const hasFetchError = Boolean(error || productsError)
+
+	const handleRetry = async () => {
+		setLoading(true)
+		refetchProducts()
+		await loadWishlist()
+	}
 
 	return (
 		<section>
 			<h1>Favoritos</h1>
 			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}
-			{productsError ? <p>No se pudo cargar el catálogo para mostrar los favoritos.</p> : null}
-			{error ? <p>Error: {error}</p> : null}
+			{hasFetchError ? (
+				<>
+					<p>Error al cargar la información. Intenta nuevamente.</p>
+					<p>Detalle: {error || productsError}</p>
+					<button type="button" onClick={handleRetry} disabled={isLoading}>
+						Reintentar
+					</button>
+				</>
+			) : null}
 
 			{!isLoading && !wishlistIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
 

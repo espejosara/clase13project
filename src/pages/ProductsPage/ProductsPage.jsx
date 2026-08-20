@@ -8,7 +8,7 @@ function ProductsPage() {
 	const [selectedCategory, setSelectedCategory] = useState('todas')
 	const [searchTerm, setSearchTerm] = useState('')
 	const [sortBy, setSortBy] = useState('name-asc')
-	const { data: products, loading, error } = useProducts()
+	const { data: products, loading, error, refetch } = useProducts()
 
 	const categories = useMemo(() => {
 		const uniqueCategories = new Set(products.map((product) => product.category))
@@ -47,7 +47,16 @@ function ProductsPage() {
 	}
 
 	if (error) {
-		return <p>Error al cargar productos: {error}</p>
+		return (
+			<section className="products-page">
+				<h1>Catálogo</h1>
+				<p>Error al cargar la información. Intenta nuevamente.</p>
+				<p>Detalle: {error}</p>
+				<button type="button" onClick={refetch}>
+					Reintentar
+				</button>
+			</section>
+		)
 	}
 
 	return (

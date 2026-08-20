@@ -5,6 +5,11 @@ export function useProducts() {
 	const [data, setData] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null)
+	const [reloadToken, setReloadToken] = useState(0)
+
+	const refetch = () => {
+		setReloadToken((currentToken) => currentToken + 1)
+	}
 
 	useEffect(() => {
 		let isMounted = true
@@ -34,7 +39,7 @@ export function useProducts() {
 		return () => {
 			isMounted = false
 		}
-	}, [])
+	}, [reloadToken])
 
-	return { data, loading, error }
+	return { data, loading, error, refetch }
 }

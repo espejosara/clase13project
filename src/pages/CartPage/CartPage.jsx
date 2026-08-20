@@ -46,11 +46,23 @@ function CartPage() {
 		navigate('/checkout')
 	}
 
+	const handleRetry = () => {
+		dispatch(fetchCartThunk())
+	}
+
 	return (
 		<section>
 			<h1>Carrito</h1>
 			{loading && !items.length ? <Spinner label="Cargando carrito..." /> : null}
-			{error ? <p>Error: {error}</p> : null}
+			{error ? (
+				<>
+					<p>Error al cargar la información. Intenta nuevamente.</p>
+					<p>Detalle: {error}</p>
+					<button type="button" onClick={handleRetry} disabled={loading || isCheckingOut}>
+						Reintentar
+					</button>
+				</>
+			) : null}
 
 			{!loading && !items.length ? <p>Tu carrito está vacío.</p> : null}
 
