@@ -9,6 +9,12 @@ function CheckoutSuccessPage() {
 				<Link to="/products">Seguir comprando</Link>
 			</p>
 			<p>
+				<Link to="/cart">Ver carrito</Link>
+			</p>
+			<p>
+				<Link to="/checkout">Volver a checkout</Link>
+			</p>
+			<p>
 				<Link to="/profile">Ir a mi perfil</Link>
 			</p>
 		</section>

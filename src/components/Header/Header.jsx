@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import './Header.css'
 
 function Header() {
+	const token = useSelector((state) => state.auth.token)
 	const user = useSelector((state) => state.auth.user)
 	const getNavLinkClass = ({ isActive }) =>
 		isActive ? 'header__link header__link--active' : 'header__link'
@@ -21,21 +22,31 @@ function Header() {
 				<NavLink to="/products" className={getNavLinkClass}>
 					Catálogo
 				</NavLink>
-				<NavLink to="/login" className={getNavLinkClass}>
-					Iniciar sesión
-				</NavLink>
-				<NavLink to="/register" className={getNavLinkClass}>
-					Registro
-				</NavLink>
-				<NavLink to="/cart" className={getNavLinkClass}>
-					Carrito
-				</NavLink>
-				<NavLink to="/wishlist" className={getNavLinkClass}>
-					Favoritos
-				</NavLink>
-				<NavLink to="/profile" className={getNavLinkClass}>
-					Perfil
-				</NavLink>
+				{token ? (
+					<>
+						<NavLink to="/cart" className={getNavLinkClass}>
+							Carrito
+						</NavLink>
+						<NavLink to="/checkout" className={getNavLinkClass}>
+							Checkout
+						</NavLink>
+						<NavLink to="/wishlist" className={getNavLinkClass}>
+							Favoritos
+						</NavLink>
+						<NavLink to="/profile" className={getNavLinkClass}>
+							Perfil
+						</NavLink>
+					</>
+				) : (
+					<>
+						<NavLink to="/login" className={getNavLinkClass}>
+							Iniciar sesión
+						</NavLink>
+						<NavLink to="/register" className={getNavLinkClass}>
+							Registro
+						</NavLink>
+					</>
+				)}
 				{user?.role === 'admin' ? (
 					<NavLink to="/admin" className={getNavLinkClass}>
 						Admin

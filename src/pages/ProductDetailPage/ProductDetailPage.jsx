@@ -1,15 +1,19 @@
 import { useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
 import Spinner from '../../components/Spinner/Spinner'
+import WishlistButton from '../../components/WishlistButton/WishlistButton'
+import { addCartItemThunk } from '../../store/slices/cartSlice'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import './ProductDetailPage.css'
 
 function ProductDetailPage() {
 	const { productId } = useParams()
+	const dispatch = useDispatch()
 	const [createdReviews, setCreatedReviews] = useState([])
 	const { data: product, loading, error } = useProduct(productId)
 	const {
@@ -24,6 +28,10 @@ function ProductDetailPage() {
 
 	const handleReviewCreated = (review) => {
 		setCreatedReviews((prev) => [review, ...prev])
+	}
+
+	const handleAddToCart = () => {
+		dispatch(addCartItemThunk({ productId: product.id, quantity: 1 }))
 	}
 
 	if (loading) {
@@ -61,6 +69,13 @@ function ProductDetailPage() {
 			</p>
 			<p className="product-detail-page__meta">
 				Disponibilidad: {product.stock} unidades en stock
+			</p>
+			<p>
+				<button type="button" onClick={handleAddToCart}>
+					Añadir al carrito
+				</button>{' '}
+				<WishlistButton productId={product.id} />{' '}
+				<Link to="/cart">Ir al carrito</Link>
 			</p>
 
 			<section>
