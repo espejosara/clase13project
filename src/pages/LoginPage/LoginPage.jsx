@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
@@ -18,16 +18,16 @@ function LoginPage() {
 	const [formData, setFormData] = useState({ email: '', password: '' })
 	const [errors, setErrors] = useState({})
 	const [successMessage, setSuccessMessage] = useState('')
-	const [sessionMessage, setSessionMessage] = useState('')
-
-	useEffect(() => {
+	const [sessionMessage, setSessionMessage] = useState(() => {
 		const sessionExpired = sessionStorage.getItem(AUTH_EXPIRED_KEY)
 
 		if (sessionExpired === '1') {
-			setSessionMessage('Tu sesión ha expirado. Vuelve a iniciar sesión.')
 			sessionStorage.removeItem(AUTH_EXPIRED_KEY)
+			return 'Tu sesión ha expirado. Vuelve a iniciar sesión.'
 		}
-	}, [])
+
+		return ''
+	})
 
 	const handleChange = (event) => {
 		const { name, value } = event.target

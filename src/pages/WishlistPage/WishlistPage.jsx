@@ -22,22 +22,33 @@ function WishlistPage() {
 		refetch: refetchProducts,
 	} = useProducts()
 
-	async function loadWishlist() {
-		try {
-			setError('')
-			const data = await fetchWishlistRequest()
-			dispatch(setLocalWishlist(data))
-		} catch {
-			setError('No se pudo cargar la wishlist.')
-		} finally {
-			setLoading(false)
-		}
-	}
-
 	useEffect(() => {
 		// Carga inicial de favoritos desde backend y sincronización con Redux.
-		loadWishlist()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		let isMounted = true
+
+		const fetchInitialWishlist = async () => {
+			try {
+				const data = await fetchWishlistRequest()
+				if (isMounted) {
+					dispatch(setLocalWishlist(data))
+					setError('')
+				}
+			} catch {
+				if (isMounted) {
+					setError('No se pudo cargar la wishlist.')
+				}
+			} finally {
+				if (isMounted) {
+					setLoading(false)
+				}
+			}
+		}
+
+		fetchInitialWishlist()
+
+		return () => {
+			isMounted = false
+		}
 	}, [dispatch])
 
 	const productsById = useMemo(() => {
@@ -79,7 +90,16 @@ function WishlistPage() {
 	const handleRetry = async () => {
 		setLoading(true)
 		refetchProducts()
-		await loadWishlist()
+
+		try {
+			const data = await fetchWishlistRequest()
+			dispatch(setLocalWishlist(data))
+			setError('')
+		} catch {
+			setError('No se pudo cargar la wishlist.')
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	return (

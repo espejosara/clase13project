@@ -7,11 +7,7 @@ export function useProduct(id) {
 	const [error, setError] = useState(null)
 
 	useEffect(() => {
-		if (!id) {
-			setData(null)
-			setLoading(false)
-			return
-		}
+		if (!id) return
 
 		let isMounted = true
 
@@ -41,6 +37,10 @@ export function useProduct(id) {
 			isMounted = false
 		}
 	}, [id])
+
+	if (!id) {
+		return { data: null, loading: false, error: null }
+	}
 
 	return { data, loading, error }
 }

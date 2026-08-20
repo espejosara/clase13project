@@ -7,11 +7,7 @@ export function useReviews(productId) {
 	const [error, setError] = useState(null)
 
 	useEffect(() => {
-		if (!productId) {
-			setData([])
-			setLoading(false)
-			return
-		}
+		if (!productId) return
 
 		let isMounted = true
 
@@ -41,6 +37,10 @@ export function useReviews(productId) {
 			isMounted = false
 		}
 	}, [productId])
+
+	if (!productId) {
+		return { data: [], loading: false, error: null }
+	}
 
 	return { data, loading, error }
 }
