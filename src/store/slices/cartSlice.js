@@ -60,6 +60,7 @@ export const checkoutThunk = createAsyncThunk(
 const initialState = {
 	items: [],
 	loading: false,
+	isCheckingOut: false,
 	error: null,
 }
 
@@ -69,6 +70,7 @@ const cartSlice = createSlice({
 	reducers: {
 		clearCart(state) {
 			state.items = []
+				state.isCheckingOut = false
 			state.error = null
 		},
 	},
@@ -76,6 +78,7 @@ const cartSlice = createSlice({
 		builder
 			.addCase(fetchCartThunk.pending, (state) => {
 				state.loading = true
+					state.isCheckingOut = false
 				state.error = null
 			})
 			.addCase(fetchCartThunk.fulfilled, (state, action) => {
@@ -88,6 +91,7 @@ const cartSlice = createSlice({
 			})
 			.addCase(addCartItemThunk.pending, (state) => {
 				state.loading = true
+					state.isCheckingOut = false
 				state.error = null
 			})
 			.addCase(addCartItemThunk.fulfilled, (state, action) => {
@@ -100,6 +104,7 @@ const cartSlice = createSlice({
 			})
 			.addCase(removeCartItemThunk.pending, (state) => {
 				state.loading = true
+					state.isCheckingOut = false
 				state.error = null
 			})
 			.addCase(removeCartItemThunk.fulfilled, (state, action) => {
@@ -111,15 +116,15 @@ const cartSlice = createSlice({
 				state.error = action.payload || 'No se pudo eliminar el item'
 			})
 			.addCase(checkoutThunk.pending, (state) => {
-				state.loading = true
+					state.isCheckingOut = true
 				state.error = null
 			})
 			.addCase(checkoutThunk.fulfilled, (state, action) => {
-				state.loading = false
+					state.isCheckingOut = false
 				state.items = extractItems(action.payload)
 			})
 			.addCase(checkoutThunk.rejected, (state, action) => {
-				state.loading = false
+					state.isCheckingOut = false
 				state.error = action.payload || 'No se pudo completar el checkout'
 			})
 	},

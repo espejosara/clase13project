@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import {
-	checkoutThunk,
 	fetchCartThunk,
 	removeCartItemThunk,
 } from '../../store/slices/cartSlice'
@@ -23,7 +22,7 @@ function getItemPrice(item) {
 function CartPage() {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const { items, loading, error } = useSelector((state) => state.cart)
+	const { items, loading, isCheckingOut, error } = useSelector((state) => state.cart)
 
 	useEffect(() => {
 		dispatch(fetchCartThunk())
@@ -43,19 +42,14 @@ function CartPage() {
 		}
 	}
 
-	const handleCheckout = async () => {
-		try {
-			await dispatch(checkoutThunk()).unwrap()
-			navigate('/checkout/success')
-		} catch {
-			// El mensaje de error ya queda reflejado en el slice.
-		}
+	const handleGoToCheckout = () => {
+		navigate('/checkout')
 	}
 
 	return (
 		<section>
 			<h1>Carrito</h1>
-			{loading ? <Spinner label="Cargando carrito..." /> : null}
+			{loading && !items.length ? <Spinner label="Cargando carrito..." /> : null}
 			{error ? <p>Error: {error}</p> : null}
 
 			{!loading && !items.length ? <p>Tu carrito está vacío.</p> : null}
@@ -68,7 +62,11 @@ function CartPage() {
 								<span>
 									{getItemName(item)} x {item.quantity ?? 1} - {getItemPrice(item).toFixed(2)} EUR
 								</span>{' '}
-								<button type="button" onClick={() => handleRemove(item)} disabled={loading}>
+								<button
+									type="button"
+									onClick={() => handleRemove(item)}
+									disabled={loading || isCheckingOut}
+								>
 									Eliminar
 								</button>
 							</li>
@@ -76,8 +74,12 @@ function CartPage() {
 					</ul>
 
 					<p>Total: {total.toFixed(2)} EUR</p>
-					<button type="button" onClick={handleCheckout} disabled={loading || !items.length}>
-						Finalizar compra
+					<button
+						type="button"
+						onClick={handleGoToCheckout}
+						disabled={loading || isCheckingOut || !items.length}
+					>
+						{isCheckingOut ? 'Procesando checkout...' : 'Ir a checkout'}
 					</button>
 				</>
 			) : null}
