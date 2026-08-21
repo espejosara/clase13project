@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
 import WishlistButton from '../WishlistButton/WishlistButton'
@@ -6,9 +7,17 @@ import './ProductCard.css'
 
 function ProductCard({ product }) {
 	const dispatch = useDispatch()
+	const [isAddingToCart, setIsAddingToCart] = useState(false)
 
-	const handleAddToCart = () => {
-		dispatch(addCartItemThunk({ productId: product.id, quantity: 1 }))
+	const handleAddToCart = async () => {
+		if (isAddingToCart) return
+
+		setIsAddingToCart(true)
+		try {
+			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+		} finally {
+			setIsAddingToCart(false)
+		}
 	}
 
 	return (
@@ -34,10 +43,18 @@ function ProductCard({ product }) {
 			<div className="product-card__actions">
 				<button
 					type="button"
-					className="product-card__action-button"
+					className={`product-card__action-button ${isAddingToCart ? 'is-loading' : ''}`}
 					onClick={handleAddToCart}
+					disabled={isAddingToCart}
+					aria-busy={isAddingToCart}
 				>
-					Añadir al carrito
+					{isAddingToCart ? (
+						<>
+							<span className="product-card__button-dot" aria-hidden="true" /> Añadiendo...
+						</>
+					) : (
+						'Añadir al carrito'
+					)}
 				</button>
 				<WishlistButton productId={product.id} />
 			</div>

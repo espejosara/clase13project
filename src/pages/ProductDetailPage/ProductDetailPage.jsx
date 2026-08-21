@@ -15,6 +15,7 @@ function ProductDetailPage() {
 	const { productId } = useParams()
 	const dispatch = useDispatch()
 	const [createdReviews, setCreatedReviews] = useState([])
+	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const { data: product, loading, error } = useProduct(productId)
 	const {
 		data: reviews,
@@ -30,8 +31,15 @@ function ProductDetailPage() {
 		setCreatedReviews((prev) => [review, ...prev])
 	}
 
-	const handleAddToCart = () => {
-		dispatch(addCartItemThunk({ productId: product.id, quantity: 1 }))
+	const handleAddToCart = async () => {
+		if (!product || isAddingToCart) return
+
+		setIsAddingToCart(true)
+		try {
+			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+		} finally {
+			setIsAddingToCart(false)
+		}
 	}
 
 	if (loading) {
@@ -71,8 +79,20 @@ function ProductDetailPage() {
 				Disponibilidad: {product.stock} unidades en stock
 			</p>
 			<p>
-				<button type="button" onClick={handleAddToCart}>
-					Añadir al carrito
+				<button
+					type="button"
+					onClick={handleAddToCart}
+					disabled={isAddingToCart}
+					aria-busy={isAddingToCart}
+					className={`product-detail-page__add-button ${isAddingToCart ? 'is-loading' : ''}`}
+				>
+					{isAddingToCart ? (
+						<>
+							<span className="product-detail-page__button-dot" aria-hidden="true" /> Añadiendo...
+						</>
+					) : (
+						'Añadir al carrito'
+					)}
 				</button>{' '}
 				<WishlistButton productId={product.id} />{' '}
 				<Link to="/cart">Ir al carrito</Link>
