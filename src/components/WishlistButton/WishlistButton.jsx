@@ -40,7 +40,7 @@ function WishlistButton({ productId }) {
 			onClick={handleToggleWishlist}
 			disabled={loading}
 		>
-			{isInWishlist ? 'Quitar de wishlist' : 'Añadir a wishlist'}
+			{isInWishlist ? 'Quitar favoritos' : 'Añadir favoritos'}
 		</button>
 	)
 }
