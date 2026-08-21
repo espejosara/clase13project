@@ -84,7 +84,7 @@ function CartPage() {
 		<main className={styles.page}>
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Carrito</p>
-				<h1 className={styles.title}>Cierre del flujo de compra</h1>
+				<h1 className={styles.title}>Tu carrito de compra</h1>
 			</section>
 
 			{error ? (

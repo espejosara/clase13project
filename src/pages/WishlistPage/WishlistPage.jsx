@@ -111,7 +111,7 @@ function WishlistPage() {
 		<main className={styles.page}>
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Favoritos</p>
-				<h1 className={styles.title}>Productos guardados</h1>
+				<h1 className={styles.title}>Tus productos favoritos</h1>
 			</section>
 
 			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}

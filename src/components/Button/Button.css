@@ -1,8 +1,10 @@
 .button {
 	border: none;
 	border-radius: 0.65rem;
-	padding: 0.65rem 1rem;
+	padding: 0.56rem 0.86rem;
 	font-weight: 600;
+	font-size: 0.92rem;
+	line-height: 1.2;
 	cursor: pointer;
 	transition: transform 120ms ease, opacity 120ms ease;
 }
@@ -29,4 +31,11 @@
 .button--danger {
 	background: #dc2626;
 	color: #ffffff;
+}
+
+@media (max-width: 760px) {
+	.button {
+		padding: 0.48rem 0.74rem;
+		font-size: 0.86rem;
+	}
 }

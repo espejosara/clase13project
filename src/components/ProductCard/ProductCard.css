@@ -108,8 +108,9 @@
 	justify-content: center;
 	gap: 0.45rem;
 	width: auto;
-	white-space: nowrap;
+	white-space: normal;
 	font-size: 0.9rem;
+	text-align: center;
 }
 
 .product-card__action-button:hover:not(:disabled) {
@@ -183,5 +184,8 @@
 
 	.product-card__action-button {
 		width: 100%;
+		min-height: 36px;
+		padding: 0.48rem 0.6rem;
+		font-size: 0.85rem;
 	}
 }

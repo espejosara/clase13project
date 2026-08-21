@@ -78,8 +78,8 @@ function ProductsPage() {
 	return (
 		<main className={styles.page}>
 			<section className={styles.hero}>
-				<p className={styles.eyebrow}>Live 2</p>
-				<h2 className={styles.title}>Checkout y optimizacion final</h2>
+				<p className={styles.eyebrow}>Catalogo</p>
+				<h1 className={styles.title}>Explora nuestra tienda de figuras</h1>
 			</section>
 
 			<section className={styles.toolbar}>

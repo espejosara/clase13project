@@ -60,8 +60,8 @@ function CheckoutPage() {
 		<main className={styles.page}>
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Checkout</p>
-				<h1 className={styles.title}>Finalizar compra</h1>
-				<p className={styles.subtitle}>Revisa los productos antes de confirmar el pedido.</p>
+				<h1 className={styles.title}>Resumen de tu pedido</h1>
+				<p className={styles.subtitle}>Verifica tus productos y confirma la compra.</p>
 			</section>
 
 			{error ? (
