@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
+import CartSummary from '../../components/CartSummary/CartSummary'
 import {
 	fetchCartThunk,
 	removeCartItemThunk,
@@ -27,13 +28,6 @@ function CartPage() {
 	useEffect(() => {
 		dispatch(fetchCartThunk())
 	}, [dispatch])
-
-	const total = useMemo(() => {
-		return items.reduce((sum, item) => {
-			const quantity = Number(item.quantity ?? 1)
-			return sum + getItemPrice(item) * quantity
-		}, 0)
-	}, [items])
 
 	const handleRemove = (item) => {
 		const itemId = getItemId(item)
@@ -85,7 +79,7 @@ function CartPage() {
 						))}
 					</ul>
 
-					<p>Total: {total.toFixed(2)} EUR</p>
+					<CartSummary items={items} />
 					<button
 						type="button"
 						onClick={handleGoToCheckout}

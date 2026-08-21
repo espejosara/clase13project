@@ -1,12 +1,9 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
+import CartSummary from '../../components/CartSummary/CartSummary'
 import { checkoutThunk, fetchCartThunk } from '../../store/slices/cartSlice'
-
-function getItemPrice(item) {
-	return Number(item.product?.price ?? item.price ?? 0)
-}
 
 function CheckoutPage() {
 	const dispatch = useDispatch()
@@ -18,13 +15,6 @@ function CheckoutPage() {
 			dispatch(fetchCartThunk())
 		}
 	}, [dispatch, items.length])
-
-	const total = useMemo(() => {
-		return items.reduce((sum, item) => {
-			const quantity = Number(item.quantity ?? 1)
-			return sum + getItemPrice(item) * quantity
-		}, 0)
-	}, [items])
 
 	const handleRetry = () => {
 		dispatch(fetchCartThunk())
@@ -75,7 +65,7 @@ function CheckoutPage() {
 						))}
 					</ul>
 
-					<p>Total a pagar: {total.toFixed(2)} EUR</p>
+					<CartSummary items={items} />
 
 					<button
 						type="button"
