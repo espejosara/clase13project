@@ -13,6 +13,42 @@ function extractItems(payload) {
 	return []
 }
 
+function normalizeComparableId(value) {
+	if (value === null || value === undefined) return null
+	return String(value)
+}
+
+function itemMatchesById(item, rawId) {
+	const comparableRawId = normalizeComparableId(rawId)
+	if (!comparableRawId) return false
+
+	const candidateIds = [item?.itemId, item?.id, item?.productId, item?.product?.id]
+	return candidateIds.some((candidateId) => normalizeComparableId(candidateId) === comparableRawId)
+}
+
+function decrementOrRemoveItem(items, payload) {
+	const removeTargetId = payload?.itemId ?? payload?.productId ?? payload
+	const nextItems = []
+	let hasChanged = false
+
+	for (const item of items) {
+		if (!hasChanged && itemMatchesById(item, removeTargetId)) {
+			const quantity = Number(item.quantity ?? 1)
+			if (Number.isFinite(quantity) && quantity > 1) {
+				nextItems.push({ ...item, quantity: quantity - 1 })
+			} else {
+				// Remove complete line item when quantity reaches zero.
+			}
+			hasChanged = true
+			continue
+		}
+
+		nextItems.push(item)
+	}
+
+	return hasChanged ? nextItems : items
+}
+
 export const fetchCartThunk = createAsyncThunk(
 	'cart/fetchCart',
 	async (_, { rejectWithValue }) => {
@@ -37,8 +73,9 @@ export const addCartItemThunk = createAsyncThunk(
 
 export const removeCartItemThunk = createAsyncThunk(
 	'cart/removeCartItem',
-	async (itemId, { rejectWithValue }) => {
+	async (payload, { rejectWithValue }) => {
 		try {
+			const itemId = payload?.itemId ?? payload
 			return await removeCartItemRequest(itemId)
 		} catch (error) {
 			return rejectWithValue(error.response?.data?.error || 'No se pudo eliminar el item')
@@ -109,7 +146,14 @@ const cartSlice = createSlice({
 			})
 			.addCase(removeCartItemThunk.fulfilled, (state, action) => {
 				state.loading = false
-				state.items = extractItems(action.payload)
+
+				const backendItems = extractItems(action.payload)
+				if (backendItems.length) {
+					state.items = backendItems
+					return
+				}
+
+				state.items = decrementOrRemoveItem(state.items, action.meta.arg)
 			})
 			.addCase(removeCartItemThunk.rejected, (state, action) => {
 				state.loading = false

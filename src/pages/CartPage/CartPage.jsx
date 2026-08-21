@@ -17,6 +17,14 @@ function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
 }
 
+function getBackendItemId(item) {
+	return item.itemId ?? item.id ?? item.productId
+}
+
+function getProductId(item) {
+	return item.productId ?? item.product?.id ?? item.id
+}
+
 function getItemName(item) {
 	return item.product?.name || item.name || `Producto ${item.productId ?? item.id}`
 }
@@ -39,9 +47,14 @@ function CartPage() {
 	}, [dispatch])
 
 	const handleRemove = (item) => {
-		const itemId = getItemId(item)
+		const itemId = getBackendItemId(item)
 		if (itemId != null) {
-			dispatch(removeCartItemThunk(itemId))
+			dispatch(
+				removeCartItemThunk({
+					itemId,
+					productId: getProductId(item),
+				}),
+			)
 		}
 	}
 
@@ -100,8 +113,8 @@ function CartPage() {
 			) : (
 				<section className={styles.layout}>
 					<div className={styles.list}>
-						{items.map((item) => (
-							<article key={getItemId(item)} className={styles.item}>
+						{items.map((item, index) => (
+							<article key={`${getItemId(item)}-${index}`} className={styles.item}>
 								<div className={styles.itemTop}>
 									<img
 										src={getItemImage(item)}
