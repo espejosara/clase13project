@@ -94,4 +94,33 @@
 	.layout {
 		grid-template-columns: 1fr;
 	}
+
+	.hero {
+		padding: 0.75rem 0 1.5rem;
+	}
+
+	.title {
+		font-size: 1.5rem;
+	}
+}
+
+@media (max-width: 560px) {
+	.item {
+		padding: 0.85rem 0.9rem;
+	}
+
+	.itemTop {
+		grid-template-columns: 48px 1fr;
+		gap: 0.6rem;
+	}
+
+	.thumb {
+		width: 48px;
+		height: 48px;
+	}
+
+	.name,
+	.meta {
+		font-size: 0.93rem;
+	}
 }

@@ -93,6 +93,9 @@ button:focus {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	justify-self: start;
+	align-self: start;
+	width: fit-content;
 	gap: 0.35rem;
 	padding: 0.52rem 0.82rem;
 	border: 1px solid var(--color-border);

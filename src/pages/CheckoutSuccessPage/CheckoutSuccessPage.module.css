@@ -50,3 +50,24 @@
 	color: #fff;
 	font-weight: 700;
 }
+
+@media (max-width: 640px) {
+	.page {
+		padding: 1rem 0 2.4rem;
+	}
+
+	.card {
+		padding: 1rem;
+		gap: 0.65rem;
+	}
+
+	.title {
+		font-size: 1.45rem;
+	}
+
+	.primaryAction,
+	.actions :global(.app-action-link) {
+		width: 100%;
+		justify-content: center;
+	}
+}

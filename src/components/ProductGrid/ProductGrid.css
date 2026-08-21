@@ -1,6 +1,6 @@
 .products-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 260px));
+	grid-template-columns: repeat(auto-fit, minmax(250px, 280px));
 	justify-content: center;
 	gap: 1rem;
 }
@@ -19,4 +19,11 @@
 
 .products-grid--empty p {
 	margin: 0;
+}
+
+@media (max-width: 640px) {
+	.products-grid {
+		grid-template-columns: 1fr;
+		gap: 0.8rem;
+	}
 }

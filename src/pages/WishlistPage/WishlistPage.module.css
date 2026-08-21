@@ -82,3 +82,38 @@
 .price {
 	font-weight: 700;
 }
+
+@media (max-width: 900px) {
+	.hero {
+		padding: 0.75rem 0 1.5rem;
+	}
+
+	.title {
+		font-size: 1.5rem;
+	}
+}
+
+@media (max-width: 560px) {
+	.item {
+		padding: 0.85rem 0.9rem;
+	}
+
+	.itemTop {
+		grid-template-columns: 48px 1fr;
+		gap: 0.6rem;
+	}
+
+	.thumb {
+		width: 48px;
+		height: 48px;
+	}
+
+	.name {
+		font-size: 0.95rem;
+	}
+
+	.meta,
+	.price {
+		font-size: 0.92rem;
+	}
+}

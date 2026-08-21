@@ -8,4 +8,23 @@
 
 .layout__main {
 	flex: 1;
+	width: 100%;
+	padding-block: clamp(0.85rem, 1.9vw, 1.5rem);
+	padding-inline: clamp(0.75rem, 2.6vw, 1.6rem);
+	max-width: calc(var(--container-width) + 3.2rem);
+	margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+	.layout__main {
+		padding-block: 1rem 1.3rem;
+		padding-inline: 0.85rem;
+	}
+}
+
+@media (max-width: 560px) {
+	.layout__main {
+		padding-block: 0.8rem 1.1rem;
+		padding-inline: 0.65rem;
+	}
 }
