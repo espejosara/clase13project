@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import Button from '../Button/Button'
 import styles from './CartSummary.module.css'
 
 function getItemQuantity(item) {
@@ -26,14 +27,15 @@ function CartSummary({ items = [], onCheckout, loading = false, checkoutLabel = 
 			<p className={styles.line}>Total: {totalPrice.toFixed(2)} EUR</p>
 			<p className={styles.note}>Impuestos incluidos. Envio calculado en checkout.</p>
 			{onCheckout ? (
-				<button
+				<Button
 					type="button"
+					variant="primary"
 					onClick={onCheckout}
 					disabled={loading || !items.length}
 					className={styles.checkoutButton}
 				>
 					{loading ? 'Procesando...' : checkoutLabel}
-				</button>
+				</Button>
 			) : null}
 		</aside>
 	)

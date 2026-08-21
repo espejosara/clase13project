@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
@@ -122,14 +123,14 @@ function WishlistPage() {
 						description={error || productsError}
 						variant="warning"
 					/>
-					<button
+					<Button
 						type="button"
-						className="app-action-button"
+						variant="primary"
 						onClick={handleRetry}
 						disabled={isLoading}
 					>
 						Reintentar
-					</button>
+					</Button>
 				</div>
 			) : null}
 
@@ -158,14 +159,14 @@ function WishlistPage() {
 								</div>
 								<p className={styles.price}>{product.price.toFixed(2)} EUR</p>
 							</Link>{' '}
-							<button
+							<Button
 								type="button"
-								className="app-action-button app-action-button--danger"
+								variant="danger"
 								onClick={() => handleToggleWishlist(product.id)}
 								disabled={togglingWishlist === product.id}
 							>
 								Quitar de favoritos
-							</button>
+							</Button>
 						</li>
 					))}
 				</ul>

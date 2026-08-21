@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
 import WishlistButton from '../WishlistButton/WishlistButton'
+import Button from '../Button/Button'
 import './ProductCard.css'
 
 function ProductCard({ product, onAddToCart }) {
@@ -45,8 +46,8 @@ function ProductCard({ product, onAddToCart }) {
 				</div>
 			</Link>
 			<div className="product-card__actions">
-				<button
-					type="button"
+				<Button
+					variant="outline"
 					className={`product-card__action-button ${isAddingToCart ? 'is-loading' : ''}`}
 					onClick={handleAddToCart}
 					disabled={isAddingToCart}
@@ -59,7 +60,7 @@ function ProductCard({ product, onAddToCart }) {
 					) : (
 						'Añadir al carrito'
 					)}
-				</button>
+				</Button>
 				<WishlistButton productId={product.id} />
 			</div>
 		</article>

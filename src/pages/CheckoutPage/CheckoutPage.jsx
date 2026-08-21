@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import Button from '../../components/Button/Button'
 import { checkoutThunk, fetchCartThunk } from '../../store/slices/cartSlice'
 import styles from './CheckoutPage.module.css'
 
@@ -67,9 +68,9 @@ function CheckoutPage() {
 			{error ? (
 				<div className={styles.messageRow}>
 					<StatusMessage title="Aviso" description={error} variant="warning" />
-					<button type="button" className="app-action-button" onClick={handleRetry}>
+					<Button className="app-action-button" onClick={handleRetry}>
 						Reintentar
-					</button>
+					</Button>
 				</div>
 			) : null}
 

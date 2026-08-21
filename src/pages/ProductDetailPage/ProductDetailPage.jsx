@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
+import Button from '../../components/Button/Button'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
 import Spinner from '../../components/Spinner/Spinner'
@@ -78,9 +79,10 @@ function ProductDetailPage() {
 			<p className="product-detail-page__meta">
 				Disponibilidad: {product.stock} unidades en stock
 			</p>
-			<p>
-				<button
+			<p className="product-detail-page__actions">
+				<Button
 					type="button"
+					variant="primary"
 					onClick={handleAddToCart}
 					disabled={isAddingToCart}
 					aria-busy={isAddingToCart}
@@ -93,7 +95,7 @@ function ProductDetailPage() {
 					) : (
 						'Añadir al carrito'
 					)}
-				</button>{' '}
+				</Button>{' '}
 				<WishlistButton productId={product.id} />{' '}
 				<Link to="/cart">Ir al carrito</Link>
 			</p>

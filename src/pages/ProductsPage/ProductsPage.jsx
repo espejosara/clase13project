@@ -4,6 +4,7 @@ import { addCartItemThunk } from '../../store/slices/cartSlice'
 import { getProducts } from '../../api/products'
 import ProductCard from '../../components/ProductCard/ProductCard'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import Button from '../../components/Button/Button'
 import styles from './ProductsPage.module.css'
 
 function ProductsPage() {
@@ -70,7 +71,7 @@ function ProductsPage() {
 		return (
 			<main className={styles.page}>
 				<StatusMessage title="Error" description={error} variant="warning" />
-				<button type="button" onClick={handleRetry}>Reintentar</button>
+				<Button onClick={handleRetry}>Reintentar</Button>
 			</main>
 		)
 	}

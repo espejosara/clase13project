@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
@@ -115,14 +116,14 @@ function CartPage() {
 						description={error}
 						variant="warning"
 					/>
-					<button
+					<Button
 						type="button"
-						className="app-action-button"
+						variant="primary"
 						onClick={handleRetry}
 						disabled={loading || isCheckingOut}
 					>
 						Reintentar
-					</button>
+					</Button>
 				</div>
 			) : null}
 
@@ -147,36 +148,36 @@ function CartPage() {
 								<div className={styles.quantityRow}>
 									<p className={styles.quantity}>Cantidad:</p>
 									<div className={styles.quantityControls}>
-										<button
+										<Button
 											type="button"
-											className="app-action-button"
+											variant="outline"
 											onClick={() => handleDecrease(item)}
 											disabled={loading || isCheckingOut}
 											aria-label={`Quitar una unidad de ${getItemName(item)}`}
 										>
 											-
-										</button>
+										</Button>
 										<span className={styles.quantityValue}>{item.quantity ?? 1}</span>
-										<button
+										<Button
 											type="button"
-											className="app-action-button"
+											variant="outline"
 											onClick={() => handleIncrease(item)}
 											disabled={loading || isCheckingOut}
 											aria-label={`Anadir una unidad de ${getItemName(item)}`}
 										>
 											+
-										</button>
+										</Button>
 									</div>
 								</div>
 								<p className={styles.price}>Precio: {getItemPrice(item).toFixed(2)} EUR</p>
-								<button
+								<Button
 									type="button"
-									className="app-action-button app-action-button--danger"
+									variant="danger"
 									onClick={() => handleRemoveLine(item)}
 									disabled={loading || isCheckingOut}
 								>
 									Eliminar producto
-								</button>
+								</Button>
 							</article>
 						))}
 					</div>

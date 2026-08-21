@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import Button from '../Button/Button'
 import './Header.css'
 
 function Header() {
@@ -27,8 +28,9 @@ function Header() {
 					<h1 className="header__title">NeoKensei Chronicles</h1>
 				</div>
 
-				<button
+				<Button
 					type="button"
+					variant="outline"
 					className={`header__menu-button ${isMenuOpen ? 'is-open' : ''}`}
 					onClick={handleToggleMenu}
 					aria-expanded={isMenuOpen}
@@ -38,7 +40,7 @@ function Header() {
 					<span className="header__menu-line" />
 					<span className="header__menu-line" />
 					<span className="header__menu-line" />
-				</button>
+				</Button>
 			</div>
 
 			<nav

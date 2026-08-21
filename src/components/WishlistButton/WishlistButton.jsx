@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleWishlistRequest } from '../../api/wishlist'
+import Button from '../Button/Button'
 import {
 	setLocalWishlist,
 	toggleLocalWishlist,
@@ -34,14 +35,15 @@ function WishlistButton({ productId }) {
 	}
 
 	return (
-		<button
+		<Button
 			type="button"
+			variant={isInWishlist ? 'primary' : 'outline'}
 			className={isInWishlist ? 'product-card__action-button is-active' : 'product-card__action-button'}
 			onClick={handleToggleWishlist}
 			disabled={loading}
 		>
 			{isInWishlist ? 'Quitar favoritos' : 'Añadir favoritos'}
-		</button>
+		</Button>
 	)
 }
 
