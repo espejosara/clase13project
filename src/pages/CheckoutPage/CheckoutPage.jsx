@@ -3,7 +3,24 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
+import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { checkoutThunk, fetchCartThunk } from '../../store/slices/cartSlice'
+import styles from './CheckoutPage.module.css'
+
+const FALLBACK_IMAGE =
+	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="%23fff7ed"/><text x="50%25" y="54%25" text-anchor="middle" font-size="10" fill="%23c2410c" font-family="Arial">IMG</text></svg>'
+
+function getItemId(item) {
+	return item.id ?? item.itemId ?? item.productId
+}
+
+function getItemName(item) {
+	return item.product?.name || item.name || `Producto ${item.productId ?? item.id}`
+}
+
+function getItemImage(item) {
+	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
+}
 
 function CheckoutPage() {
 	const dispatch = useDispatch()
@@ -31,53 +48,68 @@ function CheckoutPage() {
 		}
 	}
 
-	return (
-		<section>
-			<h1>Finalizar compra</h1>
-			<p>Revisa los productos antes de confirmar el pedido.</p>
+	if (loading && !items.length) {
+		return <Spinner label="Cargando resumen de compra..." />
+	}
 
-			{loading && !items.length ? <Spinner label="Cargando resumen de compra..." /> : null}
-			{error ? <p>Error: {error}</p> : null}
+	if (error && !items.length) {
+		return <StatusMessage title="Error" description={error} variant="warning" />
+	}
+
+	return (
+		<main className={styles.page}>
+			<section className={styles.hero}>
+				<p className={styles.eyebrow}>Checkout</p>
+				<h1 className={styles.title}>Finalizar compra</h1>
+				<p className={styles.subtitle}>Revisa los productos antes de confirmar el pedido.</p>
+			</section>
 
 			{error ? (
-				<button type="button" onClick={handleRetry}>
-					Reintentar
-				</button>
+				<div className={styles.messageRow}>
+					<StatusMessage title="Aviso" description={error} variant="warning" />
+					<button type="button" className="app-action-button" onClick={handleRetry}>
+						Reintentar
+					</button>
+				</div>
 			) : null}
 
-			{!loading && !items.length ? (
-				<p>
-					Tu carrito está vacío. <Link to="/products">Volver al catálogo</Link>
-				</p>
-			) : null}
-
-			{items.length ? (
-				<>
-					<ul>
+			{!items.length ? (
+				<StatusMessage
+					title="Carrito vacio"
+					description="Tu carrito esta vacio. Vuelve al catalogo para anadir productos."
+				/>
+			) : (
+				<section className={styles.layout}>
+					<ul className={styles.list}>
 						{items.map((item) => (
-							<li key={item.id ?? item.itemId ?? item.productId}>
-								<span>
-									{item.product?.name || item.name || `Producto ${item.productId ?? item.id}`}
-									{' x '}
-									{item.quantity ?? 1}
-								</span>
+							<li key={getItemId(item)} className={styles.item}>
+								<div className={styles.itemTop}>
+									<img
+										src={getItemImage(item)}
+										alt={getItemName(item)}
+										className={styles.thumb}
+									/>
+									<div>
+										<p className={styles.name}>{getItemName(item)}</p>
+										<p className={styles.meta}>Cantidad: {item.quantity ?? 1}</p>
+									</div>
+								</div>
 							</li>
 						))}
 					</ul>
 
-					<CartSummary items={items} />
-
-					<button
-						type="button"
-						onClick={handleConfirmCheckout}
-						disabled={loading || isCheckingOut || !items.length}
-					>
-						{isCheckingOut ? 'Procesando...' : 'Confirmar compra'}
-					</button>{' '}
-					<Link to="/cart">Volver al carrito</Link>
-				</>
-			) : null}
-		</section>
+					<div className={styles.side}>
+						<CartSummary
+							items={items}
+							onCheckout={handleConfirmCheckout}
+							loading={loading || isCheckingOut}
+							checkoutLabel="Confirmar compra"
+						/>
+						<Link to="/cart" className={`app-action-link ${styles.backLink}`}>Volver al carrito</Link>
+					</div>
+				</section>
+			)}
+		</main>
 	)
 }
 

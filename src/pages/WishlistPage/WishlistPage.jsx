@@ -2,12 +2,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
+import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
 import {
 	setLocalWishlist,
 	toggleLocalWishlist,
 } from '../../store/slices/wishlistSlice'
+import styles from './WishlistPage.module.css'
+
+const FALLBACK_IMAGE =
+	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="%23fff7ed"/><text x="50%25" y="54%25" text-anchor="middle" font-size="10" fill="%23c2410c" font-family="Arial">IMG</text></svg>'
 
 function WishlistPage() {
 	const [loading, setLoading] = useState(true)
@@ -103,33 +108,59 @@ function WishlistPage() {
 	}
 
 	return (
-		<section>
-			<h1>Favoritos</h1>
+		<main className={styles.page}>
+			<section className={styles.hero}>
+				<p className={styles.eyebrow}>Favoritos</p>
+				<h1 className={styles.title}>Productos guardados</h1>
+			</section>
+
 			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}
 			{hasFetchError ? (
-				<>
-					<p>Error al cargar la información. Intenta nuevamente.</p>
-					<p>Detalle: {error || productsError}</p>
-					<button type="button" onClick={handleRetry} disabled={isLoading}>
+				<div className={styles.messageRow}>
+					<StatusMessage
+						title="Error"
+						description={error || productsError}
+						variant="warning"
+					/>
+					<button
+						type="button"
+						className="app-action-button"
+						onClick={handleRetry}
+						disabled={isLoading}
+					>
 						Reintentar
 					</button>
-				</>
+				</div>
 			) : null}
 
-			{!isLoading && !wishlistIds.length ? <p>No tienes productos guardados en favoritos.</p> : null}
+			{!isLoading && !wishlistIds.length ? (
+				<StatusMessage
+					title="Lista vacia"
+					description="No tienes productos guardados en favoritos."
+				/>
+			) : null}
 
 			{wishlistProducts.length ? (
-				<ul>
+				<ul className={styles.list}>
 					{wishlistProducts.map((product) => (
-						<li key={product.id}>
-							<Link to={`/products/${product.id}`}>
-								<img src={product.imageUrl} alt={product.name} width="120" />
-								<h2>{product.name}</h2>
-								<p>{product.category}</p>
-								<p>{product.price.toFixed(2)} EUR</p>
+						<li key={product.id} className={styles.item}>
+							<Link to={`/products/${product.id}`} className={styles.itemLink}>
+								<div className={styles.itemTop}>
+									<img
+										src={product.imageUrl || FALLBACK_IMAGE}
+										alt={product.name}
+										className={styles.thumb}
+									/>
+									<div>
+										<h2 className={styles.name}>{product.name}</h2>
+										<p className={styles.meta}>{product.category}</p>
+									</div>
+								</div>
+								<p className={styles.price}>{product.price.toFixed(2)} EUR</p>
 							</Link>{' '}
 							<button
 								type="button"
+								className="app-action-button app-action-button--danger"
 								onClick={() => handleToggleWishlist(product.id)}
 								disabled={togglingWishlist === product.id}
 							>
@@ -139,7 +170,7 @@ function WishlistPage() {
 					))}
 				</ul>
 			) : null}
-		</section>
+		</main>
 	)
 }
 

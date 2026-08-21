@@ -10,6 +10,9 @@ import {
 } from '../../store/slices/cartSlice'
 import styles from './CartPage.module.css'
 
+const FALLBACK_IMAGE =
+	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="%23fff7ed"/><text x="50%25" y="54%25" text-anchor="middle" font-size="10" fill="%23c2410c" font-family="Arial">IMG</text></svg>'
+
 function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
 }
@@ -20,6 +23,10 @@ function getItemName(item) {
 
 function getItemPrice(item) {
 	return Number(item.product?.price ?? item.price ?? 0)
+}
+
+function getItemImage(item) {
+	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
 }
 
 function CartPage() {
@@ -76,6 +83,7 @@ function CartPage() {
 					/>
 					<button
 						type="button"
+						className="app-action-button"
 						onClick={handleRetry}
 						disabled={loading || isCheckingOut}
 					>
@@ -94,11 +102,19 @@ function CartPage() {
 					<div className={styles.list}>
 						{items.map((item) => (
 							<article key={getItemId(item)} className={styles.item}>
-								<p className={styles.name}>{getItemName(item)}</p>
+								<div className={styles.itemTop}>
+									<img
+										src={getItemImage(item)}
+										alt={getItemName(item)}
+										className={styles.thumb}
+									/>
+									<p className={styles.name}>{getItemName(item)}</p>
+								</div>
 								<p className={styles.quantity}>Cantidad: {item.quantity ?? 1}</p>
 								<p className={styles.price}>Precio: {getItemPrice(item).toFixed(2)} EUR</p>
 								<button
 									type="button"
+									className="app-action-button app-action-button--danger"
 									onClick={() => handleRemove(item)}
 									disabled={loading || isCheckingOut}
 								>

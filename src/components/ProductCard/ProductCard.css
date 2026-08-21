@@ -142,7 +142,7 @@
 }
 
 .product-card__action-button.is-active {
-	background: var(--color-primary-soft);
-	border-color: var(--color-primary);
+	background: #eef4ff;
+	border-color: var(--color-accent);
 	color: var(--color-text);
 }
