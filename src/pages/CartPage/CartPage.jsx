@@ -5,6 +5,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import {
+	addCartItemThunk,
 	fetchCartThunk,
 	removeCartItemThunk,
 } from '../../store/slices/cartSlice'
@@ -46,7 +47,27 @@ function CartPage() {
 		dispatch(fetchCartThunk())
 	}, [dispatch])
 
-	const handleRemove = (item) => {
+	const handleRemoveLine = (item) => {
+		const itemId = getBackendItemId(item)
+		if (itemId != null) {
+			dispatch(
+				removeCartItemThunk({
+					itemId,
+					productId: getProductId(item),
+					removeAll: true,
+				}),
+			)
+		}
+	}
+
+	const handleIncrease = (item) => {
+		const productId = getProductId(item)
+		if (productId != null) {
+			dispatch(addCartItemThunk({ productId, quantity: 1 }))
+		}
+	}
+
+	const handleDecrease = (item) => {
 		const itemId = getBackendItemId(item)
 		if (itemId != null) {
 			dispatch(
@@ -123,15 +144,38 @@ function CartPage() {
 									/>
 									<p className={styles.name}>{getItemName(item)}</p>
 								</div>
-								<p className={styles.quantity}>Cantidad: {item.quantity ?? 1}</p>
+								<div className={styles.quantityRow}>
+									<p className={styles.quantity}>Cantidad:</p>
+									<div className={styles.quantityControls}>
+										<button
+											type="button"
+											className="app-action-button"
+											onClick={() => handleDecrease(item)}
+											disabled={loading || isCheckingOut}
+											aria-label={`Quitar una unidad de ${getItemName(item)}`}
+										>
+											-
+										</button>
+										<span className={styles.quantityValue}>{item.quantity ?? 1}</span>
+										<button
+											type="button"
+											className="app-action-button"
+											onClick={() => handleIncrease(item)}
+											disabled={loading || isCheckingOut}
+											aria-label={`Anadir una unidad de ${getItemName(item)}`}
+										>
+											+
+										</button>
+									</div>
+								</div>
 								<p className={styles.price}>Precio: {getItemPrice(item).toFixed(2)} EUR</p>
 								<button
 									type="button"
 									className="app-action-button app-action-button--danger"
-									onClick={() => handleRemove(item)}
+									onClick={() => handleRemoveLine(item)}
 									disabled={loading || isCheckingOut}
 								>
-									Eliminar
+									Eliminar producto
 								</button>
 							</article>
 						))}

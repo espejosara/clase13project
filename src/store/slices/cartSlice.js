@@ -28,11 +28,17 @@ function itemMatchesById(item, rawId) {
 
 function decrementOrRemoveItem(items, payload) {
 	const removeTargetId = payload?.itemId ?? payload?.productId ?? payload
+	const shouldRemoveAll = payload?.removeAll === true
 	const nextItems = []
 	let hasChanged = false
 
 	for (const item of items) {
 		if (!hasChanged && itemMatchesById(item, removeTargetId)) {
+			if (shouldRemoveAll) {
+				hasChanged = true
+				continue
+			}
+
 			const quantity = Number(item.quantity ?? 1)
 			if (Number.isFinite(quantity) && quantity > 1) {
 				nextItems.push({ ...item, quantity: quantity - 1 })
