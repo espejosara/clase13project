@@ -1,0 +1,48 @@
+.page {
+	padding-bottom: 3rem;
+}
+
+.hero {
+	padding: 1rem 0 2rem;
+}
+
+.eyebrow {
+	margin: 0 0 0.35rem;
+	color: #c2410c;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.title {
+	margin: 0;
+}
+
+.toolbar {
+	display: flex;
+	gap: 0.75rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.input,
+.select {
+	padding: 0.8rem 1rem;
+	border: 1px solid #fdba74;
+	border-radius: 999px;
+}
+
+.input {
+	flex: 1 1 280px;
+}
+
+.select {
+	min-width: 210px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 1rem;
+}

@@ -5,7 +5,7 @@ import { addCartItemThunk } from '../../store/slices/cartSlice'
 import WishlistButton from '../WishlistButton/WishlistButton'
 import './ProductCard.css'
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 
@@ -14,7 +14,11 @@ function ProductCard({ product }) {
 
 		setIsAddingToCart(true)
 		try {
-			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+			if (onAddToCart) {
+				await onAddToCart(product.id)
+			} else {
+				await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+			}
 		} finally {
 			setIsAddingToCart(false)
 		}
