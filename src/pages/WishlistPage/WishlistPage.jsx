@@ -6,6 +6,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
+import { addCartItemThunk } from '../../store/slices/cartSlice'
 import {
 	setLocalWishlist,
 	toggleLocalWishlist,
@@ -19,6 +20,7 @@ function WishlistPage() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
+	const [addingToCart, setAddingToCart] = useState(null)
 	const dispatch = useDispatch()
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const {
@@ -108,10 +110,22 @@ function WishlistPage() {
 		}
 	}
 
+	const handleAddToCart = async (productId) => {
+		if (addingToCart === productId) return
+
+		try {
+			setAddingToCart(productId)
+			await dispatch(addCartItemThunk({ productId, quantity: 1 })).unwrap()
+		} catch (addError) {
+			console.log('No se pudo añadir al carrito desde favoritos', addError)
+		} finally {
+			setAddingToCart(null)
+		}
+	}
+
 	return (
 		<main className={styles.page}>
 			<section className={styles.hero}>
-				<p className={styles.eyebrow}>Favoritos</p>
 				<h1 className={styles.title}>Tus productos favoritos</h1>
 			</section>
 
@@ -146,27 +160,39 @@ function WishlistPage() {
 					{wishlistProducts.map((product) => (
 						<li key={product.id} className={styles.item}>
 							<Link to={`/products/${product.id}`} className={styles.itemLink}>
-								<div className={styles.itemTop}>
-									<img
-										src={product.imageUrl || FALLBACK_IMAGE}
-										alt={product.name}
-										className={styles.thumb}
-									/>
-									<div>
-										<h2 className={styles.name}>{product.name}</h2>
-										<p className={styles.meta}>{product.category}</p>
-									</div>
+								<img
+									src={product.imageUrl || FALLBACK_IMAGE}
+									alt={product.name}
+									className={styles.thumb}
+								/>
+								<div className={styles.content}>
+									<h2 className={styles.name}>{product.name}</h2>
+									<p className={styles.meta}>{product.category}</p>
+									<p className={styles.price}>{product.price.toFixed(2)} EUR</p>
 								</div>
-								<p className={styles.price}>{product.price.toFixed(2)} EUR</p>
-							</Link>{' '}
-							<Button
-								type="button"
-								variant="danger"
-								onClick={() => handleToggleWishlist(product.id)}
-								disabled={togglingWishlist === product.id}
-							>
-								Quitar de favoritos
-							</Button>
+							</Link>
+
+							<div className={styles.actions}>
+								<Button
+									type="button"
+									variant="primary"
+									onClick={() => handleAddToCart(product.id)}
+									disabled={addingToCart === product.id}
+									className={styles.cartButton}
+								>
+									{addingToCart === product.id ? 'Añadiendo...' : '🛒 + Añadir'}
+								</Button>
+
+								<button
+									type="button"
+									className={styles.removeButton}
+									onClick={() => handleToggleWishlist(product.id)}
+									disabled={togglingWishlist === product.id}
+									aria-label={`Quitar ${product.name} de favoritos`}
+								>
+									{togglingWishlist === product.id ? '…' : '✕'}
+								</button>
+							</div>
 						</li>
 					))}
 				</ul>
