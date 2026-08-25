@@ -76,8 +76,8 @@ function CheckoutPage() {
 
 			{!items.length ? (
 				<StatusMessage
-					title="Carrito vacio"
-					description="Tu carrito esta vacio. Vuelve al catalogo para anadir productos."
+					title="Carrito vacío"
+					description="Tu carrito está vacío. Vuelve al catálogo para añadir productos."
 				/>
 			) : (
 				<section className={styles.layout}>

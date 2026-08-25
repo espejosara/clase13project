@@ -12,8 +12,8 @@ import styles from './Header.module.css'
 const HEADER_SYNC_TTL_MS = 12000
 
 function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
-	const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+	const [openMenuPath, setOpenMenuPath] = useState(null)
+	const [openProfileMenuPath, setOpenProfileMenuPath] = useState(null)
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const profileMenuRef = useRef(null)
@@ -24,6 +24,8 @@ function Header() {
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const location = useLocation()
 	const isAuthenticated = Boolean(token)
+	const isMenuOpen = openMenuPath === location.pathname
+	const isProfileMenuOpen = openProfileMenuPath === location.pathname
 
 	const getNavLinkClass = ({ isActive }) =>
 		isActive ? `${styles.link} ${styles.linkActive}` : styles.link
@@ -52,11 +54,6 @@ function Header() {
 			wishlistIds,
 		})
 	}, [cartCount, wishlistCount, cartItems, wishlistIds, location.pathname])
-
-	useEffect(() => {
-		setIsMenuOpen(false)
-		setIsProfileMenuOpen(false)
-	}, [location.pathname])
 
 	useEffect(() => {
 		if (!isAuthenticated) {
@@ -105,13 +102,13 @@ function Header() {
 
 		const handleOutsideClick = (event) => {
 			if (!profileMenuRef.current?.contains(event.target)) {
-				setIsProfileMenuOpen(false)
+				setOpenProfileMenuPath(null)
 			}
 		}
 
 		const handleEscape = (event) => {
 			if (event.key === 'Escape') {
-				setIsProfileMenuOpen(false)
+				setOpenProfileMenuPath(null)
 			}
 		}
 
@@ -125,18 +122,22 @@ function Header() {
 	}, [isProfileMenuOpen])
 
 	const handleToggleMenu = () => {
-		setIsMenuOpen((previousState) => !previousState)
+		setOpenMenuPath((previousPath) => (
+			previousPath === location.pathname ? null : location.pathname
+		))
 	}
 
 	const handleToggleProfileMenu = () => {
-		setIsProfileMenuOpen((previousState) => !previousState)
+		setOpenProfileMenuPath((previousPath) => (
+			previousPath === location.pathname ? null : location.pathname
+		))
 	}
 
 	const handleLogout = () => {
 		dispatch(logout())
 		dispatch(clearCart())
 		dispatch(clearWishlist())
-		setIsProfileMenuOpen(false)
+		setOpenProfileMenuPath(null)
 		navigate('/login')
 	}
 
@@ -144,11 +145,11 @@ function Header() {
 		<>
 			<a className="skip-link" href="#main-content">Saltar al contenido principal</a>
 			<header className={styles.header}>
-			<div className={styles.top}>
-				<Link to="/" className={styles.brand} aria-label="Ir al inicio">
-					<p className={styles.eyebrow}>Tienda oficial</p>
-					<p className={styles.title}>NeoKensei Chronicles</p>
-				</Link>
+				<div className={styles.top}>
+					<Link to="/" className={styles.brand} aria-label="Ir al inicio">
+						<p className={styles.eyebrow}>Tienda oficial</p>
+						<p className={styles.title}>NeoKensei Chronicles</p>
+					</Link>
 
 				<Button
 					type="button"
@@ -157,22 +158,22 @@ function Header() {
 					onClick={handleToggleMenu}
 					aria-expanded={isMenuOpen}
 					aria-controls="main-navigation"
-					aria-label={isMenuOpen ? 'Cerrar menu de navegacion' : 'Abrir menu de navegacion'}
-				>
-					<span className={styles.menuLine} />
-					<span className={styles.menuLine} />
-					<span className={styles.menuLine} />
-				</Button>
-			</div>
+						aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+					>
+						<span className={styles.menuLine} />
+						<span className={styles.menuLine} />
+						<span className={styles.menuLine} />
+					</Button>
+				</div>
 
 			<nav
 				id="main-navigation"
 				className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}
-				aria-label="Navegacion principal"
+				aria-label="Navegación principal"
 			>
 				<div className={styles.navLeft}>
 					<NavLink to="/products" className={getNavLinkClass}>
-						Catalogo
+						Catálogo
 					</NavLink>
 				</div>
 
@@ -195,7 +196,7 @@ function Header() {
 								</Button>
 
 								{isProfileMenuOpen ? (
-										<div id="profile-menu" className={styles.dropdown} aria-label="Menu de usuario">
+									<div id="profile-menu" className={styles.dropdown} aria-label="Menú de usuario">
 										<Link to="/profile" className={styles.dropdownItem}>
 											Mi cuenta
 										</Link>
@@ -209,7 +210,7 @@ function Header() {
 											className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
 											onClick={handleLogout}
 										>
-											Cerrar sesion
+											Cerrar sesión
 										</button>
 									</div>
 								) : null}

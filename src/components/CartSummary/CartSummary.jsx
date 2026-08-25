@@ -34,7 +34,7 @@ function CartSummary({
 			<p className={styles.label}>Resumen</p>
 			<p className={styles.line}>Items: {totalItems}</p>
 			<p className={styles.line}>Total: {totalPrice.toFixed(2)} EUR</p>
-			<p className={styles.note}>Impuestos incluidos. Envio calculado en checkout.</p>
+			<p className={styles.note}>Impuestos incluidos. Envío calculado en checkout.</p>
 			{onCheckout ? (
 				<Button
 					type="button"
@@ -48,7 +48,7 @@ function CartSummary({
 			) : null}
 			{isEmpty ? (
 				<Link to={explorePath} className={styles.exploreButton}>
-					Explorar catalogo
+					Explorar catálogo
 				</Link>
 			) : null}
 		</aside>

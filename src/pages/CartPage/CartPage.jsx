@@ -129,8 +129,8 @@ function CartPage() {
 			<section className={styles.layout}>
 				{!items.length ? (
 					<StatusMessage
-						title="Carrito vacio"
-						description="Anade productos antes de comprar."
+						title="Carrito vacío"
+						description="Añade productos antes de comprar."
 					/>
 				) : (
 					<ul className={styles.list} aria-label="Productos en el carrito">
@@ -167,7 +167,7 @@ function CartPage() {
 											className={styles.quantityButton}
 											onClick={() => handleIncrease(item)}
 											disabled={loading || isCheckingOut}
-											aria-label={`Anadir una unidad de ${getItemName(item)}`}
+											aria-label={`Añadir una unidad de ${getItemName(item)}`}
 										>
 											+
 										</button>

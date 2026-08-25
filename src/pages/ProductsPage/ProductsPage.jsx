@@ -62,7 +62,7 @@ function ProductsPage() {
 		return (
 			<StatusMessage
 				title="Cargando productos"
-				description="Consultando catalogo..."
+				description="Consultando catálogo..."
 			/>
 		)
 	}
@@ -79,7 +79,7 @@ function ProductsPage() {
 	return (
 		<section className={styles.page} aria-labelledby="products-title">
 			<section className={styles.hero}>
-				<p className={styles.eyebrow}>Catalogo</p>
+				<p className={styles.eyebrow}>Catálogo</p>
 				<h1 id="products-title" className={styles.title}>Explora nuestra tienda de figuras</h1>
 			</section>
 

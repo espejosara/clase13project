@@ -63,7 +63,7 @@ function ProductDetailPage() {
 			<p className={styles.label}>Ficha del producto</p>
 			<h1 id="product-title" className={styles.title}>{product.name}</h1>
 			<p className={styles.intro}>
-				Figura original de coleccion con acabados detallados y estilo
+				Figura original de colección con acabados detallados y estilo
 				inspirado en el universo {product.category}.
 			</p>
 			<img

@@ -8,7 +8,7 @@ function AdminPage() {
 			<h1 id="admin-title" className={styles.title}>Ruta protegida</h1>
 			<StatusMessage
 				title="Acceso avanzado"
-				description="Esta pagina depende del token y del rol del usuario."
+				description="Esta página depende del token y del rol del usuario."
 				variant="warning"
 			/>
 		</section>
