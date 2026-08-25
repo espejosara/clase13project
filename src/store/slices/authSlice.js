@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { login, register } from '../../api/auth'
+import { fetchCurrentUserRequest, login, register } from '../../api/auth'
 
 const AUTH_TOKEN_KEY = 'auth_token'
 const AUTH_USER_KEY = 'auth_user'
@@ -30,17 +30,41 @@ function persistAuth({ token, user }) {
 	}
 }
 
-function normalizeUser(user) {
-	if (!user || typeof user !== 'object') return null
+function normalizeUser(inputUser) {
+	if (!inputUser || typeof inputUser !== 'object') return null
+
+	const user = inputUser.user || inputUser
+	const wishlist = inputUser.wishlist || user?.wishlist || {}
+	const checkout = inputUser.checkout || user?.checkout || {}
+
+	const normalizedWishlistCount = Number(
+		wishlist.count ?? user?.wishlistCount ?? wishlist.items?.length ?? user?.wishlistItems?.length ?? 0,
+	)
+
+	const normalizedOrdersCount = Number(
+		checkout.ordersCount ?? user?.checkoutOrdersCount ?? 0,
+	)
 
 	return {
-		id: user.id ?? user._id ?? null,
+		id: user.id ?? user._id ?? inputUser.id ?? inputUser._id ?? null,
 		name: user.name || user.fullName || user.username || 'Sin nombre',
 		email: user.email || 'Sin email',
 		role: user.role || 'user',
 		phone: user.phone || user.telephone || null,
 		address: user.address || user.location || null,
-		createdAt: user.createdAt || user.registeredAt || null,
+		createdAt: user.createdAt || user.registeredAt || user.memberSince || null,
+		memberSince: user.memberSince || user.createdAt || user.registeredAt || null,
+		wishlist: {
+			count: Number.isFinite(normalizedWishlistCount) ? normalizedWishlistCount : 0,
+			items: Array.isArray(wishlist.items) ? wishlist.items : Array.isArray(user?.wishlistItems) ? user.wishlistItems : [],
+		},
+		checkout: {
+			ordersCount: Number.isFinite(normalizedOrdersCount) ? normalizedOrdersCount : 0,
+			lastOrder: checkout.lastOrder ?? user?.lastOrder ?? null,
+		},
+		wishlistCount: Number.isFinite(normalizedWishlistCount) ? normalizedWishlistCount : 0,
+		checkoutOrdersCount: Number.isFinite(normalizedOrdersCount) ? normalizedOrdersCount : 0,
+		lastOrder: checkout.lastOrder ?? user?.lastOrder ?? null,
 	}
 }
 
@@ -64,6 +88,17 @@ export const registerThunk = createAsyncThunk(
 			return authData
 		} catch (error) {
 			return rejectWithValue(error.response?.data?.error || 'No se pudo crear la cuenta')
+		}
+	},
+)
+
+export const fetchCurrentUserThunk = createAsyncThunk(
+	'auth/fetchCurrentUser',
+	async (_, { rejectWithValue }) => {
+		try {
+			return await fetchCurrentUserRequest()
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo cargar el perfil del usuario')
 		}
 	},
 )
@@ -121,6 +156,21 @@ const authSlice = createSlice({
 			.addCase(registerThunk.rejected, (state, action) => {
 				state.loading = false
 				state.error = action.payload || 'No se pudo crear la cuenta'
+			})
+			.addCase(fetchCurrentUserThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(fetchCurrentUserThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.error = null
+
+				state.user = normalizeUser(action.payload)
+				persistAuth({ token: state.token, user: state.user })
+			})
+			.addCase(fetchCurrentUserThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo cargar el perfil del usuario'
 			})
 	},
 })

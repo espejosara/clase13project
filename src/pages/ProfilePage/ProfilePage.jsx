@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
-import { logout } from '../../store/slices/authSlice'
+import { fetchCurrentUserThunk, logout } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import styles from './ProfilePage.module.css'
 
@@ -47,6 +47,7 @@ function ProfilePage() {
 	const { items: orders, loading, error } = useSelector((state) => state.orders)
 
 	useEffect(() => {
+		dispatch(fetchCurrentUserThunk())
 		dispatch(fetchOrdersThunk())
 	}, [dispatch])
 
@@ -57,6 +58,10 @@ function ProfilePage() {
 
 	const userName = user?.name || 'Usuario sin nombre'
 	const userRole = user?.role || 'user'
+	const memberSince = user?.memberSince || user?.createdAt
+	const wishlistCount = user?.wishlistCount ?? user?.wishlist?.count ?? 0
+	const checkoutOrdersCount = user?.checkoutOrdersCount ?? user?.checkout?.ordersCount ?? 0
+	const lastOrder = user?.lastOrder ?? user?.checkout?.lastOrder ?? null
 
 	return (
 		<main className={styles.page}>
@@ -77,17 +82,36 @@ function ProfilePage() {
 							<span className={styles.label}>Email</span>
 							<p className={styles.value}>{user?.email || 'Sin email'}</p>
 						</div>
-						<div className={styles.infoItem}>
-							<span className={styles.label}>Teléfono</span>
-							<p className={styles.value}>{user?.phone || 'No indicado'}</p>
-						</div>
-						<div className={styles.infoItem}>
-							<span className={styles.label}>Dirección</span>
-							<p className={styles.value}>{user?.address || 'No indicada'}</p>
-						</div>
+						{user?.phone ? (
+							<div className={styles.infoItem}>
+								<span className={styles.label}>Teléfono</span>
+								<p className={styles.value}>{user.phone}</p>
+							</div>
+						) : null}
+						{user?.address ? (
+							<div className={styles.infoItem}>
+								<span className={styles.label}>Dirección</span>
+								<p className={styles.value}>{user.address}</p>
+							</div>
+						) : null}
 						<div className={styles.infoItem}>
 							<span className={styles.label}>Miembro desde</span>
-							<p className={styles.value}>{formatDate(user?.createdAt)}</p>
+							<p className={styles.value}>{formatDate(memberSince)}</p>
+						</div>
+					</div>
+
+					<div className={styles.infoGrid}>
+						<div className={styles.infoItem}>
+							<span className={styles.label}>Favoritos</span>
+							<p className={styles.value}>{wishlistCount}</p>
+						</div>
+						<div className={styles.infoItem}>
+							<span className={styles.label}>Pedidos</span>
+							<p className={styles.value}>{checkoutOrdersCount}</p>
+						</div>
+						<div className={styles.infoItem}>
+							<span className={styles.label}>Última compra</span>
+							<p className={styles.value}>{lastOrder ? formatDate(lastOrder.createdAt ?? lastOrder.date) : 'Sin compras aún'}</p>
 						</div>
 					</div>
 				</section>
