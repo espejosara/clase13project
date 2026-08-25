@@ -26,3 +26,10 @@
 .statusMessage--info {
 	border-color: color-mix(in srgb, var(--color-accent) 24%, transparent);
 }
+
+@media (max-width: 480px) {
+	.statusMessage {
+		padding: 0.85rem 1rem;
+		border-radius: 0.8rem;
+	}
+}

@@ -2,6 +2,7 @@
 	border: none;
 	border-radius: 0.65rem;
 	padding: 0.56rem 0.86rem;
+	min-height: 2.75rem;
 	font-weight: 600;
 	font-size: 0.95rem;
 	line-height: 1.2;

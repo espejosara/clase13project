@@ -82,20 +82,20 @@
 
 	.input,
 	.select {
-		height: 34px;
-		padding: 0.32rem 0.62rem;
-		font-size: 0.88rem;
+		height: 44px;
+		padding: 0.5rem 0.7rem;
+		font-size: 0.95rem;
 		border-radius: 0.6rem;
 	}
 
 	.input {
-		flex: 1 1 180px;
-		max-width: 270px;
+		flex: 1 1 100%;
+		max-width: none;
 	}
 
 	.select {
-		flex: 0 0 auto;
-		min-width: 155px;
+		flex: 1 1 100%;
+		min-width: 0;
 	}
 
 	.grid {
@@ -106,10 +106,10 @@
 
 @media (max-width: 420px) {
 	.input {
-		max-width: 240px;
+		max-width: none;
 	}
 
 	.select {
-		min-width: 140px;
+		min-width: 0;
 	}
 }

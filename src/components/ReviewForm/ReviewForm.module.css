@@ -41,3 +41,14 @@
 .messageSuccess {
 	color: var(--color-success);
 }
+
+@media (max-width: 560px) {
+	.reviewForm {
+		width: 100%;
+		padding: 0.85rem;
+	}
+
+	.control {
+		min-height: 2.75rem;
+	}
+}

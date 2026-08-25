@@ -68,3 +68,16 @@
 	background: var(--color-primary-soft);
 	border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
 }
+
+@media (max-width: 560px) {
+	.box {
+		padding: 1rem;
+	}
+
+	.checkoutButton,
+	.exploreButton {
+		width: 100%;
+		min-height: 2.75rem;
+		justify-content: center;
+	}
+}

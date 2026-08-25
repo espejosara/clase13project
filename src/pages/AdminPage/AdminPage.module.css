@@ -20,3 +20,9 @@
 	font-size: clamp(2rem, 4vw, 3rem);
 	line-height: 1.1;
 }
+
+@media (max-width: 560px) {
+	.page {
+		padding: 1.25rem 0 2rem;
+	}
+}

@@ -1,7 +1,18 @@
 .authPage {
+	width: min(100%, 440px);
 	max-width: 440px;
 	margin: 0 auto;
 	padding: 1rem;
+}
+
+@media (max-width: 480px) {
+	.authPage {
+		padding: 0.5rem 0;
+	}
+
+	.authForm {
+		gap: 0.8rem;
+	}
 }
 
 .authForm {

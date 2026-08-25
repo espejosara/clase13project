@@ -1,11 +1,18 @@
 .notFoundPage {
-	min-height: 100vh;
+	min-height: 60vh;
 	display: grid;
 	place-content: center;
 	place-items: center;
 	gap: 0.75rem;
 	padding: 2rem;
 	text-align: center;
+}
+
+@media (max-width: 480px) {
+	.notFoundPage {
+		min-height: 50vh;
+		padding: 1.25rem 0.5rem;
+	}
 }
 
 .code {
