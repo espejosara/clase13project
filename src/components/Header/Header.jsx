@@ -9,12 +9,15 @@ import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
 import styles from './Header.module.css'
 
+const HEADER_SYNC_TTL_MS = 12000
+
 function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const profileMenuRef = useRef(null)
+	const lastHeaderSyncRef = useRef(0)
 	const token = useSelector((state) => state.auth.token)
 	const user = useSelector((state) => state.auth.user)
 	const cartItems = useSelector((state) => state.cart.items)
@@ -51,22 +54,43 @@ function Header() {
 		if (!isAuthenticated) {
 			dispatch(clearCart())
 			dispatch(clearWishlist())
+			lastHeaderSyncRef.current = 0
 			return
 		}
 
-		dispatch(fetchCartThunk())
+		let isActive = true
 
-		const syncWishlist = async () => {
+		const syncHeaderCounters = async (force = false) => {
+			const now = Date.now()
+			const isFresh = now - lastHeaderSyncRef.current < HEADER_SYNC_TTL_MS
+
+			if (!force && isFresh) {
+				return
+			}
+
+			dispatch(fetchCartThunk())
+
 			try {
 				const data = await fetchWishlistRequest()
-				dispatch(setLocalWishlist(data))
+
+				if (isActive) {
+					dispatch(setLocalWishlist(data))
+				}
 			} catch {
 				// Evita bloquear la cabecera cuando falla la sincronización inicial.
+			} finally {
+				if (isActive) {
+					lastHeaderSyncRef.current = now
+				}
 			}
 		}
 
-		syncWishlist()
-	}, [dispatch, isAuthenticated])
+		syncHeaderCounters()
+
+		return () => {
+			isActive = false
+		}
+	}, [dispatch, isAuthenticated, location.pathname])
 
 	useEffect(() => {
 		if (!isProfileMenuOpen) return undefined
@@ -145,6 +169,43 @@ function Header() {
 				<div className={styles.navRight}>
 					{isAuthenticated ? (
 						<>
+							<div className={styles.profile} ref={profileMenuRef}>
+								<Button
+									type="button"
+									variant="outline"
+									className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
+									onClick={handleToggleProfileMenu}
+									aria-haspopup="menu"
+									aria-expanded={isProfileMenuOpen}
+									aria-label="Usuario"
+									data-label="Usuario"
+								>
+									<span className={styles.icon} aria-hidden="true">👤</span>
+									<span className={styles.srOnly}>Usuario</span>
+								</Button>
+
+								{isProfileMenuOpen ? (
+									<div className={styles.dropdown} role="menu" aria-label="Menu de usuario">
+										<Link to="/profile" className={styles.dropdownItem} role="menuitem">
+											Mi cuenta
+										</Link>
+										{user?.role === 'admin' ? (
+											<Link to="/admin" className={styles.dropdownItem} role="menuitem">
+												Panel admin
+											</Link>
+										) : null}
+										<button
+											type="button"
+											className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+											onClick={handleLogout}
+											role="menuitem"
+										>
+											Cerrar sesion
+										</button>
+									</div>
+								) : null}
+							</div>
+
 							<NavLink
 								to="/wishlist"
 								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
@@ -157,43 +218,6 @@ function Header() {
 									{wishlistCount}
 								</span>
 							</NavLink>
-
-							<div className={styles.profile} ref={profileMenuRef}>
-							<Button
-								type="button"
-								variant="outline"
-								className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
-								onClick={handleToggleProfileMenu}
-								aria-haspopup="menu"
-								aria-expanded={isProfileMenuOpen}
-								aria-label="Usuario"
-								data-label="Usuario"
-							>
-								<span className={styles.icon} aria-hidden="true">👤</span>
-								<span className={styles.srOnly}>Usuario</span>
-							</Button>
-
-							{isProfileMenuOpen ? (
-								<div className={styles.dropdown} role="menu" aria-label="Menu de usuario">
-									<Link to="/profile" className={styles.dropdownItem} role="menuitem">
-										Mi cuenta
-									</Link>
-									{user?.role === 'admin' ? (
-										<Link to="/admin" className={styles.dropdownItem} role="menuitem">
-											Panel admin
-										</Link>
-									) : null}
-									<button
-										type="button"
-										className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
-										onClick={handleLogout}
-										role="menuitem"
-									>
-										Cerrar sesion
-									</button>
-								</div>
-							) : null}
-							</div>
 
 							<NavLink
 								to="/cart"
