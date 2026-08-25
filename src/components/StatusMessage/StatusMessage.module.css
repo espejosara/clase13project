@@ -2,6 +2,7 @@
 	padding: 1rem 1.25rem;
 	border-radius: 1rem;
 	border: 1px solid var(--color-border);
+	border-inline-start: 4px solid var(--color-accent);
 	background: var(--color-surface);
 	display: grid;
 	gap: 0.35rem;
@@ -19,12 +20,26 @@
 }
 
 .statusMessage--warning {
-	border-color: color-mix(in srgb, var(--color-border-strong) 70%, transparent);
-	background: linear-gradient(180deg, var(--color-surface-warm) 0%, var(--color-surface) 100%);
+	border-color: var(--color-warning);
+	border-inline-start-color: var(--color-warning);
+	background: var(--color-warning-soft);
 }
 
 .statusMessage--info {
-	border-color: color-mix(in srgb, var(--color-accent) 24%, transparent);
+	border-color: var(--color-accent);
+	background: var(--color-info-soft);
+}
+
+.statusMessage--success {
+	border-color: var(--color-success);
+	border-inline-start-color: var(--color-success);
+	background: var(--color-success-soft);
+}
+
+.statusMessage--error {
+	border-color: var(--color-danger);
+	border-inline-start-color: var(--color-danger);
+	background: var(--color-danger-soft);
 }
 
 @media (max-width: 480px) {

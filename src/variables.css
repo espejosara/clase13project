@@ -1,31 +1,50 @@
 :root {
-	--color-bg: #e6ecff;
+	/* Base: superficies y tipografía */
+	--color-bg: #f1f5f9;
 	--color-surface: #ffffff;
-	--color-surface-alt: #f5f8ff;
-	--color-surface-muted: #eef4ff;
-	--color-surface-warm: #fff7ed;
-	--color-text: #0f1730;
-	--color-text-soft: #4a5b86;
+	--color-surface-alt: #f8fafc;
+	--color-surface-muted: #eff6ff;
+	--color-surface-warm: #fffbeb;
+	--color-surface-elevated: color-mix(in srgb, var(--color-surface) 96%, transparent);
+	--color-surface-translucent: color-mix(in srgb, var(--color-surface) 82%, transparent);
+	--color-text: #0f172a;
+	--color-text-soft: #475569;
+	--color-text-muted: #64748b;
 	--color-text-inverse: #ffffff;
-	--color-border: #7890be;
-	--color-border-strong: #c2410c;
-	--color-primary: #bd3b23;
-	--color-primary-hover: #b93620;
-	--color-primary-soft: #ffe7df;
-	--color-accent: #2168dc;
-	--color-accent-2: #843bcf;
+	--color-border: #64748b;
+	--color-border-subtle: #dbe3ef;
+	--color-border-muted: color-mix(in srgb, var(--color-border) 72%, transparent);
+	--color-border-strong: #64748b;
+
+	/* Acciones y estados */
+	--color-primary: #2563eb;
+	--color-primary-hover: #1d4ed8;
+	--color-primary-soft: #dbeafe;
+	--color-accent: #4f46e5;
+	--color-accent-hover: #4338ca;
+	--color-accent-soft: #eef2ff;
+	--color-accent-2: #7c3aed;
 	--color-secondary: #334155;
 	--color-secondary-hover: #1e293b;
-	--color-danger: #dc2626;
-	--color-danger-hover: #b91c1c;
-	--color-danger-soft: #fff1f2;
-	--color-success: #166534;
-	--color-warning: #c2410c;
-	--color-rating: #f59e0b;
+	--color-danger: #b91c1c;
+	--color-danger-hover: #991b1b;
+	--color-danger-soft: #ffebee;
+	--color-success: #15803d;
+	--color-success-soft: #eaf7ee;
+	--color-warning: #b45309;
+	--color-warning-soft: #fffbeb;
+	--color-info-soft: #eef2ff;
+	--color-rating: #d97706;
 	--color-disabled: #9ca3af;
-	--color-glow: rgba(165, 78, 255, 0.22);
-	--shadow-soft: 0 12px 26px rgba(15, 23, 48, 0.1);
-	--shadow-strong: 0 18px 40px rgba(15, 23, 48, 0.18);
+
+	/* Capas, foco y profundidad */
+	--color-primary-outline: color-mix(in srgb, var(--color-primary) 38%, transparent);
+	--color-accent-outline: color-mix(in srgb, var(--color-accent) 30%, transparent);
+	--color-overlay: color-mix(in srgb, var(--color-text) 18%, transparent);
+	--color-glow: color-mix(in srgb, var(--color-accent-2) 22%, transparent);
+	--shadow-soft: 0 12px 26px color-mix(in srgb, var(--color-text) 10%, transparent);
+	--shadow-strong: 0 18px 40px color-mix(in srgb, var(--color-text) 18%, transparent);
+	--focus-ring: 0 0 0 3px var(--color-accent-outline);
 	--transition-fast: 0.15s ease;
 	--transition-base: 0.2s ease;
 	--font-base: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;

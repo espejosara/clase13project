@@ -70,7 +70,7 @@
 	border-radius: 999px;
 	font-weight: 600;
 	color: var(--color-text);
-	border: 1px solid rgba(148, 163, 184, 0.5);
+	border: 1px solid var(--color-border-muted);
 	background: var(--color-surface);
 	cursor: pointer;
 	text-decoration: none;
@@ -103,7 +103,7 @@
 	transform: translateX(-50%) translateY(-2px);
 	padding: 0.28rem 0.45rem;
 	border-radius: 0.4rem;
-	border: 1px solid color-mix(in srgb, var(--color-border) 78%, #000000 22%);
+	border: 1px solid var(--color-border);
 	background: var(--color-text);
 	color: var(--color-text-inverse);
 	font-size: 0.75rem;
@@ -179,7 +179,7 @@
 	border-radius: 0.8rem;
 	background: var(--color-surface);
 	border: 1px solid var(--color-border);
-	box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+	box-shadow: var(--shadow-strong);
 }
 
 .dropdownItem {
@@ -305,7 +305,7 @@
 		display: none;
 		width: 100%;
 		padding-top: 0.3rem;
-		border-top: 1px solid rgba(201, 215, 247, 0.72);
+		border-top: 1px solid var(--color-border-muted);
 	}
 
 	.navOpen {

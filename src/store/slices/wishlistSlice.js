@@ -2,29 +2,41 @@ import { createSlice } from '@reduxjs/toolkit'
 import { normalizeId } from '../../utils/id'
 
 function extractProductIds(payload) {
+	const extractIdsFromList = (items) => items
+		.map((item) => {
+			if (typeof item === 'object' && item !== null) {
+				return normalizeId(item.productId ?? item.product?.id ?? item.product?._id ?? item.id ?? item._id)
+			}
+
+			return normalizeId(item)
+		})
+		.filter((id) => id !== null)
+
 	if (Array.isArray(payload)) {
-		if (!payload.length) return []
-
-		if (typeof payload[0] === 'number') {
-			return payload.map(normalizeId).filter((id) => id !== null)
-		}
-
-		if (typeof payload[0] === 'object' && payload[0] !== null) {
-			return payload
-				.map((item) => normalizeId(item.productId ?? item.product?.id ?? item.id))
-				.filter((id) => id !== null)
-		}
+		return { ids: extractIdsFromList(payload), isRecognized: true }
 	}
 
 	if (Array.isArray(payload?.productIds)) {
-		return payload.productIds.map(normalizeId).filter((id) => id !== null)
+		return { ids: extractIdsFromList(payload.productIds), isRecognized: true }
 	}
 
 	if (Array.isArray(payload?.items)) {
 		return extractProductIds(payload.items)
 	}
 
-	return []
+	if (Array.isArray(payload?.wishlist)) {
+		return extractProductIds(payload.wishlist)
+	}
+
+	if (Array.isArray(payload?.wishlist?.productIds)) {
+		return extractProductIds(payload.wishlist.productIds)
+	}
+
+	if (Array.isArray(payload?.wishlist?.items)) {
+		return extractProductIds(payload.wishlist.items)
+	}
+
+	return { ids: [], isRecognized: false }
 }
 
 const initialState = {
@@ -37,7 +49,14 @@ const wishlistSlice = createSlice({
 	initialState,
 	reducers: {
 		setLocalWishlist(state, action) {
-			const ids = extractProductIds(action.payload)
+			const { ids, isRecognized } = extractProductIds(action.payload)
+
+			// Algunas respuestas del toggle solo contienen un mensaje de éxito.
+			// En ese caso se conserva el cambio optimista, en vez de borrar la wishlist local.
+			if (!isRecognized) {
+				return
+			}
+
 			state.ids = ids
 			state.productIds = ids
 		},

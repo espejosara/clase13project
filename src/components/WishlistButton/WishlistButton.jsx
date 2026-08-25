@@ -18,6 +18,8 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 	const handleToggleWishlist = async () => {
 		if (loading) return
 
+		const previousWishlistIds = [...wishlistIds]
+
 		try {
 			setLoading(true)
 			dispatch(toggleLocalWishlist(productId))
@@ -28,7 +30,9 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
 		} catch (toggleError) {
-			console.log('No se pudo sincronizar la wishlist con el back', toggleError)
+			// Revierte el cambio optimista si el servidor rechaza la operación.
+			dispatch(setLocalWishlist(previousWishlistIds))
+			console.error('No se pudo sincronizar la wishlist con el back', toggleError)
 		} finally {
 			setLoading(false)
 		}
