@@ -88,7 +88,7 @@ function ProfilePage() {
 			</header>
 
 			<div className={styles.layout}>
-				<section className={`${styles.card} ${styles.userCard}`}>
+				<section id="perfil-general" className={`${styles.card} ${styles.userCard}`}>
 					<div className={styles.avatarWrap}>{getInitials(userName)}</div>
 					<h2 className={styles.userName}>{userName}</h2>
 					<span className={styles.userRole}>{userRole}</span>
@@ -132,7 +132,7 @@ function ProfilePage() {
 					</div>
 				</section>
 
-				<section className={`${styles.card} ${styles.ordersCard}`}>
+				<section id="historial-pedidos" className={`${styles.card} ${styles.ordersCard}`}>
 					<h2 className={styles.sectionTitle}>Historial de pedidos</h2>
 
 					{loading ? (

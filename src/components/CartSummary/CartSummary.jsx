@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import Button from '../Button/Button'
 import styles from './CartSummary.module.css'
 
@@ -11,7 +12,13 @@ function getItemPrice(item) {
 	return Number(item?.product?.price ?? item?.price ?? 0)
 }
 
-function CartSummary({ items = [], onCheckout, loading = false, checkoutLabel = 'Ir a checkout' }) {
+function CartSummary({
+	items = [],
+	onCheckout,
+	loading = false,
+	checkoutLabel = 'Ir a checkout',
+	explorePath = '/products',
+}) {
 	const totalItems = useMemo(() => {
 		return items.reduce((acc, item) => acc + getItemQuantity(item), 0)
 	}, [items])
@@ -19,6 +26,8 @@ function CartSummary({ items = [], onCheckout, loading = false, checkoutLabel = 
 	const totalPrice = useMemo(() => {
 		return items.reduce((acc, item) => acc + getItemQuantity(item) * getItemPrice(item), 0)
 	}, [items])
+
+	const isEmpty = totalItems === 0
 
 	return (
 		<aside className={styles.box}>
@@ -31,11 +40,16 @@ function CartSummary({ items = [], onCheckout, loading = false, checkoutLabel = 
 					type="button"
 					variant="primary"
 					onClick={onCheckout}
-					disabled={loading || !items.length}
+					disabled={loading || isEmpty}
 					className={styles.checkoutButton}
 				>
 					{loading ? 'Procesando...' : checkoutLabel}
 				</Button>
+			) : null}
+			{isEmpty ? (
+				<Link to={explorePath} className={styles.exploreButton}>
+					Explorar catalogo
+				</Link>
 			) : null}
 		</aside>
 	)

@@ -127,15 +127,15 @@ function CartPage() {
 				</div>
 			) : null}
 
-			{!items.length ? (
-				<StatusMessage
-					title="Carrito vacio"
-					description="Anade productos antes de comprar."
-				/>
-			) : (
-				<section className={styles.layout}>
-					<div className={styles.list}>
-						{items.map((item, index) => (
+			<section className={styles.layout}>
+				<div className={styles.list}>
+					{!items.length ? (
+						<StatusMessage
+							title="Carrito vacio"
+							description="Anade productos antes de comprar."
+						/>
+					) : (
+						items.map((item, index) => (
 							<article key={`${getItemId(item)}-${index}`} className={styles.item}>
 								<div className={styles.itemTop}>
 									<img
@@ -179,17 +179,17 @@ function CartPage() {
 									Eliminar producto
 								</Button>
 							</article>
-						))}
-					</div>
+						))
+					)}
+				</div>
 
-					<CartSummary
-						items={items}
-						onCheckout={handleGoToCheckout}
-						loading={loading || isCheckingOut}
-						checkoutLabel="Ir a checkout"
-					/>
-				</section>
-			)}
+				<CartSummary
+					items={items}
+					onCheckout={handleGoToCheckout}
+					loading={loading || isCheckingOut}
+					checkoutLabel="Ir a checkout"
+				/>
+			</section>
 		</main>
 	)
 }
