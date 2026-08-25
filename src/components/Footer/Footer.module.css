@@ -10,13 +10,13 @@
 	flex-wrap: wrap;
 }
 
-.footer__text,
-.footer__copy {
+.text,
+.copy {
 	margin: 0;
 	font-size: 0.95rem;
 }
 
-.footer__copy {
+.copy {
 	font-weight: 700;
 	color: var(--color-accent);
 }
@@ -29,15 +29,15 @@
 		gap: 0.35rem;
 	}
 
-	.footer__text,
-	.footer__copy {
+	.text,
+	.copy {
 		font-size: 0.9rem;
 	}
 }
 
 @media (max-width: 420px) {
-	.footer__text,
-	.footer__copy {
+	.text,
+	.copy {
 		font-size: 0.85rem;
 		line-height: 1.4;
 	}

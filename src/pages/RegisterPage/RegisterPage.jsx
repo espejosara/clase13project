@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
 import { registerThunk } from '../../store/slices/authSlice'
-import './RegisterPage.css'
+import styles from './RegisterPage.module.css'
 
 function RegisterPage() {
 	const dispatch = useDispatch()
@@ -71,9 +71,9 @@ function RegisterPage() {
 	}
 
 	return (
-		<section className="auth-page">
+		<section className={styles.authPage}>
 			<h1>Crear cuenta</h1>
-			<form className="auth-form" onSubmit={handleSubmit} noValidate>
+			<form className={styles.authForm} onSubmit={handleSubmit} noValidate>
 				<FormInput
 					autoFocus
 					id="register-name"
@@ -114,8 +114,8 @@ function RegisterPage() {
 				<Button type="submit" variant="secondary" disabled={loading}>
 					{loading ? 'Creando...' : 'Registrarme'}
 				</Button>
-				{serverError ? <p className="auth-message auth-message--error">{serverError}</p> : null}
-				{successMessage ? <p className="auth-message auth-message--success">{successMessage}</p> : null}
+				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{serverError}</p> : null}
+				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`}>{successMessage}</p> : null}
 			</form>
 		</section>
 	)

@@ -1,14 +1,14 @@
-.star-rating {
+.starRating {
 	display: inline-flex;
 	gap: 0.15rem;
 	font-size: 1rem;
 	line-height: 1;
 }
 
-.star-rating__star {
+.star {
 	color: #9ca3af;
 }
 
-.star-rating__star--filled {
+.starFilled {
 	color: #f59e0b;
 }

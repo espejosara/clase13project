@@ -1,4 +1,4 @@
-.product-detail-page {
+.productDetailPage {
 	max-width: var(--container-width);
 	margin: 0 auto;
 	padding: 2.5rem 1.5rem;
@@ -6,7 +6,11 @@
 	gap: 1rem;
 }
 
-.product-detail-page__label {
+.back {
+	justify-self: start;
+}
+
+.label {
 	margin: 0;
 	font-size: 0.875rem;
 	letter-spacing: 0.12em;
@@ -14,19 +18,19 @@
 	color: var(--color-primary);
 }
 
-.product-detail-page__title {
+.title {
 	margin: 0;
 	font-size: clamp(2rem, 4vw, 3rem);
 }
 
-.product-detail-page__intro {
+.intro {
 	margin: 0;
 	max-width: 50rem;
 	color: var(--color-text-soft);
 	line-height: 1.6;
 }
 
-.product-detail-page__image {
+.image {
 	width: 100%;
 	max-width: 520px;
 	border-radius: 1rem;
@@ -34,20 +38,28 @@
 	object-fit: cover;
 }
 
-.product-detail-page__description {
+.description {
 	margin: 0;
 	color: var(--color-text-soft);
 	line-height: 1.6;
 	max-width: 48rem;
 }
 
-.product-detail-page__meta {
+.meta {
 	margin: 0;
 	font-weight: 600;
 	color: var(--color-text);
 }
 
-.product-detail-page__add-button {
+.actions {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+}
+
+.addButton {
 	border: 1px solid var(--color-border);
 	border-radius: 0.55rem;
 	padding: 0.55rem 0.85rem;
@@ -60,24 +72,25 @@
 	align-items: center;
 	justify-content: center;
 	gap: 0.45rem;
+	width: auto;
 }
 
-.product-detail-page__add-button:hover:not(:disabled) {
+.addButton:hover:not(:disabled) {
 	background: var(--color-primary-soft);
 	border-color: var(--color-primary);
 }
 
-.product-detail-page__add-button:disabled {
+.addButton:disabled {
 	opacity: 0.7;
 	cursor: not-allowed;
 }
 
-.product-detail-page__add-button.is-loading {
+.isLoading {
 	border-color: var(--color-accent);
 	background: #eef4ff;
 }
 
-.product-detail-page__button-dot {
+.buttonDot {
 	width: 0.55rem;
 	height: 0.55rem;
 	border-radius: 999px;
@@ -96,7 +109,13 @@
 	}
 }
 
-.product-detail-page__error {
+.isActive {
+	background: #eef4ff;
+	border-color: var(--color-accent);
+	color: var(--color-text);
+}
+
+.error {
 	margin: 0;
 	font-weight: 700;
 	color: #b91c1c;

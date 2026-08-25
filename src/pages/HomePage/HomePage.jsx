@@ -1,4 +1,4 @@
-import './HomePage.css'
+import styles from './HomePage.module.css'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
 import Spinner from '../../components/Spinner/Spinner'
 import { useProducts } from '../../hooks/useProducts'
@@ -16,21 +16,21 @@ function HomePage() {
 	}
 
 	return (
-		<section className="home-page">
-			<div className="home-page__hero home-page__panel">
-				<p className="home-page__eyebrow">Coleccion oficial</p>
-				<h1 className="home-page__title">Figuras de NeoKensei Chronicles</h1>
-				<p className="home-page__description">
+		<section className={styles.homePage}>
+			<div className={`${styles.hero} ${styles.panel}`}>
+				<p className={styles.eyebrow}>Coleccion oficial</p>
+				<h1 className={styles.title}>Figuras de NeoKensei Chronicles</h1>
+				<p className={styles.description}>
 					Explora figuras originales inspiradas en mundos de accion,
 					magia y tecnologia. Cada pieza esta pensada para vitrinas,
 					regalos y colecciones personales.
 				</p>
 			</div>
 
-			<section className="home-page__featured home-page__panel">
-				<div className="home-page__featured-header">
-					<h2 className="home-page__featured-title">Destacados de temporada</h2>
-					<p className="home-page__featured-copy">
+			<section className={`${styles.featured} ${styles.panel}`}>
+				<div className={styles.featuredHeader}>
+					<h2 className={styles.featuredTitle}>Destacados de temporada</h2>
+					<p className={styles.featuredCopy}>
 						Selección recomendada para empezar tu colección.
 					</p>
 				</div>

@@ -7,7 +7,7 @@ import { logout } from '../../store/slices/authSlice'
 import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlice'
 import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
-import './Header.css'
+import styles from './Header.module.css'
 
 function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -23,9 +23,9 @@ function Header() {
 	const isAuthenticated = Boolean(token)
 
 	const getNavLinkClass = ({ isActive }) =>
-		isActive ? 'header__link header__link--active' : 'header__link'
+		isActive ? `${styles.link} ${styles.linkActive}` : styles.link
 	const getIconLinkClass = ({ isActive }) =>
-		isActive ? 'header__icon-link header__icon-link--active' : 'header__icon-link'
+		isActive ? `${styles.iconLink} ${styles.iconLinkActive}` : styles.iconLink
 
 	const cartCount = useMemo(
 		() =>
@@ -109,84 +109,83 @@ function Header() {
 	}
 
 	return (
-		<header className="header">
-			<div className="header__top">
-				<Link to="/" className="header__brand" aria-label="Ir al inicio">
-					<p className="header__eyebrow">Tienda oficial</p>
-					<h1 className="header__title">NeoKensei Chronicles</h1>
+		<header className={styles.header}>
+			<div className={styles.top}>
+				<Link to="/" className={styles.brand} aria-label="Ir al inicio">
+					<p className={styles.eyebrow}>Tienda oficial</p>
+					<h1 className={styles.title}>NeoKensei Chronicles</h1>
 				</Link>
 
 				<Button
 					type="button"
 					variant="outline"
-					className={`header__menu-button ${isMenuOpen ? 'is-open' : ''}`}
+					className={`${styles.menuButton} ${isMenuOpen ? styles.isOpen : ''}`}
 					onClick={handleToggleMenu}
 					aria-expanded={isMenuOpen}
 					aria-controls="main-navigation"
 					aria-label={isMenuOpen ? 'Cerrar menu de navegacion' : 'Abrir menu de navegacion'}
 				>
-					<span className="header__menu-line" />
-					<span className="header__menu-line" />
-					<span className="header__menu-line" />
+					<span className={styles.menuLine} />
+					<span className={styles.menuLine} />
+					<span className={styles.menuLine} />
 				</Button>
 			</div>
 
 			<nav
 				id="main-navigation"
-				className={`header__nav ${isMenuOpen ? 'header__nav--open' : ''}`}
+				className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}
 				aria-label="Navegacion principal"
 			>
-				<div className="header__nav-left">
+				<div className={styles.navLeft}>
 					<NavLink to="/products" className={getNavLinkClass}>
 						Catalogo
 					</NavLink>
 				</div>
 
-				<div className="header__nav-right">
+				<div className={styles.navRight}>
 					{isAuthenticated ? (
 						<>
-							<NavLink to="/wishlist" className={getIconLinkClass} aria-label="Favoritos">
-								<span className="header__icon" aria-hidden="true">❤</span>
-								<span className="header__icon-label">Favoritos</span>
-								<span className="header__badge" aria-label={`${wishlistCount} productos en favoritos`}>
+							<NavLink
+								to="/wishlist"
+								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+								aria-label="Favoritos"
+								data-label="Favoritos"
+							>
+								<span className={styles.icon} aria-hidden="true">❤</span>
+								<span className={styles.srOnly}>Favoritos</span>
+								<span className={styles.badge} aria-label={`${wishlistCount} productos en favoritos`}>
 									{wishlistCount}
 								</span>
 							</NavLink>
 
-							<NavLink to="/cart" className={getIconLinkClass} aria-label="Carrito">
-								<span className="header__icon" aria-hidden="true">🛒</span>
-								<span className="header__icon-label">Carrito</span>
-								<span className="header__badge" aria-label={`${cartCount} unidades en carrito`}>
-									{cartCount}
-								</span>
-							</NavLink>
-
-						<div className="header__profile" ref={profileMenuRef}>
+							<div className={styles.profile} ref={profileMenuRef}>
 							<Button
 								type="button"
 								variant="outline"
-								className={`header__profile-button ${isProfileMenuOpen ? 'is-open' : ''}`}
+								className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
 								onClick={handleToggleProfileMenu}
 								aria-haspopup="menu"
 								aria-expanded={isProfileMenuOpen}
+								aria-label="Usuario"
+								data-label="Usuario"
 							>
-								<span className="header__icon" aria-hidden="true">👤</span>
-								<span className="header__icon-label">Perfil</span>
+								<span className={styles.icon} aria-hidden="true">👤</span>
+								<span className={styles.srOnly}>Usuario</span>
 							</Button>
 
 							{isProfileMenuOpen ? (
-								<div className="header__dropdown" role="menu" aria-label="Menu de usuario">
-									<Link to="/profile" className="header__dropdown-item" role="menuitem">
+								<div className={styles.dropdown} role="menu" aria-label="Menu de usuario">
+									<Link to="/profile" className={styles.dropdownItem} role="menuitem">
 										Mi cuenta
 									</Link>
 									{user?.role === 'admin' ? (
-										<Link to="/admin" className="header__dropdown-item" role="menuitem">
+										<Link to="/admin" className={styles.dropdownItem} role="menuitem">
 											Panel admin
 										</Link>
 									) : null}
 									<button
 										type="button"
-										className="header__dropdown-item header__dropdown-item--danger"
+										className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
 										onClick={handleLogout}
 										role="menuitem"
 									>
@@ -194,7 +193,20 @@ function Header() {
 									</button>
 								</div>
 							) : null}
-						</div>
+							</div>
+
+							<NavLink
+								to="/cart"
+								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+								aria-label="Carrito"
+								data-label="Carrito"
+							>
+								<span className={styles.icon} aria-hidden="true">🛒</span>
+								<span className={styles.srOnly}>Carrito</span>
+								<span className={styles.badge} aria-label={`${cartCount} unidades en carrito`}>
+									{cartCount}
+								</span>
+							</NavLink>
 						</>
 					) : (
 						<>

@@ -1,16 +1,16 @@
 import StarRating from '../StarRating/StarRating'
-import './ReviewList.css'
+import styles from './ReviewList.module.css'
 
 function ReviewList({ reviews = [] }) {
 	if (!reviews.length) {
-		return <p className="review-list__empty">Aun no hay reviews para este producto.</p>
+		return <p className={styles.empty}>Aun no hay reviews para este producto.</p>
 	}
 
 	return (
-		<ul className="review-list">
+		<ul className={styles.list}>
 			{reviews.map((review) => (
-				<li key={review.id} className="review-list__item">
-					<div className="review-list__header">
+				<li key={review.id} className={styles.item}>
+					<div className={styles.header}>
 						<strong>{review.author}</strong>
 						<StarRating value={review.rating} />
 					</div>

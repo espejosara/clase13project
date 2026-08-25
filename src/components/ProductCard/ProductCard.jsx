@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
 import WishlistButton from '../WishlistButton/WishlistButton'
 import Button from '../Button/Button'
-import './ProductCard.css'
+import styles from './ProductCard.module.css'
 
 function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
@@ -26,42 +26,46 @@ function ProductCard({ product, onAddToCart }) {
 	}
 
 	return (
-		<article className="product-card">
-			<Link to={`/products/${product.id}`} className="product-card__link">
+		<article className={styles.productCard}>
+			<Link to={`/products/${product.id}`} className={styles.link}>
 				<img
-					className="product-card__image"
+					className={styles.image}
 					src={product.imageUrl}
 					alt={product.name}
 				/>
-				<div className="product-card__content">
-					<p className="product-card__category">{product.category}</p>
-					<h2 className="product-card__title">{product.name}</h2>
-					<p className="product-card__description">{product.description}</p>
-					<div className="product-card__meta">
-						<span className="product-card__price">
+				<div className={styles.content}>
+					<p className={styles.category}>{product.category}</p>
+					<h2 className={styles.title}>{product.name}</h2>
+					<p className={styles.description}>{product.description}</p>
+					<div className={styles.meta}>
+						<span className={styles.price}>
 							{product.price.toFixed(2)} EUR
 						</span>
-						<span className="product-card__stock">Stock: {product.stock}</span>
+						<span className={styles.stock}>Stock: {product.stock}</span>
 					</div>
 				</div>
 			</Link>
-			<div className="product-card__actions">
+			<div className={styles.actions}>
 				<Button
 					variant="outline"
-					className={`product-card__action-button ${isAddingToCart ? 'is-loading' : ''}`}
+					className={`${styles.actionButton} ${isAddingToCart ? styles.isLoading : ''}`}
 					onClick={handleAddToCart}
 					disabled={isAddingToCart}
 					aria-busy={isAddingToCart}
 				>
 					{isAddingToCart ? (
 						<>
-							<span className="product-card__button-dot" aria-hidden="true" /> Añadiendo...
+							<span className={styles.buttonDot} aria-hidden="true" /> Añadiendo...
 						</>
 					) : (
 						'Añadir al carrito'
 					)}
 				</Button>
-				<WishlistButton productId={product.id} />
+				<WishlistButton
+					productId={product.id}
+					className={styles.actionButton}
+					activeClassName={styles.isActive}
+				/>
 			</div>
 		</article>
 	)

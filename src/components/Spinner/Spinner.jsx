@@ -1,10 +1,10 @@
-import './Spinner.css'
+import styles from './Spinner.module.css'
 
 function Spinner({ label = 'Cargando...' }) {
 	return (
-		<div className="spinner" role="status" aria-live="polite">
-			<span className="spinner__circle" aria-hidden="true" />
-			<span className="spinner__label">{label}</span>
+		<div className={styles.spinner} role="status" aria-live="polite">
+			<span className={styles.circle} aria-hidden="true" />
+			<span className={styles.label}>{label}</span>
 		</div>
 	)
 }

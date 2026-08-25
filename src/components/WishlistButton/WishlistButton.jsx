@@ -8,7 +8,7 @@ import {
 } from '../../store/slices/wishlistSlice'
 import { idsAreEqual } from '../../utils/id'
 
-function WishlistButton({ productId }) {
+function WishlistButton({ productId, className = '', activeClassName = '' }) {
 	const [loading, setLoading] = useState(false)
 	const dispatch = useDispatch()
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
@@ -34,11 +34,13 @@ function WishlistButton({ productId }) {
 		}
 	}
 
+	const composedClassName = [className, isInWishlist ? activeClassName : ''].filter(Boolean).join(' ')
+
 	return (
 		<Button
 			type="button"
 			variant={isInWishlist ? 'primary' : 'outline'}
-			className={isInWishlist ? 'product-card__action-button is-active' : 'product-card__action-button'}
+			className={composedClassName}
 			onClick={handleToggleWishlist}
 			disabled={loading}
 		>

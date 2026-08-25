@@ -1,13 +1,13 @@
-import './Footer.css'
+import styles from './Footer.module.css'
 
 function Footer() {
 	return (
-		<footer className="footer">
-			<p className="footer__text">
+		<footer className={styles.footer}>
+			<p className={styles.text}>
 				Colecciones originales, piezas de autor y ediciones para fans y
 				coleccionistas.
 			</p>
-			<p className="footer__copy">Envios y novedades de temporada</p>
+			<p className={styles.copy}>Envios y novedades de temporada</p>
 		</footer>
 	)
 }

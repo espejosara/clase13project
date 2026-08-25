@@ -1,0 +1,24 @@
+.authPage {
+	max-width: 440px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.authForm {
+	display: grid;
+	gap: 0.9rem;
+	margin-top: 1rem;
+}
+
+.authMessage {
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.authMessageError {
+	color: #b91c1c;
+}
+
+.authMessageSuccess {
+	color: #166534;
+}

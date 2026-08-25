@@ -1,8 +1,10 @@
+import styles from './StatusMessage.module.css'
+
 function StatusMessage({ title, description, variant = 'info' }) {
 	return (
-		<section className={`status-message status-message--${variant}`}>
-			<h2 className="status-message__title">{title}</h2>
-			<p className="status-message__description">{description}</p>
+		<section className={`${styles.statusMessage} ${styles[`statusMessage--${variant}`] || styles['statusMessage--info']}`}>
+			<h2 className={styles.title}>{title}</h2>
+			<p className={styles.description}>{description}</p>
 		</section>
 	)
 }

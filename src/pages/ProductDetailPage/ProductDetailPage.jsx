@@ -10,7 +10,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import WishlistButton from '../../components/WishlistButton/WishlistButton'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
-import './ProductDetailPage.css'
+import styles from './ProductDetailPage.module.css'
 
 function ProductDetailPage() {
 	const { productId } = useParams()
@@ -56,48 +56,52 @@ function ProductDetailPage() {
 	}
 
 	return (
-		<main className="product-detail-page">
-			<Link to="/products" className="product-detail-page__back">
+		<main className={styles.productDetailPage}>
+			<Link to="/products" className={`app-action-link ${styles.back}`}>
 				← Volver al catálogo
 			</Link>
-			<p className="product-detail-page__label">Ficha del producto</p>
-			<h1 className="product-detail-page__title">{product.name}</h1>
-			<p className="product-detail-page__intro">
+			<p className={styles.label}>Ficha del producto</p>
+			<h1 className={styles.title}>{product.name}</h1>
+			<p className={styles.intro}>
 				Figura original de coleccion con acabados detallados y estilo
 				inspirado en el universo {product.category}.
 			</p>
 			<img
-				className="product-detail-page__image"
+				className={styles.image}
 				src={product.imageUrl}
 				alt={product.name}
 			/>
-			<p className="product-detail-page__description">{product.description}</p>
-			<p className="product-detail-page__meta">Categoría: {product.category}</p>
-			<p className="product-detail-page__meta">
+			<p className={styles.description}>{product.description}</p>
+			<p className={styles.meta}>Categoría: {product.category}</p>
+			<p className={styles.meta}>
 				Precio oficial: {product.price.toFixed(2)} EUR
 			</p>
-			<p className="product-detail-page__meta">
+			<p className={styles.meta}>
 				Disponibilidad: {product.stock} unidades en stock
 			</p>
-			<p className="product-detail-page__actions">
+			<p className={styles.actions}>
 				<Button
 					type="button"
 					variant="primary"
 					onClick={handleAddToCart}
 					disabled={isAddingToCart}
 					aria-busy={isAddingToCart}
-					className={`product-detail-page__add-button ${isAddingToCart ? 'is-loading' : ''}`}
+					className={`${styles.addButton} ${isAddingToCart ? styles.isLoading : ''}`}
 				>
 					{isAddingToCart ? (
 						<>
-							<span className="product-detail-page__button-dot" aria-hidden="true" /> Añadiendo...
+							<span className={styles.buttonDot} aria-hidden="true" /> Añadiendo...
 						</>
 					) : (
 						'Añadir al carrito'
 					)}
 				</Button>{' '}
-				<WishlistButton productId={product.id} />{' '}
-				<Link to="/cart">Ir al carrito</Link>
+				<WishlistButton
+					productId={product.id}
+					className={styles.addButton}
+					activeClassName={styles.isActive}
+				/>{' '}
+				<Link to="/cart" className="app-action-link">Ir al carrito</Link>
 			</p>
 
 			<section>

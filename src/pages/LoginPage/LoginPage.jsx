@@ -5,7 +5,7 @@ import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
 import { loginThunk } from '../../store/slices/authSlice'
 
-import './LoginPage.css'
+import styles from './LoginPage.module.css'
 
 const AUTH_EXPIRED_KEY = 'auth_session_expired'
 
@@ -69,9 +69,9 @@ function LoginPage() {
 	}
 
 	return (
-		<section className="auth-page">
+		<section className={styles.authPage}>
 			<h1>Iniciar sesión</h1>
-			<form className="auth-form" onSubmit={handleSubmit} noValidate>
+			<form className={styles.authForm} onSubmit={handleSubmit} noValidate>
 				<FormInput
 					autoFocus
 					id="login-email"
@@ -94,9 +94,9 @@ function LoginPage() {
 				<Button type="submit" variant="primary" disabled={loading}>
 					{loading ? 'Enviando...' : 'Entrar'}
 				</Button>
-				{sessionMessage ? <p className="auth-message auth-message--error">{sessionMessage}</p> : null}
-				{serverError ? <p className="auth-message auth-message--error">{serverError}</p> : null}
-				{successMessage ? <p className="auth-message auth-message--success">{successMessage}</p> : null}
+				{sessionMessage ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{sessionMessage}</p> : null}
+				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{serverError}</p> : null}
+				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`}>{successMessage}</p> : null}
 			</form>
 		</section>
 	)

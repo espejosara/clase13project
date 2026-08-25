@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { createReview } from '../../api/reviews'
 import Button from '../Button/Button'
-import './ReviewForm.css'
+import styles from './ReviewForm.module.css'
 
 function ReviewForm({ productId, onReviewCreated }) {
 	const { token } = useSelector((state) => state.auth)
@@ -13,7 +13,7 @@ function ReviewForm({ productId, onReviewCreated }) {
 	const [successMessage, setSuccessMessage] = useState('')
 
 	if (!token) {
-		return <p className="review-form__hint">Inicia sesión para escribir una reseña.</p>
+		return <p className={styles.hint}>Inicia sesión para escribir una reseña.</p>
 	}
 
 	const handleSubmit = async (event) => {
@@ -46,14 +46,14 @@ function ReviewForm({ productId, onReviewCreated }) {
 	}
 
 	return (
-		<form className="review-form" onSubmit={handleSubmit}>
-			<h3 className="review-form__title">Escribir una reseña</h3>
-			<label className="review-form__label" htmlFor="review-rating">
+		<form className={styles.reviewForm} onSubmit={handleSubmit}>
+			<h3 className={styles.title}>Escribir una reseña</h3>
+			<label className={styles.label} htmlFor="review-rating">
 				Valoración
 			</label>
 			<select
 				id="review-rating"
-				className="review-form__control"
+				className={styles.control}
 				value={rating}
 				onChange={(event) => setRating(event.target.value)}
 			>
@@ -64,12 +64,12 @@ function ReviewForm({ productId, onReviewCreated }) {
 				<option value="1">1</option>
 			</select>
 
-			<label className="review-form__label" htmlFor="review-comment">
+			<label className={styles.label} htmlFor="review-comment">
 				Comentario
 			</label>
 			<textarea
 				id="review-comment"
-				className="review-form__control review-form__textarea"
+				className={`${styles.control} ${styles.textarea}`}
 				value={comment}
 				onChange={(event) => setComment(event.target.value)}
 				placeholder="Comparte tu opinión sobre la figura"
@@ -79,8 +79,8 @@ function ReviewForm({ productId, onReviewCreated }) {
 				{loading ? 'Enviando...' : 'Publicar reseña'}
 			</Button>
 
-			{error ? <p className="review-form__message review-form__message--error">{error}</p> : null}
-			{successMessage ? <p className="review-form__message review-form__message--success">{successMessage}</p> : null}
+			{error ? <p className={`${styles.message} ${styles.messageError}`}>{error}</p> : null}
+			{successMessage ? <p className={`${styles.message} ${styles.messageSuccess}`}>{successMessage}</p> : null}
 		</form>
 	)
 }
