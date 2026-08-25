@@ -55,6 +55,44 @@ function decrementOrRemoveItem(items, payload) {
 	return hasChanged ? nextItems : items
 }
 
+function incrementOrAppendItem(items, payload) {
+	const productId = payload?.productId ?? payload
+	const requestedQuantity = Number(payload?.quantity ?? 1)
+	const quantityToAdd = Number.isFinite(requestedQuantity) && requestedQuantity > 0 ? requestedQuantity : 1
+	const comparableProductId = normalizeComparableId(productId)
+
+	if (!comparableProductId) {
+		return items
+	}
+
+	let hasChanged = false
+	const nextItems = items.map((item) => {
+		if (!hasChanged && itemMatchesById(item, comparableProductId)) {
+			hasChanged = true
+			const currentQuantity = Number(item.quantity ?? 1)
+			const safeCurrentQuantity = Number.isFinite(currentQuantity) && currentQuantity > 0 ? currentQuantity : 1
+			return {
+				...item,
+				quantity: safeCurrentQuantity + quantityToAdd,
+			}
+		}
+
+		return item
+	})
+
+	if (hasChanged) {
+		return nextItems
+	}
+
+	return [
+		...items,
+		{
+			productId,
+			quantity: quantityToAdd,
+		},
+	]
+}
+
 export const fetchCartThunk = createAsyncThunk(
 	'cart/fetchCart',
 	async (_, { rejectWithValue }) => {
@@ -139,7 +177,14 @@ const cartSlice = createSlice({
 			})
 			.addCase(addCartItemThunk.fulfilled, (state, action) => {
 				state.loading = false
-				state.items = extractItems(action.payload)
+
+				const backendItems = extractItems(action.payload)
+				if (backendItems.length) {
+					state.items = backendItems
+					return
+				}
+
+				state.items = incrementOrAppendItem(state.items, action.meta.arg)
 			})
 			.addCase(addCartItemThunk.rejected, (state, action) => {
 				state.loading = false

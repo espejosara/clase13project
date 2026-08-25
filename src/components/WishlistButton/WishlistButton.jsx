@@ -24,7 +24,7 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 
 			const syncedWishlist = await toggleWishlistRequest(productId)
 
-			if (Array.isArray(syncedWishlist)) {
+			if (syncedWishlist) {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
 		} catch (toggleError) {

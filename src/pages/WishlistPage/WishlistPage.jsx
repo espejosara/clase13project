@@ -82,7 +82,7 @@ function WishlistPage() {
 
 			const syncedWishlist = await toggleWishlistRequest(productId)
 
-			if (Array.isArray(syncedWishlist)) {
+			if (syncedWishlist) {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
 		} catch (toggleError) {
@@ -111,15 +111,24 @@ function WishlistPage() {
 	}
 
 	const handleAddToCart = async (productId) => {
-		if (addingToCart === productId) return
+		if (addingToCart === productId || togglingWishlist === productId) return
 
 		try {
 			setAddingToCart(productId)
 			await dispatch(addCartItemThunk({ productId, quantity: 1 })).unwrap()
+
+			setTogglingWishlist(productId)
+			dispatch(toggleLocalWishlist(productId))
+
+			const syncedWishlist = await toggleWishlistRequest(productId)
+			if (syncedWishlist) {
+				dispatch(setLocalWishlist(syncedWishlist))
+			}
 		} catch (addError) {
 			console.log('No se pudo añadir al carrito desde favoritos', addError)
 		} finally {
 			setAddingToCart(null)
+			setTogglingWishlist(null)
 		}
 	}
 

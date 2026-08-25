@@ -105,7 +105,6 @@ function CartPage() {
 	return (
 		<main className={styles.page}>
 			<section className={styles.hero}>
-				<p className={styles.eyebrow}>Carrito</p>
 				<h1 className={styles.title}>Tu carrito de compra</h1>
 			</section>
 
@@ -137,58 +136,62 @@ function CartPage() {
 					) : (
 						items.map((item, index) => (
 							<article key={`${getItemId(item)}-${index}`} className={styles.item}>
-								<div className={styles.itemTop}>
+								<div className={styles.itemMain}>
 									<img
 										src={getItemImage(item)}
 										alt={getItemName(item)}
 										className={styles.thumb}
 									/>
-									<p className={styles.name}>{getItemName(item)}</p>
+									<div className={styles.itemInfo}>
+										<p className={styles.name}>{getItemName(item)}</p>
+										<p className={styles.price}>{getItemPrice(item).toFixed(2)} EUR</p>
+									</div>
 								</div>
-								<div className={styles.quantityRow}>
-									<p className={styles.quantity}>Cantidad:</p>
+								<div className={styles.itemActions}>
 									<div className={styles.quantityControls}>
-										<Button
+										<button
 											type="button"
-											variant="outline"
+											className={styles.quantityButton}
 											onClick={() => handleDecrease(item)}
 											disabled={loading || isCheckingOut}
 											aria-label={`Quitar una unidad de ${getItemName(item)}`}
 										>
 											-
-										</Button>
+										</button>
 										<span className={styles.quantityValue}>{item.quantity ?? 1}</span>
-										<Button
+										<button
 											type="button"
-											variant="outline"
+											className={styles.quantityButton}
 											onClick={() => handleIncrease(item)}
 											disabled={loading || isCheckingOut}
 											aria-label={`Anadir una unidad de ${getItemName(item)}`}
 										>
 											+
-										</Button>
+										</button>
 									</div>
+									<button
+										type="button"
+										className={styles.removeButton}
+										onClick={() => handleRemoveLine(item)}
+										disabled={loading || isCheckingOut}
+										aria-label={`Eliminar ${getItemName(item)} del carrito`}
+									>
+										🗑️
+									</button>
 								</div>
-								<p className={styles.price}>Precio: {getItemPrice(item).toFixed(2)} EUR</p>
-								<Button
-									type="button"
-									variant="danger"
-									onClick={() => handleRemoveLine(item)}
-									disabled={loading || isCheckingOut}
-								>
-									Eliminar producto
-								</Button>
 							</article>
 						))
 					)}
 				</div>
 
-				<CartSummary
-					items={items}
-					onCheckout={handleGoToCheckout}
-					loading={loading || isCheckingOut}
-					checkoutLabel="Ir a checkout"
-				/>
+				<aside className={styles.summaryColumn}>
+					<CartSummary
+						items={items}
+						onCheckout={handleGoToCheckout}
+						loading={loading || isCheckingOut}
+						checkoutLabel="Ir a checkout"
+					/>
+				</aside>
 			</section>
 		</main>
 	)

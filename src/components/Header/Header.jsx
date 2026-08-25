@@ -39,11 +39,19 @@ function Header() {
 		[cartItems],
 	)
 
-	const wishlistCount = useMemo(() => {
-		if (wishlistIds.length) return wishlistIds.length
-		const fallbackCount = Number(user?.wishlistCount ?? user?.wishlist?.count ?? 0)
-		return Number.isFinite(fallbackCount) ? fallbackCount : 0
-	}, [user?.wishlist?.count, user?.wishlistCount, wishlistIds])
+	const wishlistCount = wishlistIds.length
+
+	useEffect(() => {
+		if (!import.meta.env.DEV) return
+
+		console.log('[Header badges]', {
+			path: location.pathname,
+			cartCount,
+			wishlistCount,
+			cartItems,
+			wishlistIds,
+		})
+	}, [cartCount, wishlistCount, cartItems, wishlistIds, location.pathname])
 
 	useEffect(() => {
 		setIsMenuOpen(false)
