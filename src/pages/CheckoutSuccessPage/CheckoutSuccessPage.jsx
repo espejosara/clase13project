@@ -3,10 +3,10 @@ import styles from './CheckoutSuccessPage.module.css'
 
 function CheckoutSuccessPage() {
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="success-title">
 			<section className={styles.card}>
 				<p className={styles.badge}>Pedido confirmado</p>
-				<h1 className={styles.title}>Tu compra se ha realizado con exito</h1>
+				<h1 id="success-title" className={styles.title}>Tu compra se ha realizado con exito</h1>
 				<p className={styles.copy}>
 					Tu pedido se ha procesado correctamente. Gracias por comprar en NeoKensei Chronicles.
 				</p>
@@ -18,7 +18,7 @@ function CheckoutSuccessPage() {
 					<Link to="/profile" className="app-action-link">Ir a mi perfil</Link>
 				</div>
 			</section>
-		</main>
+		</section>
 	)
 }
 

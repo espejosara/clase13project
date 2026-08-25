@@ -80,10 +80,10 @@ function ProfilePage() {
 	const lastOrder = user?.lastOrder ?? user?.checkout?.lastOrder ?? null
 
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="profile-title">
 			<header className={styles.header}>
 				<p className={styles.eyebrow}>Mi cuenta</p>
-				<h1 className={styles.title}>Perfil</h1>
+				<h1 id="profile-title" className={styles.title}>Perfil</h1>
 				<p className={styles.subtitle}>Gestiona tu cuenta y revisa tu historial de compras.</p>
 			</header>
 
@@ -225,7 +225,7 @@ function ProfilePage() {
 			<Button type="button" variant="danger" onClick={handleLogout} className={styles.logoutButton}>
 				Cerrar sesión
 			</Button>
-		</main>
+		</section>
 	)
 }
 

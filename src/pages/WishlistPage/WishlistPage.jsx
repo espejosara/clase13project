@@ -133,9 +133,9 @@ function WishlistPage() {
 	}
 
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="wishlist-title">
 			<section className={styles.hero}>
-				<h1 className={styles.title}>Tus productos favoritos</h1>
+				<h1 id="wishlist-title" className={styles.title}>Tus productos favoritos</h1>
 			</section>
 
 			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}
@@ -206,7 +206,7 @@ function WishlistPage() {
 					))}
 				</ul>
 			) : null}
-		</main>
+		</section>
 	)
 }
 

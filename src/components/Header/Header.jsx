@@ -141,11 +141,13 @@ function Header() {
 	}
 
 	return (
-		<header className={styles.header}>
+		<>
+			<a className="skip-link" href="#main-content">Saltar al contenido principal</a>
+			<header className={styles.header}>
 			<div className={styles.top}>
 				<Link to="/" className={styles.brand} aria-label="Ir al inicio">
 					<p className={styles.eyebrow}>Tienda oficial</p>
-					<h1 className={styles.title}>NeoKensei Chronicles</h1>
+					<p className={styles.title}>NeoKensei Chronicles</p>
 				</Link>
 
 				<Button
@@ -183,8 +185,8 @@ function Header() {
 									variant="outline"
 									className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
 									onClick={handleToggleProfileMenu}
-									aria-haspopup="menu"
 									aria-expanded={isProfileMenuOpen}
+									aria-controls="profile-menu"
 									aria-label="Usuario"
 									data-label="Usuario"
 								>
@@ -193,12 +195,12 @@ function Header() {
 								</Button>
 
 								{isProfileMenuOpen ? (
-									<div className={styles.dropdown} role="menu" aria-label="Menu de usuario">
-										<Link to="/profile" className={styles.dropdownItem} role="menuitem">
+										<div id="profile-menu" className={styles.dropdown} aria-label="Menu de usuario">
+										<Link to="/profile" className={styles.dropdownItem}>
 											Mi cuenta
 										</Link>
 										{user?.role === 'admin' ? (
-											<Link to="/admin" className={styles.dropdownItem} role="menuitem">
+											<Link to="/admin" className={styles.dropdownItem}>
 												Panel admin
 											</Link>
 										) : null}
@@ -206,7 +208,6 @@ function Header() {
 											type="button"
 											className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
 											onClick={handleLogout}
-											role="menuitem"
 										>
 											Cerrar sesion
 										</button>
@@ -217,12 +218,12 @@ function Header() {
 							<NavLink
 								to="/wishlist"
 								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-								aria-label="Favoritos"
+								aria-label={`Favoritos, ${wishlistCount} productos guardados`}
 								data-label="Favoritos"
 							>
 								<span className={styles.icon} aria-hidden="true">❤</span>
 								<span className={styles.srOnly}>Favoritos</span>
-								<span className={styles.badge} aria-label={`${wishlistCount} productos en favoritos`}>
+								<span className={styles.badge} aria-hidden="true">
 									{wishlistCount}
 								</span>
 							</NavLink>
@@ -230,12 +231,12 @@ function Header() {
 							<NavLink
 								to="/cart"
 								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-								aria-label="Carrito"
+								aria-label={`Carrito, ${cartCount} unidades`}
 								data-label="Carrito"
 							>
 								<span className={styles.icon} aria-hidden="true">🛒</span>
 								<span className={styles.srOnly}>Carrito</span>
-								<span className={styles.badge} aria-label={`${cartCount} unidades en carrito`}>
+								<span className={styles.badge} aria-hidden="true">
 									{cartCount}
 								</span>
 							</NavLink>
@@ -252,7 +253,8 @@ function Header() {
 					)}
 				</div>
 			</nav>
-		</header>
+			</header>
+		</>
 	)
 }
 

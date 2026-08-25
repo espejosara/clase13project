@@ -103,9 +103,9 @@ function CartPage() {
 	}
 
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="cart-title">
 			<section className={styles.hero}>
-				<h1 className={styles.title}>Tu carrito de compra</h1>
+				<h1 id="cart-title" className={styles.title}>Tu carrito de compra</h1>
 			</section>
 
 			{error ? (
@@ -127,15 +127,15 @@ function CartPage() {
 			) : null}
 
 			<section className={styles.layout}>
-				<div className={styles.list}>
-					{!items.length ? (
-						<StatusMessage
-							title="Carrito vacio"
-							description="Anade productos antes de comprar."
-						/>
-					) : (
-						items.map((item, index) => (
-							<article key={`${getItemId(item)}-${index}`} className={styles.item}>
+				{!items.length ? (
+					<StatusMessage
+						title="Carrito vacio"
+						description="Anade productos antes de comprar."
+					/>
+				) : (
+					<ul className={styles.list} aria-label="Productos en el carrito">
+						{items.map((item, index) => (
+							<li key={`${getItemId(item)}-${index}`} className={styles.item}>
 								<div className={styles.itemMain}>
 									<img
 										src={getItemImage(item)}
@@ -148,7 +148,7 @@ function CartPage() {
 									</div>
 								</div>
 								<div className={styles.itemActions}>
-									<div className={styles.quantityControls}>
+									<div className={styles.quantityControls} role="group" aria-label={`Cantidad de ${getItemName(item)}`}>
 										<button
 											type="button"
 											className={styles.quantityButton}
@@ -158,7 +158,10 @@ function CartPage() {
 										>
 											-
 										</button>
-										<span className={styles.quantityValue}>{item.quantity ?? 1}</span>
+										<span className={styles.quantityValue} aria-hidden="true">{item.quantity ?? 1}</span>
+										<span className="visually-hidden" aria-live="polite" aria-atomic="true">
+											Cantidad de {getItemName(item)}: {item.quantity ?? 1}
+										</span>
 										<button
 											type="button"
 											className={styles.quantityButton}
@@ -179,21 +182,21 @@ function CartPage() {
 										🗑️
 									</button>
 								</div>
-							</article>
-						))
-					)}
-				</div>
+							</li>
+						))}
+					</ul>
+				)}
 
-				<aside className={styles.summaryColumn}>
+				<div className={styles.summaryColumn}>
 					<CartSummary
 						items={items}
 						onCheckout={handleGoToCheckout}
 						loading={loading || isCheckingOut}
 						checkoutLabel="Ir a checkout"
 					/>
-				</aside>
+				</div>
 			</section>
-		</main>
+		</section>
 	)
 }
 

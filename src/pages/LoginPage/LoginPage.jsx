@@ -71,12 +71,13 @@ function LoginPage() {
 	return (
 		<section className={styles.authPage}>
 			<h1>Iniciar sesión</h1>
-			<form className={styles.authForm} onSubmit={handleSubmit} noValidate>
+			<form className={styles.authForm} onSubmit={handleSubmit}>
 				<FormInput
 					autoFocus
 					id="login-email"
 					name="email"
 					type="email"
+					autoComplete="email"
 					label="Email"
 					value={formData.email}
 					onChange={handleChange}
@@ -86,6 +87,7 @@ function LoginPage() {
 					id="login-password"
 					name="password"
 					type="password"
+					autoComplete="current-password"
 					label="Contraseña"
 					value={formData.password}
 					onChange={handleChange}
@@ -94,9 +96,9 @@ function LoginPage() {
 				<Button type="submit" variant="primary" disabled={loading}>
 					{loading ? 'Enviando...' : 'Entrar'}
 				</Button>
-				{sessionMessage ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{sessionMessage}</p> : null}
-				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{serverError}</p> : null}
-				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`}>{successMessage}</p> : null}
+				{sessionMessage ? <p className={`${styles.authMessage} ${styles.authMessageError}`} role="alert">{sessionMessage}</p> : null}
+				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`} role="alert">{serverError}</p> : null}
+				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`} role="status">{successMessage}</p> : null}
 			</form>
 		</section>
 	)

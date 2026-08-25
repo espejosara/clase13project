@@ -56,12 +56,12 @@ function ProductDetailPage() {
 	}
 
 	return (
-		<main className={styles.productDetailPage}>
+		<section className={styles.productDetailPage} aria-labelledby="product-title">
 			<Link to="/products" className={`app-action-link ${styles.back}`}>
 				← Volver al catálogo
 			</Link>
 			<p className={styles.label}>Ficha del producto</p>
-			<h1 className={styles.title}>{product.name}</h1>
+			<h1 id="product-title" className={styles.title}>{product.name}</h1>
 			<p className={styles.intro}>
 				Figura original de coleccion con acabados detallados y estilo
 				inspirado en el universo {product.category}.
@@ -111,7 +111,7 @@ function ProductDetailPage() {
 				{reviewsError ? <p>Error al cargar reviews: {reviewsError}</p> : null}
 				{!reviewsLoading && !reviewsError ? <ReviewList reviews={allReviews} /> : null}
 			</section>
-		</main>
+		</section>
 	)
 }
 

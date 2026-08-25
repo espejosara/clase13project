@@ -43,6 +43,8 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 			className={composedClassName}
 			onClick={handleToggleWishlist}
 			disabled={loading}
+			aria-pressed={isInWishlist}
+			aria-label={isInWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'}
 		>
 			{isInWishlist ? 'Quitar favoritos' : 'Añadir favoritos'}
 		</Button>

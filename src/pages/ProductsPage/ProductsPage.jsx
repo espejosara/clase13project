@@ -69,22 +69,24 @@ function ProductsPage() {
 
 	if (error) {
 		return (
-			<main className={styles.page}>
+			<section className={styles.page} aria-label="Catálogo de productos">
 				<StatusMessage title="Error" description={error} variant="warning" />
 				<Button onClick={handleRetry}>Reintentar</Button>
-			</main>
+			</section>
 		)
 	}
 
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="products-title">
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Catalogo</p>
-				<h1 className={styles.title}>Explora nuestra tienda de figuras</h1>
+				<h1 id="products-title" className={styles.title}>Explora nuestra tienda de figuras</h1>
 			</section>
 
-			<section className={styles.toolbar}>
+			<form className={styles.toolbar} role="search" onSubmit={(event) => event.preventDefault()}>
+				<label className="visually-hidden" htmlFor="product-search">Buscar productos</label>
 				<input
+					id="product-search"
 					className={styles.input}
 					type="text"
 					placeholder="Buscar producto..."
@@ -92,7 +94,9 @@ function ProductsPage() {
 					onChange={(event) => setSearch(event.target.value)}
 				/>
 
+				<label className="visually-hidden" htmlFor="product-sort">Ordenar productos</label>
 				<select
+					id="product-sort"
 					className={styles.select}
 					value={sortBy}
 					onChange={(event) => setSortBy(event.target.value)}
@@ -100,9 +104,13 @@ function ProductsPage() {
 					<option value="name">Ordenar por nombre</option>
 					<option value="price">Ordenar por precio</option>
 				</select>
-			</section>
+			</form>
 
-			<section className={styles.grid}>
+			<p className="visually-hidden" aria-live="polite" aria-atomic="true">
+				{filteredProducts.length} productos encontrados
+			</p>
+
+			<section className={styles.grid} aria-label="Productos encontrados">
 				{filteredProducts.map((product) => (
 					<ProductCard
 						key={product.id}
@@ -111,7 +119,7 @@ function ProductsPage() {
 					/>
 				))}
 			</section>
-		</main>
+		</section>
 	)
 }
 

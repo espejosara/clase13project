@@ -4,7 +4,7 @@ function StarRating({ value = 0, max = 5 }) {
 	const safeValue = Math.max(0, Math.min(max, Math.round(value)))
 
 	return (
-		<div className={styles.starRating} aria-label={`Valoracion ${safeValue} de ${max}`}>
+		<div className={styles.starRating} role="img" aria-label={`Valoracion ${safeValue} de ${max}`}>
 			{Array.from({ length: max }, (_, index) => {
 				const isFilled = index < safeValue
 				return (

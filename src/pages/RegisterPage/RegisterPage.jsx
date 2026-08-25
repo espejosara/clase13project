@@ -73,12 +73,13 @@ function RegisterPage() {
 	return (
 		<section className={styles.authPage}>
 			<h1>Crear cuenta</h1>
-			<form className={styles.authForm} onSubmit={handleSubmit} noValidate>
+			<form className={styles.authForm} onSubmit={handleSubmit}>
 				<FormInput
 					autoFocus
 					id="register-name"
 					name="name"
 					type="text"
+					autoComplete="name"
 					label="Nombre"
 					value={formData.name}
 					onChange={handleChange}
@@ -88,6 +89,7 @@ function RegisterPage() {
 					id="register-email"
 					name="email"
 					type="email"
+					autoComplete="email"
 					label="Email"
 					value={formData.email}
 					onChange={handleChange}
@@ -97,6 +99,7 @@ function RegisterPage() {
 					id="register-password"
 					name="password"
 					type="password"
+					autoComplete="new-password"
 					label="Contraseña"
 					value={formData.password}
 					onChange={handleChange}
@@ -106,6 +109,7 @@ function RegisterPage() {
 					id="register-confirm-password"
 					name="confirmPassword"
 					type="password"
+					autoComplete="new-password"
 					label="Confirmar contraseña"
 					value={formData.confirmPassword}
 					onChange={handleChange}
@@ -114,8 +118,8 @@ function RegisterPage() {
 				<Button type="submit" variant="secondary" disabled={loading}>
 					{loading ? 'Creando...' : 'Registrarme'}
 				</Button>
-				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`}>{serverError}</p> : null}
-				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`}>{successMessage}</p> : null}
+				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`} role="alert">{serverError}</p> : null}
+				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`} role="status">{successMessage}</p> : null}
 			</form>
 		</section>
 	)

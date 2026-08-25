@@ -58,10 +58,10 @@ function CheckoutPage() {
 	}
 
 	return (
-		<main className={styles.page}>
+		<section className={styles.page} aria-labelledby="checkout-title">
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Checkout</p>
-				<h1 className={styles.title}>Resumen de tu pedido</h1>
+				<h1 id="checkout-title" className={styles.title}>Resumen de tu pedido</h1>
 				<p className={styles.subtitle}>Verifica tus productos y confirma la compra.</p>
 			</section>
 
@@ -110,7 +110,7 @@ function CheckoutPage() {
 					</div>
 				</section>
 			)}
-		</main>
+		</section>
 	)
 }
 
