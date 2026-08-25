@@ -30,6 +30,20 @@ function persistAuth({ token, user }) {
 	}
 }
 
+function normalizeUser(user) {
+	if (!user || typeof user !== 'object') return null
+
+	return {
+		id: user.id ?? user._id ?? null,
+		name: user.name || user.fullName || user.username || 'Sin nombre',
+		email: user.email || 'Sin email',
+		role: user.role || 'user',
+		phone: user.phone || user.telephone || null,
+		address: user.address || user.location || null,
+		createdAt: user.createdAt || user.registeredAt || null,
+	}
+}
+
 export const loginThunk = createAsyncThunk(
 	'auth/login',
 	async (formData, { rejectWithValue }) => {
@@ -56,7 +70,7 @@ export const registerThunk = createAsyncThunk(
 
 const initialState = {
 	token: localStorage.getItem(AUTH_TOKEN_KEY),
-	user: getStoredUser(),
+	user: normalizeUser(getStoredUser()),
 	loading: false,
 	error: null,
 }
@@ -83,7 +97,7 @@ const authSlice = createSlice({
 				state.error = null
 
 				state.token = action.payload?.token || state.token
-				state.user = action.payload?.user || action.payload
+				state.user = normalizeUser(action.payload?.user || action.payload)
 
 				persistAuth({ token: state.token, user: state.user })
 			})
@@ -100,7 +114,7 @@ const authSlice = createSlice({
 				state.error = null
 
 				state.token = action.payload?.token || state.token
-				state.user = action.payload?.user || action.payload
+				state.user = normalizeUser(action.payload?.user || action.payload)
 
 				persistAuth({ token: state.token, user: state.user })
 			})
