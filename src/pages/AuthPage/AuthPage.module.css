@@ -16,9 +16,9 @@
 }
 
 .authMessageError {
-	color: #b91c1c;
+	color: var(--color-danger-hover);
 }
 
 .authMessageSuccess {
-	color: #166534;
+	color: var(--color-success);
 }

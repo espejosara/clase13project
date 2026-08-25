@@ -10,8 +10,8 @@
 	width: 1rem;
 	height: 1rem;
 	border-radius: 50%;
-	border: 2px solid rgba(29, 78, 216, 0.2);
-	border-top-color: #1d4ed8;
+	border: 2px solid color-mix(in srgb, var(--color-accent) 20%, transparent);
+	border-top-color: var(--color-accent);
 	animation: spinner-rotate 0.8s linear infinite;
 }
 

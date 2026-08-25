@@ -6,9 +6,9 @@
 }
 
 .star {
-	color: #9ca3af;
+	color: var(--color-disabled);
 }
 
 .starFilled {
-	color: #f59e0b;
+	color: var(--color-rating);
 }

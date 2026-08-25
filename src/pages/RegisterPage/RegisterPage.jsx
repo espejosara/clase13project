@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
 import { registerThunk } from '../../store/slices/authSlice'
-import styles from './RegisterPage.module.css'
+import styles from '../AuthPage/AuthPage.module.css'
 
 function RegisterPage() {
 	const dispatch = useDispatch()

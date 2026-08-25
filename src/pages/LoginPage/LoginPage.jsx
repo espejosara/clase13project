@@ -5,7 +5,7 @@ import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
 import { loginThunk } from '../../store/slices/authSlice'
 
-import styles from './LoginPage.module.css'
+import styles from '../AuthPage/AuthPage.module.css'
 
 const AUTH_EXPIRED_KEY = 'auth_session_expired'
 
