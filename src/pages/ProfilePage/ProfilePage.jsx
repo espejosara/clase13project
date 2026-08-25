@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button'
@@ -30,6 +30,17 @@ function formatPrice(value) {
 	}).format(numericValue)
 }
 
+function getOrderProducts(order) {
+	if (Array.isArray(order?.products)) return order.products
+	if (Array.isArray(order?.items)) return order.items
+	return []
+}
+
+function getOrderProductImage(item) {
+	if (!item || typeof item === 'string') return null
+	return item.imageUrl || item.product?.imageUrl || item.productDetails?.imageUrl || null
+}
+
 function getInitials(name) {
 	if (!name) return 'U'
 	return name
@@ -45,11 +56,16 @@ function ProfilePage() {
 	const navigate = useNavigate()
 	const { user } = useSelector((state) => state.auth)
 	const { items: orders, loading, error } = useSelector((state) => state.orders)
+	const [openOrderId, setOpenOrderId] = useState(null)
 
 	useEffect(() => {
 		dispatch(fetchCurrentUserThunk())
 		dispatch(fetchOrdersThunk())
 	}, [dispatch])
+
+	const toggleOrder = (orderId) => {
+		setOpenOrderId((current) => (current === orderId ? null : orderId))
+	}
 
 	const handleLogout = () => {
 		dispatch(logout())
@@ -127,10 +143,11 @@ function ProfilePage() {
 						<ul className={styles.ordersList}>
 							{orders.map((order) => {
 								const orderId = order.id ?? order._id ?? order.orderId ?? 'pedido'
-								const total = order.total ?? order.amount ?? order.totalPrice ?? 0
+								const total = Number(order.total ?? order.amount ?? order.totalPrice ?? 0)
 								const date = order.createdAt ?? order.date ?? order.updatedAt
 								const status = order.status || 'Procesado'
-								const items = order.items ?? order.products ?? []
+								const items = getOrderProducts(order)
+								const isOpen = openOrderId === String(orderId)
 
 								return (
 									<li key={String(orderId)} className={styles.orderCard}>
@@ -153,6 +170,48 @@ function ProfilePage() {
 												<p className={styles.metaItemValue}>{items.length || 0}</p>
 											</div>
 										</div>
+
+										<button
+											type="button"
+											className={styles.toggleButton}
+											onClick={() => toggleOrder(String(orderId))}
+										>
+											<span>{isOpen ? 'Ocultar detalle' : 'Ver detalle'}</span>
+											<span aria-hidden="true">{isOpen ? '−' : '+'}</span>
+										</button>
+
+										{isOpen ? (
+											<div className={styles.itemsSection}>
+												<span className={styles.metaItemLabel}>Artículos comprados</span>
+												<ul className={styles.itemsList}>
+													{items.length ? (
+														items.map((item, index) => {
+															const quantity = Number(item?.quantity ?? item?.qty ?? 1)
+															const unitPrice = Number(item?.unitPrice ?? item?.price ?? 0)
+															const subtotal = Number(item?.subtotal ?? item?.total ?? quantity * unitPrice)
+															const itemName = item?.name || item?.productName || `Producto ${item?.productId ?? item?.id ?? index + 1}`
+															const imageUrl = getOrderProductImage(item)
+
+															return (
+																<li key={`${String(orderId)}-${item?.productId ?? item?.id ?? index}`} className={styles.productItem}>
+																	{imageUrl ? (
+																		<img src={imageUrl} alt={itemName} className={styles.productThumb} />
+																	) : null}
+																	<div className={styles.productMeta}>
+																		<p className={styles.productName}>{itemName}</p>
+																		<p className={styles.productDetails}>Cantidad: {quantity}</p>
+																		<p className={styles.productDetails}>Precio unitario: {formatPrice(unitPrice)}</p>
+																		<p className={styles.productDetails}>Subtotal: {formatPrice(subtotal)}</p>
+																	</div>
+																</li>
+															)
+														})
+													) : (
+														<li className={styles.itemRow}>Sin productos registrados</li>
+													)}
+												</ul>
+											</div>
+										) : null}
 									</li>
 								)
 							})}
