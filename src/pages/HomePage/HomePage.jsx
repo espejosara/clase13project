@@ -2,10 +2,12 @@ import styles from './HomePage.module.css'
 import { Link } from 'react-router-dom'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
 import Spinner from '../../components/Spinner/Spinner'
+import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import Button from '../../components/Button/Button'
 import { useProducts } from '../../hooks/useProducts'
 
 function HomePage() {
-	const { data: products, loading, error } = useProducts()
+	const { data: products, loading, error, refetch } = useProducts()
 	const featuredProducts = products.slice(0, 4)
 
 	if (loading) {
@@ -13,7 +15,16 @@ function HomePage() {
 	}
 
 	if (error) {
-		return <p>Error al cargar productos: {error}</p>
+		return (
+			<section className={styles.homePage} aria-label="Productos destacados">
+				<StatusMessage
+					title="No se pudieron cargar los destacados"
+					description={error}
+					variant="error"
+				/>
+				<Button type="button" onClick={refetch}>Reintentar</Button>
+			</section>
+		)
 	}
 
 	return (
