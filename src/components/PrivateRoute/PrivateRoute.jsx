@@ -11,8 +11,9 @@ function PrivateRoute({ children, allowedRoles }) {
 	}
 
 	if (allowedRoles?.length) {
-		const userRole = user?.role || 'user'
-		const isAllowed = allowedRoles.includes(userRole)
+		const userRole = String(user?.role || 'user').toLowerCase()
+		const normalizedAllowedRoles = allowedRoles.map((role) => String(role).toLowerCase())
+		const isAllowed = normalizedAllowedRoles.includes(userRole)
 
 		if (!isAllowed) {
 			return <Navigate to="/profile" replace />

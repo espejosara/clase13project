@@ -240,6 +240,35 @@ npm run dev
 npm run build
 npm run preview
 npm run lint
+npm test
+npm run test:watch
+```
+
+## Pruebas automatizadas
+
+El frontend utiliza Vitest, jsdom y React Testing Library. La suite está aislada del backend real y no modifica datos.
+
+Las pruebas cubren:
+
+- Incremento y actualización de cantidades en Redux.
+- Uso de `PATCH` para cambiar cantidad y `DELETE` para eliminar una línea del carrito.
+- Conservación del carrito cuando una actualización falla.
+- Redirección de usuarios no autenticados.
+- Protección de `/admin` para roles `USER` y `ADMIN`.
+- Campos obligatorios de login.
+- Longitud mínima de contraseña en registro.
+- Visualización de errores devueltos por el backend.
+
+Ejecutar una sola vez:
+
+```bash
+npm test
+```
+
+Ejecutar en modo observación:
+
+```bash
+npm run test:watch
 ```
 
 ## Notas
