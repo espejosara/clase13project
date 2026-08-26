@@ -10,7 +10,21 @@ function extractItems(payload) {
 	if (Array.isArray(payload)) return payload
 	if (Array.isArray(payload?.items)) return payload.items
 	if (Array.isArray(payload?.cart?.items)) return payload.cart.items
+	if (Array.isArray(payload?.products)) return payload.products
+	if (Array.isArray(payload?.cart?.products)) return payload.cart.products
+	if (Array.isArray(payload?.cartItems)) return payload.cartItems
+	if (Array.isArray(payload?.cart?.cartItems)) return payload.cart.cartItems
 	return []
+}
+
+function isRecognizedCartPayload(payload) {
+	return Array.isArray(payload)
+		|| Array.isArray(payload?.items)
+		|| Array.isArray(payload?.cart?.items)
+		|| Array.isArray(payload?.products)
+		|| Array.isArray(payload?.cart?.products)
+		|| Array.isArray(payload?.cartItems)
+		|| Array.isArray(payload?.cart?.cartItems)
 }
 
 function normalizeComparableId(value) {
@@ -129,9 +143,9 @@ export const removeCartItemThunk = createAsyncThunk(
 
 export const checkoutThunk = createAsyncThunk(
 	'cart/checkout',
-	async (_, { rejectWithValue }) => {
+	async (payload, { rejectWithValue }) => {
 		try {
-			return await checkoutRequest()
+			return await checkoutRequest(payload)
 		} catch (error) {
 			return rejectWithValue(error.response?.data?.error || 'No se pudo completar el checkout')
 		}
@@ -164,7 +178,12 @@ const cartSlice = createSlice({
 			})
 			.addCase(fetchCartThunk.fulfilled, (state, action) => {
 				state.loading = false
-				state.items = extractItems(action.payload)
+
+				// Un payload de sincronización sin lista de productos no debe borrar
+				// el carrito que ya está visible en la aplicación.
+				if (isRecognizedCartPayload(action.payload)) {
+					state.items = extractItems(action.payload)
+				}
 			})
 			.addCase(fetchCartThunk.rejected, (state, action) => {
 				state.loading = false
