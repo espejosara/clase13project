@@ -4,6 +4,7 @@ import {
 	checkoutRequest,
 	fetchCartRequest,
 	removeCartItemRequest,
+	updateCartItemQuantity,
 } from '../../api/cart'
 
 function extractItems(payload) {
@@ -40,33 +41,36 @@ function itemMatchesById(item, rawId) {
 	return candidateIds.some((candidateId) => normalizeComparableId(candidateId) === comparableRawId)
 }
 
-function decrementOrRemoveItem(items, payload) {
-	const removeTargetId = payload?.itemId ?? payload?.productId ?? payload
-	const shouldRemoveAll = payload?.removeAll === true
-	const nextItems = []
-	let hasChanged = false
+function cartItemMatchesById(item, rawId) {
+	const comparableRawId = normalizeComparableId(rawId)
+	if (!comparableRawId) return false
 
-	for (const item of items) {
-		if (!hasChanged && itemMatchesById(item, removeTargetId)) {
-			if (shouldRemoveAll) {
-				hasChanged = true
-				continue
-			}
+	const cartItemId = item?.itemId ?? item?.id
+	return normalizeComparableId(cartItemId) === comparableRawId
+}
 
-			const quantity = Number(item.quantity ?? 1)
-			if (Number.isFinite(quantity) && quantity > 1) {
-				nextItems.push({ ...item, quantity: quantity - 1 })
-			} else {
-				// Remove complete line item when quantity reaches zero.
-			}
-			hasChanged = true
-			continue
+function removeItemById(items, payload) {
+	const itemId = payload?.itemId ?? payload
+	return items.filter((item) => !cartItemMatchesById(item, itemId))
+}
+
+function replaceItemQuantity(items, responseItem, requestPayload) {
+	const itemId = requestPayload?.itemId
+	const requestedQuantity = Number(requestPayload?.quantity)
+	const responseQuantity = Number(responseItem?.quantity)
+	const quantity = Number.isInteger(responseQuantity) && responseQuantity > 0
+		? responseQuantity
+		: requestedQuantity
+
+	return items.map((item) => {
+		if (!cartItemMatchesById(item, itemId)) return item
+
+		return {
+			...item,
+			...(responseItem && typeof responseItem === 'object' ? responseItem : {}),
+			quantity,
 		}
-
-		nextItems.push(item)
-	}
-
-	return hasChanged ? nextItems : items
+	})
 }
 
 function incrementOrAppendItem(items, payload) {
@@ -137,6 +141,17 @@ export const removeCartItemThunk = createAsyncThunk(
 			return await removeCartItemRequest(itemId)
 		} catch (error) {
 			return rejectWithValue(error.response?.data?.error || 'No se pudo eliminar el item')
+		}
+	},
+)
+
+export const updateCartItemQuantityThunk = createAsyncThunk(
+	'cart/updateCartItemQuantity',
+	async ({ itemId, quantity }, { rejectWithValue }) => {
+		try {
+			return await updateCartItemQuantity(itemId, quantity)
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo actualizar la cantidad')
 		}
 	},
 )
@@ -223,11 +238,24 @@ const cartSlice = createSlice({
 					return
 				}
 
-				state.items = decrementOrRemoveItem(state.items, action.meta.arg)
+				state.items = removeItemById(state.items, action.meta.arg)
 			})
 			.addCase(removeCartItemThunk.rejected, (state, action) => {
 				state.loading = false
 				state.error = action.payload || 'No se pudo eliminar el item'
+			})
+			.addCase(updateCartItemQuantityThunk.pending, (state) => {
+				state.loading = true
+				state.isCheckingOut = false
+				state.error = null
+			})
+			.addCase(updateCartItemQuantityThunk.fulfilled, (state, action) => {
+				state.loading = false
+				state.items = replaceItemQuantity(state.items, action.payload, action.meta.arg)
+			})
+			.addCase(updateCartItemQuantityThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo actualizar la cantidad'
 			})
 			.addCase(checkoutThunk.pending, (state) => {
 					state.isCheckingOut = true

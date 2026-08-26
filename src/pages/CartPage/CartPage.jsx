@@ -9,6 +9,7 @@ import {
 	addCartItemThunk,
 	fetchCartThunk,
 	removeCartItemThunk,
+	updateCartItemQuantityThunk,
 } from '../../store/slices/cartSlice'
 import styles from './CartPage.module.css'
 
@@ -51,13 +52,7 @@ function CartPage() {
 	const handleRemoveLine = (item) => {
 		const itemId = getBackendItemId(item)
 		if (itemId != null) {
-			dispatch(
-				removeCartItemThunk({
-					itemId,
-					productId: getProductId(item),
-					removeAll: true,
-				}),
-			)
+			dispatch(removeCartItemThunk({ itemId }))
 		}
 	}
 
@@ -70,14 +65,16 @@ function CartPage() {
 
 	const handleDecrease = (item) => {
 		const itemId = getBackendItemId(item)
-		if (itemId != null) {
-			dispatch(
-				removeCartItemThunk({
-					itemId,
-					productId: getProductId(item),
-				}),
-			)
+		if (itemId == null) return
+
+		const quantity = Number(item.quantity ?? 1)
+
+		if (Number.isInteger(quantity) && quantity > 1) {
+			dispatch(updateCartItemQuantityThunk({ itemId, quantity: quantity - 1 }))
+			return
 		}
+
+		dispatch(removeCartItemThunk({ itemId }))
 	}
 
 	const handleGoToCheckout = () => {
