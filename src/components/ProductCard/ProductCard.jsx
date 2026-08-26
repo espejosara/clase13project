@@ -9,10 +9,12 @@ import styles from './ProductCard.module.css'
 function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
+	const [cartError, setCartError] = useState('')
 
 	const handleAddToCart = async () => {
 		if (isAddingToCart) return
 
+		setCartError('')
 		setIsAddingToCart(true)
 		try {
 			if (onAddToCart) {
@@ -20,6 +22,8 @@ function ProductCard({ product, onAddToCart }) {
 			} else {
 				await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
 			}
+		} catch {
+			setCartError('No se pudo añadir el producto al carrito. Inténtalo de nuevo.')
 		} finally {
 			setIsAddingToCart(false)
 		}
@@ -66,6 +70,7 @@ function ProductCard({ product, onAddToCart }) {
 					className={styles.actionButton}
 					activeClassName={styles.isActive}
 				/>
+				{cartError ? <p className={styles.actionError} role="alert">{cartError}</p> : null}
 			</div>
 		</article>
 	)

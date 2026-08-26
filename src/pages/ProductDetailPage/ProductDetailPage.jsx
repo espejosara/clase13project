@@ -8,6 +8,7 @@ import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
 import Spinner from '../../components/Spinner/Spinner'
 import WishlistButton from '../../components/WishlistButton/WishlistButton'
+import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import styles from './ProductDetailPage.module.css'
@@ -17,6 +18,7 @@ function ProductDetailPage() {
 	const dispatch = useDispatch()
 	const [createdReviews, setCreatedReviews] = useState([])
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
+	const [cartError, setCartError] = useState('')
 	const { data: product, loading, error } = useProduct(productId)
 	const {
 		data: reviews,
@@ -33,11 +35,14 @@ function ProductDetailPage() {
 	}
 
 	const handleAddToCart = async () => {
-		if (!product || isAddingToCart) return
+	if (!product || isAddingToCart) return
 
+		setCartError('')
 		setIsAddingToCart(true)
 		try {
 			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+		} catch {
+			setCartError('No se pudo añadir el producto al carrito. Inténtalo de nuevo.')
 		} finally {
 			setIsAddingToCart(false)
 		}
@@ -48,7 +53,7 @@ function ProductDetailPage() {
 	}
 
 	if (error) {
-		return <p>Error al cargar el producto: {error}</p>
+		return <StatusMessage title="No se pudo cargar el producto" description={error} variant="error" />
 	}
 
 	if (!product) {
@@ -79,7 +84,7 @@ function ProductDetailPage() {
 			<p className={styles.meta}>
 				Disponibilidad: {product.stock} unidades en stock
 			</p>
-			<p className={styles.actions}>
+			<div className={styles.actions}>
 				<Button
 					type="button"
 					variant="primary"
@@ -102,13 +107,14 @@ function ProductDetailPage() {
 					activeClassName={styles.isActive}
 				/>{' '}
 				<Link to="/cart" className="app-action-link">Ir al carrito</Link>
-			</p>
+				{cartError ? <p className={styles.actionError} role="alert">{cartError}</p> : null}
+			</div>
 
 			<section>
 				<h2>Reviews</h2>
 				<ReviewForm productId={productId} onReviewCreated={handleReviewCreated} />
 				{reviewsLoading ? <Spinner label="Cargando reseñas..." /> : null}
-				{reviewsError ? <p>Error al cargar reviews: {reviewsError}</p> : null}
+				{reviewsError ? <StatusMessage title="No se pudieron cargar las reseñas" description={reviewsError} variant="error" /> : null}
 				{!reviewsLoading && !reviewsError ? <ReviewList reviews={allReviews} /> : null}
 			</section>
 		</section>

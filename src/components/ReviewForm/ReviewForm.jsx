@@ -79,8 +79,8 @@ function ReviewForm({ productId, onReviewCreated }) {
 				{loading ? 'Enviando...' : 'Publicar reseña'}
 			</Button>
 
-			{error ? <p className={`${styles.message} ${styles.messageError}`}>{error}</p> : null}
-			{successMessage ? <p className={`${styles.message} ${styles.messageSuccess}`}>{successMessage}</p> : null}
+			{error ? <p className={`${styles.message} ${styles.messageError}`} role="alert">{error}</p> : null}
+			{successMessage ? <p className={`${styles.message} ${styles.messageSuccess}`} role="status">{successMessage}</p> : null}
 		</form>
 	)
 }
