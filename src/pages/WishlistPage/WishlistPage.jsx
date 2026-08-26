@@ -19,6 +19,7 @@ const FALLBACK_IMAGE =
 function WishlistPage() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
+	const [actionError, setActionError] = useState('')
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const [addingToCart, setAddingToCart] = useState(null)
 	const dispatch = useDispatch()
@@ -75,8 +76,10 @@ function WishlistPage() {
 	// Alterna un favorito desde la página y mantiene el estado local sincronizado.
 	const handleToggleWishlist = async (productId) => {
 		if (togglingWishlist === productId) return
+		const previousWishlistIds = [...wishlistIds]
 
 		try {
+			setActionError('')
 			setTogglingWishlist(productId)
 			dispatch(toggleLocalWishlist(productId))
 
@@ -86,7 +89,9 @@ function WishlistPage() {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
 		} catch (toggleError) {
-			console.log('No se pudo sincronizar la wishlist con el back', toggleError)
+			dispatch(setLocalWishlist(previousWishlistIds))
+			setActionError('No se pudo quitar el producto de favoritos. Inténtalo de nuevo.')
+			console.error('No se pudo sincronizar la wishlist con el back', toggleError)
 		} finally {
 			setTogglingWishlist(null)
 		}
@@ -112,8 +117,10 @@ function WishlistPage() {
 
 	const handleAddToCart = async (productId) => {
 		if (addingToCart === productId || togglingWishlist === productId) return
+		const previousWishlistIds = [...wishlistIds]
 
 		try {
+			setActionError('')
 			setAddingToCart(productId)
 			await dispatch(addCartItemThunk({ productId, quantity: 1 })).unwrap()
 
@@ -125,7 +132,9 @@ function WishlistPage() {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
 		} catch (addError) {
-			console.log('No se pudo añadir al carrito desde favoritos', addError)
+			dispatch(setLocalWishlist(previousWishlistIds))
+			setActionError('No se pudo completar la acción. Revisa tu conexión e inténtalo de nuevo.')
+			console.error('No se pudo añadir al carrito desde favoritos', addError)
 		} finally {
 			setAddingToCart(null)
 			setTogglingWishlist(null)
@@ -154,6 +163,12 @@ function WishlistPage() {
 					>
 						Reintentar
 					</Button>
+				</div>
+			) : null}
+
+			{actionError ? (
+				<div className={styles.messageRow}>
+					<StatusMessage title="No se pudo actualizar favoritos" description={actionError} variant="error" />
 				</div>
 			) : null}
 
