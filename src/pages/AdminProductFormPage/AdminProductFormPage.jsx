@@ -8,7 +8,17 @@ import {
 import Button from '../../components/Button/Button'
 import FormInput from '../../components/FormInput/FormInput'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import { buildProductFormData } from '../../utils/productFormData'
 import styles from './AdminProductFormPage.module.css'
+
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024
+const ALLOWED_IMAGE_TYPES = new Set([
+	'image/avif',
+	'image/gif',
+	'image/jpeg',
+	'image/png',
+	'image/webp',
+])
 
 const emptyForm = {
 	name: '',
@@ -16,23 +26,13 @@ const emptyForm = {
 	description: '',
 	price: '',
 	stock: '',
-	imageUrl: '',
 }
 
 function getErrorMessage(error, fallback) {
 	return error.response?.data?.error || fallback
 }
 
-function isValidImageUrl(value) {
-	try {
-		const url = new URL(value)
-		return url.protocol === 'http:' || url.protocol === 'https:'
-	} catch {
-		return false
-	}
-}
-
-function validateProduct(formData) {
+function validateProduct(formData, imageFile, isEditing) {
 	const errors = {}
 	const price = Number(formData.price)
 	const stock = Number(formData.stock)
@@ -53,10 +53,12 @@ function validateProduct(formData) {
 		errors.stock = 'El stock debe ser un número entero igual o mayor que 0'
 	}
 
-	if (!formData.imageUrl.trim()) {
-		errors.imageUrl = 'La URL de la imagen es obligatoria'
-	} else if (!isValidImageUrl(formData.imageUrl.trim())) {
-		errors.imageUrl = 'Introduce una URL de imagen válida'
+	if (!imageFile && !isEditing) {
+		errors.image = 'Selecciona una imagen para el producto'
+	} else if (imageFile && !ALLOWED_IMAGE_TYPES.has(imageFile.type)) {
+		errors.image = 'Usa una imagen JPG, PNG, WebP, GIF o AVIF'
+	} else if (imageFile && imageFile.size > MAX_IMAGE_SIZE_BYTES) {
+		errors.image = 'La imagen no puede superar los 5 MB'
 	}
 
 	return errors
@@ -71,6 +73,8 @@ function AdminProductFormPage() {
 	const [submitting, setSubmitting] = useState(false)
 	const [error, setError] = useState('')
 	const [fieldErrors, setFieldErrors] = useState({})
+	const [imageFile, setImageFile] = useState(null)
+	const [existingImageUrl, setExistingImageUrl] = useState('')
 
 	useEffect(() => {
 		if (!isEditing) return undefined
@@ -91,8 +95,8 @@ function AdminProductFormPage() {
 					description: product.description || '',
 					price: String(product.price ?? ''),
 					stock: String(product.stock ?? ''),
-					imageUrl: product.imageUrl || '',
 				})
+				setExistingImageUrl(product.imageUrl || '')
 			} catch (requestError) {
 				if (active) {
 					setError(getErrorMessage(requestError, 'No se pudo cargar el producto.'))
@@ -115,24 +119,29 @@ function AdminProductFormPage() {
 		setFieldErrors((currentErrors) => ({ ...currentErrors, [name]: '' }))
 	}
 
+	const handleFileChange = (event) => {
+		const selectedFile = event.target.files?.[0] || null
+		setImageFile(selectedFile)
+		setFieldErrors((currentErrors) => ({ ...currentErrors, image: '' }))
+	}
+
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-		const validationErrors = validateProduct(formData)
+		const validationErrors = validateProduct(formData, imageFile, isEditing)
 
 		if (Object.keys(validationErrors).length > 0) {
 			setFieldErrors(validationErrors)
 			return
 		}
 
-		const payload = {
-			...formData,
+		const normalizedProduct = {
 			name: formData.name.trim(),
 			category: formData.category.trim(),
 			description: formData.description.trim(),
-			imageUrl: formData.imageUrl.trim(),
-			price: Number(formData.price),
-			stock: Number(formData.stock),
+			price: formData.price,
+			stock: formData.stock,
 		}
+		const payload = buildProductFormData(normalizedProduct, imageFile)
 
 		try {
 			setSubmitting(true)
@@ -217,18 +226,39 @@ function AdminProductFormPage() {
 						error={fieldErrors.stock}
 					/>
 
-					<div className={styles.fullWidth}>
-						<FormInput
-							id="product-image-url"
-							name="imageUrl"
-							type="url"
-							label="URL de la imagen"
-							placeholder="https://ejemplo.com/producto.jpg"
-							value={formData.imageUrl}
-							onChange={handleChange}
-							error={fieldErrors.imageUrl}
+					<div className={`${styles.field} ${styles.fullWidth}`}>
+						<label htmlFor="product-image">
+							{isEditing ? 'Nueva imagen (opcional)' : 'Imagen'}
+						</label>
+						<input
+							id="product-image"
+							className={styles.fileInput}
+							type="file"
+							name="image"
+							accept="image/avif,image/gif,image/jpeg,image/png,image/webp"
+							onChange={handleFileChange}
+							aria-invalid={Boolean(fieldErrors.image)}
+							aria-describedby={fieldErrors.image ? 'product-image-error' : 'product-image-help'}
 						/>
+						<p id="product-image-help" className={styles.helpText}>
+							JPG, PNG, WebP, GIF o AVIF. Tamaño máximo: 5 MB.
+						</p>
+						{imageFile ? (
+							<p className={styles.selectedFile}>Archivo seleccionado: {imageFile.name}</p>
+						) : null}
+						{fieldErrors.image ? (
+							<p id="product-image-error" className={styles.fieldError} role="alert">
+								{fieldErrors.image}
+							</p>
+						) : null}
 					</div>
+
+					{isEditing && existingImageUrl ? (
+						<figure className={`${styles.currentImage} ${styles.fullWidth}`}>
+							<img src={existingImageUrl} alt={`Imagen actual de ${formData.name || 'producto'}`} />
+							<figcaption>Imagen actual; se conservará si no seleccionas otra.</figcaption>
+						</figure>
+					) : null}
 
 					<label className={`${styles.field} ${styles.fullWidth}`}>
 						<span>Descripción</span>

@@ -28,12 +28,16 @@ function renderForm(path) {
 }
 
 async function completeForm(user) {
+	const image = new File(['imagen'], 'figura.png', { type: 'image/png' })
+
 	await user.type(screen.getByLabelText('Nombre'), 'Nueva figura')
 	await user.type(screen.getByLabelText('Categoría'), 'acción')
 	await user.type(screen.getByLabelText('Precio (€)'), '29.95')
 	await user.type(screen.getByLabelText('Stock'), '5')
-	await user.type(screen.getByLabelText('URL de la imagen'), 'https://example.com/figura.jpg')
+	await user.upload(screen.getByLabelText('Imagen'), image)
 	await user.type(screen.getByLabelText('Descripción'), 'Descripción de la figura')
+
+	return image
 }
 
 describe('AdminProductFormPage', () => {
@@ -49,24 +53,28 @@ describe('AdminProductFormPage', () => {
 
 		expect(screen.getByText('El nombre es obligatorio')).toBeInTheDocument()
 		expect(screen.getByText('El precio es obligatorio')).toBeInTheDocument()
+		expect(screen.getByText('Selecciona una imagen para el producto')).toBeInTheDocument()
 		expect(createProduct).not.toHaveBeenCalled()
 	})
 
-	it('crea un producto convirtiendo precio y stock a números', async () => {
+	it('crea un producto enviando sus campos y la imagen como FormData', async () => {
 		const user = userEvent.setup()
 		createProduct.mockResolvedValue({ id: 21 })
 		renderForm('/admin/products/new')
 
-		await completeForm(user)
+		const image = await completeForm(user)
 		await user.click(screen.getByRole('button', { name: 'Crear producto' }))
 
-		expect(createProduct).toHaveBeenCalledWith({
+		expect(createProduct).toHaveBeenCalledOnce()
+		const payload = createProduct.mock.calls[0][0]
+		expect(payload).toBeInstanceOf(FormData)
+		expect(Object.fromEntries(payload.entries())).toEqual({
 			name: 'Nueva figura',
 			category: 'acción',
 			description: 'Descripción de la figura',
-			price: 29.95,
-			stock: 5,
-			imageUrl: 'https://example.com/figura.jpg',
+			price: '29.95',
+			stock: '5',
+			image,
 		})
 		expect(await screen.findByRole('heading', { name: 'Listado admin' })).toBeInTheDocument()
 	})
@@ -90,14 +98,18 @@ describe('AdminProductFormPage', () => {
 		await user.type(nameInput, 'Figura actualizada')
 		await user.click(screen.getByRole('button', { name: 'Actualizar producto' }))
 
-		expect(updateProduct).toHaveBeenCalledWith('7', {
+		expect(updateProduct).toHaveBeenCalledOnce()
+		const [productId, payload] = updateProduct.mock.calls[0]
+		expect(productId).toBe('7')
+		expect(payload).toBeInstanceOf(FormData)
+		expect(Object.fromEntries(payload.entries())).toEqual({
 			name: 'Figura actualizada',
 			category: 'magia',
 			description: 'Descripción existente',
-			price: 19.5,
-			stock: 2,
-			imageUrl: 'https://example.com/existente.jpg',
+			price: '19.5',
+			stock: '2',
 		})
+		expect(payload.has('image')).toBe(false)
 		expect(await screen.findByRole('heading', { name: 'Listado admin' })).toBeInTheDocument()
 	})
 })

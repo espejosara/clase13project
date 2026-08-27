@@ -61,6 +61,28 @@
 	background: var(--color-danger-soft);
 }
 
+.fileInput {
+	padding: 0.55rem;
+}
+
+.fileInput[aria-invalid='true'] {
+	border-color: var(--color-danger);
+	background: var(--color-danger-soft);
+}
+
+.helpText,
+.selectedFile {
+	margin: 0;
+	color: var(--color-text-soft);
+	font-size: 0.875rem;
+	font-weight: 400;
+}
+
+.selectedFile {
+	color: var(--color-success);
+	font-weight: 700;
+}
+
 .fieldError {
 	margin: 0;
 	color: var(--color-danger);
@@ -70,6 +92,26 @@
 
 .fullWidth {
 	grid-column: 1 / -1;
+}
+
+.currentImage {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	margin: 0;
+	padding: 0.8rem;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 0.7rem;
+	background: var(--color-surface-alt);
+	color: var(--color-text-soft);
+	font-size: 0.875rem;
+}
+
+.currentImage img {
+	width: 5rem;
+	height: 5rem;
+	border-radius: 0.55rem;
+	object-fit: cover;
 }
 
 .actions {
@@ -85,6 +127,11 @@
 
 	.fullWidth {
 		grid-column: auto;
+	}
+
+	.currentImage {
+		align-items: flex-start;
+		flex-direction: column;
 	}
 
 	.actions {

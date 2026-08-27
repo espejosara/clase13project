@@ -35,15 +35,17 @@ describe('API de productos', () => {
 
 	it('crea, actualiza y elimina productos', async () => {
 		const product = { id: 1, name: 'Figura' }
+		const multipartPayload = new FormData()
+		multipartPayload.append('name', product.name)
 		api.post.mockResolvedValue({ data: { data: product } })
 		api.put.mockResolvedValue({ data: { data: product } })
 		api.delete.mockResolvedValue({ data: { data: { message: 'Producto eliminado' } } })
 
-		await expect(createProduct(product)).resolves.toEqual(product)
-		await expect(updateProduct(1, product)).resolves.toEqual(product)
+		await expect(createProduct(multipartPayload)).resolves.toEqual(product)
+		await expect(updateProduct(1, multipartPayload)).resolves.toEqual(product)
 		await expect(deleteProduct(1)).resolves.toEqual({ message: 'Producto eliminado' })
-		expect(api.post).toHaveBeenCalledWith('/products', product)
-		expect(api.put).toHaveBeenCalledWith('/products/1', product)
+		expect(api.post).toHaveBeenCalledWith('/products', multipartPayload)
+		expect(api.put).toHaveBeenCalledWith('/products/1', multipartPayload)
 		expect(api.delete).toHaveBeenCalledWith('/products/1')
 	})
 })
