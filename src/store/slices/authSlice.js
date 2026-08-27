@@ -177,4 +177,8 @@ const authSlice = createSlice({
 
 export const { logout } = authSlice.actions
 
+export const selectIsAdmin = (state) => (
+	String(state.auth.user?.role || '').toUpperCase() === 'ADMIN'
+)
+
 export default authSlice.reducer

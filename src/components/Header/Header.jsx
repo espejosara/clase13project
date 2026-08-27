@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button/Button'
 import { fetchCartThunk } from '../../store/slices/cartSlice'
-import { logout } from '../../store/slices/authSlice'
+import { logout, selectIsAdmin } from '../../store/slices/authSlice'
 import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlice'
 import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
@@ -19,7 +19,7 @@ function Header() {
 	const profileMenuRef = useRef(null)
 	const lastHeaderSyncRef = useRef(0)
 	const token = useSelector((state) => state.auth.token)
-	const user = useSelector((state) => state.auth.user)
+	const isAdmin = useSelector(selectIsAdmin)
 	const cartItems = useSelector((state) => state.cart.items)
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const location = useLocation()
@@ -200,7 +200,7 @@ function Header() {
 										<Link to="/profile" className={styles.dropdownItem}>
 											Mi cuenta
 										</Link>
-										{user?.role === 'admin' ? (
+										{isAdmin ? (
 											<Link to="/admin" className={styles.dropdownItem}>
 												Panel admin
 											</Link>

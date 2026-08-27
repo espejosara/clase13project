@@ -6,6 +6,7 @@ import ProductDetailPage from '../pages/ProductDetailPage/ProductDetailPage'
 import LoginPage from '../pages/LoginPage/LoginPage'
 import RegisterPage from '../pages/RegisterPage/RegisterPage'
 import PrivateRoute from '../components/PrivateRoute/PrivateRoute'
+import AdminRoute from '../components/AdminRoute/AdminRoute'
 import CartPage from '../pages/CartPage/CartPage'
 import WishlistPage from '../pages/WishlistPage/WishlistPage'
 import ProfilePage from '../pages/ProfilePage/ProfilePage'
@@ -64,12 +65,13 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: 'admin',
-				element: (
-					<PrivateRoute allowedRoles={['admin']}>
-						<AdminPage />
-					</PrivateRoute>
-				),
+				element: <AdminRoute />,
+				children: [
+					{
+						path: 'admin',
+						element: <AdminPage />,
+					},
+				],
 			},
 			{
 				path: 'checkout',

@@ -37,6 +37,7 @@ src/
 			cartSlice.js
 			wishlistSlice.js
 	components/
+		AdminRoute/
 		PrivateRoute/
 		Spinner/
 		WishlistButton/
@@ -155,6 +156,7 @@ Authorization: Bearer <token>
 - /cart
 - /wishlist
 - /profile
+- /admin (solo rol ADMIN)
 - /checkout
 - /checkout/success
 - * (404)
@@ -166,6 +168,7 @@ Authorization: Bearer <token>
 - Interceptor Axios para adjuntar token automáticamente.
 - Manejo global de `401` con redirección a login y aviso de sesión expirada.
 - Rutas privadas con `PrivateRoute`.
+- Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
 - Carrito global con fetch, add, remove y checkout.
 - Wishlist global con fetch y toggle.
 - Perfil con datos del usuario y logout.
@@ -230,11 +233,12 @@ No usar useMemo cuando:
 1. Abrir http://localhost:5173/login y comprobar que puedes iniciar sesión.
 2. Recargar la página y comprobar que la sesión persiste.
 3. Abrir rutas privadas como /cart, /wishlist o /profile.
-4. Añadir un producto al carrito desde /products.
-5. Añadir o quitar un producto de favoritos.
-6. Ir a /cart y completar checkout.
-7. Comprobar la redirección a /checkout/success.
-8. Abrir un detalle de producto y crear una reseña autenticada.
+4. Comprobar que un usuario USER no ve ni puede abrir `/admin` y que un ADMIN sí puede.
+5. Añadir un producto al carrito desde /products.
+6. Añadir o quitar un producto de favoritos.
+7. Ir a /cart y completar checkout.
+8. Comprobar la redirección a /checkout/success.
+9. Abrir un detalle de producto y crear una reseña autenticada.
 
 ## Checklist de cierre de sprint
 
