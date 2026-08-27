@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import styles from './AdminPage.module.css'
 
@@ -10,6 +11,9 @@ function AdminPage() {
 				title="Bienvenido al panel de administración"
 				description="Desde aquí podrás gestionar los productos de la tienda."
 			/>
+			<Link className="app-action-link" to="/admin/products">
+				Gestionar productos
+			</Link>
 		</section>
 	)
 }

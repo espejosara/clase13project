@@ -11,6 +11,8 @@ import CartPage from '../pages/CartPage/CartPage'
 import WishlistPage from '../pages/WishlistPage/WishlistPage'
 import ProfilePage from '../pages/ProfilePage/ProfilePage'
 import AdminPage from '../pages/AdminPage/AdminPage'
+import AdminProductsPage from '../pages/AdminProductsPage/AdminProductsPage'
+import AdminProductFormPage from '../pages/AdminProductFormPage/AdminProductFormPage'
 import CheckoutPage from '../pages/CheckoutPage/CheckoutPage'
 import CheckoutSuccessPage from '../pages/CheckoutSuccessPage/CheckoutSuccessPage'
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage'
@@ -70,6 +72,18 @@ export const router = createBrowserRouter([
 					{
 						path: 'admin',
 						element: <AdminPage />,
+					},
+					{
+						path: 'admin/products',
+						element: <AdminProductsPage />,
+					},
+					{
+						path: 'admin/products/new',
+						element: <AdminProductFormPage />,
+					},
+					{
+						path: 'admin/products/:id/edit',
+						element: <AdminProductFormPage />,
 					},
 				],
 			},

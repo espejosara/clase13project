@@ -43,6 +43,9 @@ src/
 		WishlistButton/
 		ReviewForm/
 	pages/
+		AdminPage/
+		AdminProductsPage/
+		AdminProductFormPage/
 		HomePage/
 		ProductsPage/
 		ProductDetailPage/
@@ -140,6 +143,12 @@ Debe quedar activo en http://localhost:5173
 - POST /wishlist/:productId
 - POST /products/:id/reviews
 
+### Administración (rol ADMIN)
+
+- POST /products
+- PUT /products/:id
+- DELETE /products/:id
+
 Header requerido en privadas:
 
 ```http
@@ -157,6 +166,9 @@ Authorization: Bearer <token>
 - /wishlist
 - /profile
 - /admin (solo rol ADMIN)
+- /admin/products (solo rol ADMIN)
+- /admin/products/new (solo rol ADMIN)
+- /admin/products/:id/edit (solo rol ADMIN)
 - /checkout
 - /checkout/success
 - * (404)
@@ -169,6 +181,8 @@ Authorization: Bearer <token>
 - Manejo global de `401` con redirección a login y aviso de sesión expirada.
 - Rutas privadas con `PrivateRoute`.
 - Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
+- CRUD de productos con listado, creación, edición y eliminación confirmada.
+- Formulario único de alta y edición con validaciones de campos, precio, stock e imagen por URL.
 - Carrito global con fetch, add, remove y checkout.
 - Wishlist global con fetch y toggle.
 - Perfil con datos del usuario y logout.
