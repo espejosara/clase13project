@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+const LOCAL_API_BASE_URL = 'http://localhost:3000'
+const PRODUCTION_API_BASE_URL = 'https://backend-lite-sprint13.onrender.com'
+const baseURL = import.meta.env.VITE_API_BASE_URL
+	|| (import.meta.env.PROD ? PRODUCTION_API_BASE_URL : LOCAL_API_BASE_URL)
 const AUTH_TOKEN_KEY = 'auth_token'
 const AUTH_USER_KEY = 'auth_user'
 const AUTH_EXPIRED_KEY = 'auth_session_expired'

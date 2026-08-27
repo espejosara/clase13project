@@ -69,6 +69,18 @@ src/
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
+### Configuración de producción en Netlify
+
+El build de producción utiliza `https://backend-lite-sprint13.onrender.com`, definido en `.env.production`.
+
+En Netlify, revisar **Site configuration → Environment variables** y configurar:
+
+```env
+VITE_API_BASE_URL=https://backend-lite-sprint13.onrender.com
+```
+
+La variable no debe contener comillas, espacios finales ni `/products`. Después de cambiarla es necesario desplegar nuevamente el sitio para que Vite incorpore el valor al bundle.
+
 2. Instalar dependencias:
 
 ```bash
