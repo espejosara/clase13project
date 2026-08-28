@@ -19,8 +19,3 @@ export async function removeCartItemRequest(itemId) {
 	const response = await api.delete(`/cart/items/${itemId}`)
 	return response.data.data ?? response.data
 }
-
-export async function checkoutRequest(payload) {
-	const response = await api.post('/cart/checkout', payload)
-	return response.data.data ?? response.data
-}

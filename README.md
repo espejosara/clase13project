@@ -133,6 +133,7 @@ Debe quedar activo en http://localhost:5173
 - POST /auth/login
 - POST /auth/register
 - POST /auth/logout
+- POST /payments/checkout-session
 
 ### Privadas
 
@@ -185,7 +186,7 @@ axios.create({ withCredentials: true })
 - Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
 - CRUD de productos con listado, creación, edición y eliminación confirmada.
 - Formulario único de alta y edición con validaciones de campos, precio, stock e imagen por URL.
-- Carrito global con fetch, add, remove y checkout.
+- Carrito global con fetch, add, remove y redirección a Stripe Checkout.
 - Wishlist global con fetch y toggle.
 - Perfil con datos del usuario y logout.
 - ReviewForm autenticado para crear reseñas.

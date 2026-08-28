@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
@@ -25,7 +25,6 @@ function getItemImage(item) {
 
 function CheckoutPage() {
 	const dispatch = useDispatch()
-	const navigate = useNavigate()
 	const { items, loading, isCheckingOut, error } = useSelector((state) => state.cart)
 
 	useEffect(() => {
@@ -42,8 +41,8 @@ function CheckoutPage() {
 		if (!items.length || isCheckingOut) return
 
 		try {
-			await dispatch(checkoutThunk()).unwrap()
-			navigate('/checkout/success')
+			const checkoutSession = await dispatch(checkoutThunk()).unwrap()
+			window.location.assign(checkoutSession.url)
 		} catch {
 			// El mensaje de error ya queda reflejado en el slice.
 		}
@@ -62,7 +61,7 @@ function CheckoutPage() {
 			<section className={styles.hero}>
 				<p className={styles.eyebrow}>Checkout</p>
 				<h1 id="checkout-title" className={styles.title}>Resumen de tu pedido</h1>
-				<p className={styles.subtitle}>Verifica tus productos y confirma la compra.</p>
+				<p className={styles.subtitle}>Verifica tus productos y continúa al pago seguro de Stripe.</p>
 			</section>
 
 			{error ? (
@@ -104,7 +103,7 @@ function CheckoutPage() {
 							items={items}
 							onCheckout={handleConfirmCheckout}
 							loading={loading || isCheckingOut}
-							checkoutLabel="Confirmar compra"
+							checkoutLabel="Pagar con Stripe"
 						/>
 						<Link to="/cart" className={`app-action-link ${styles.backLink}`}>Volver al carrito</Link>
 					</div>

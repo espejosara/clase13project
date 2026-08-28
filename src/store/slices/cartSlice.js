@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import {
 	addCartItemRequest,
-	checkoutRequest,
 	fetchCartRequest,
 	removeCartItemRequest,
 	updateCartItemQuantity,
 } from '../../api/cart'
+import { createCheckoutSessionRequest } from '../../api/payments'
 
 function extractItems(payload) {
 	if (Array.isArray(payload)) return payload
@@ -158,11 +158,15 @@ export const updateCartItemQuantityThunk = createAsyncThunk(
 
 export const checkoutThunk = createAsyncThunk(
 	'cart/checkout',
-	async (payload, { rejectWithValue }) => {
+	async (_, { rejectWithValue }) => {
 		try {
-			return await checkoutRequest(payload)
+			return await createCheckoutSessionRequest()
 		} catch (error) {
-			return rejectWithValue(error.response?.data?.error || 'No se pudo completar el checkout')
+			return rejectWithValue(
+				error.response?.data?.error
+				|| error.message
+				|| 'No se pudo iniciar el pago con Stripe',
+			)
 		}
 	},
 )
@@ -261,13 +265,12 @@ const cartSlice = createSlice({
 					state.isCheckingOut = true
 				state.error = null
 			})
-			.addCase(checkoutThunk.fulfilled, (state, action) => {
+			.addCase(checkoutThunk.fulfilled, (state) => {
 					state.isCheckingOut = false
-				state.items = extractItems(action.payload)
 			})
 			.addCase(checkoutThunk.rejected, (state, action) => {
 					state.isCheckingOut = false
-				state.error = action.payload || 'No se pudo completar el checkout'
+				state.error = action.payload || 'No se pudo iniciar el pago con Stripe'
 			})
 	},
 })
