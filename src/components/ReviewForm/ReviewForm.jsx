@@ -5,14 +5,18 @@ import Button from '../Button/Button'
 import styles from './ReviewForm.module.css'
 
 function ReviewForm({ productId, onReviewCreated }) {
-	const { token } = useSelector((state) => state.auth)
+	const { sessionChecked, user } = useSelector((state) => state.auth)
 	const [rating, setRating] = useState('5')
 	const [comment, setComment] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
 
-	if (!token) {
+	if (!sessionChecked) {
+		return null
+	}
+
+	if (!user) {
 		return <p className={styles.hint}>Inicia sesión para escribir una reseña.</p>
 	}
 

@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button/Button'
 import { fetchCartThunk } from '../../store/slices/cartSlice'
-import { logout, selectIsAdmin } from '../../store/slices/authSlice'
+import { logoutThunk, selectIsAdmin } from '../../store/slices/authSlice'
 import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlice'
 import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
@@ -18,12 +18,12 @@ function Header() {
 	const navigate = useNavigate()
 	const profileMenuRef = useRef(null)
 	const lastHeaderSyncRef = useRef(0)
-	const token = useSelector((state) => state.auth.token)
+	const authenticatedUser = useSelector((state) => state.auth.user)
 	const isAdmin = useSelector(selectIsAdmin)
 	const cartItems = useSelector((state) => state.cart.items)
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const location = useLocation()
-	const isAuthenticated = Boolean(token)
+	const isAuthenticated = Boolean(authenticatedUser)
 	const isMenuOpen = openMenuPath === location.pathname
 	const isProfileMenuOpen = openProfileMenuPath === location.pathname
 
@@ -133,8 +133,13 @@ function Header() {
 		))
 	}
 
-	const handleLogout = () => {
-		dispatch(logout())
+	const handleLogout = async () => {
+		try {
+			await dispatch(logoutThunk()).unwrap()
+		} catch {
+			return
+		}
+
 		dispatch(clearCart())
 		dispatch(clearWishlist())
 		setOpenProfileMenuPath(null)

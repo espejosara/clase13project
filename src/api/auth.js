@@ -10,7 +10,12 @@ export async function register(payload) {
 	return response.data.data
 }
 
-export async function fetchCurrentUserRequest() {
-	const response = await api.get('/auth/me')
+export async function logoutRequest() {
+	const response = await api.post('/auth/logout')
+	return response.data.data ?? response.data
+}
+
+export async function fetchCurrentUserRequest({ suppressAuthRedirect = false } = {}) {
+	const response = await api.get('/auth/me', { suppressAuthRedirect })
 	return response.data.data ?? response.data
 }

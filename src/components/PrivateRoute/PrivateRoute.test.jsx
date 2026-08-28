@@ -33,21 +33,28 @@ function renderAdminRoute(authState) {
 }
 
 describe('PrivateRoute', () => {
+	it('espera a comprobar la cookie antes de decidir la navegación', () => {
+		renderAdminRoute({ sessionChecked: false, user: null })
+
+		expect(screen.getByRole('status')).toHaveTextContent('Comprobando sesión...')
+		expect(screen.queryByRole('heading', { name: 'Página de login' })).not.toBeInTheDocument()
+	})
+
 	it('redirige a login si no hay autenticación', () => {
-		renderAdminRoute({ token: null, user: null })
+		renderAdminRoute({ sessionChecked: true, user: null })
 
 		expect(screen.getByRole('heading', { name: 'Página de login' })).toBeInTheDocument()
 	})
 
 	it('impide acceder al admin a un usuario con rol USER', () => {
-		renderAdminRoute({ token: 'token-valido', user: { role: 'USER' } })
+		renderAdminRoute({ sessionChecked: true, user: { role: 'USER' } })
 
 		expect(screen.getByRole('heading', { name: 'Perfil de usuario' })).toBeInTheDocument()
 		expect(screen.queryByRole('heading', { name: 'Panel privado' })).not.toBeInTheDocument()
 	})
 
 	it('permite acceder al admin a un usuario con rol ADMIN', () => {
-		renderAdminRoute({ token: 'token-valido', user: { role: 'ADMIN' } })
+		renderAdminRoute({ sessionChecked: true, user: { role: 'ADMIN' } })
 
 		expect(screen.getByRole('heading', { name: 'Panel privado' })).toBeInTheDocument()
 	})

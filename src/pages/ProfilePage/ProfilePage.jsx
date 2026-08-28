@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
-import { fetchCurrentUserThunk, logout } from '../../store/slices/authSlice'
+import { fetchCurrentUserThunk, logoutThunk } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import styles from './ProfilePage.module.css'
 
@@ -67,9 +67,13 @@ function ProfilePage() {
 		setOpenOrderId((current) => (current === orderId ? null : orderId))
 	}
 
-	const handleLogout = () => {
-		dispatch(logout())
-		navigate('/login')
+	const handleLogout = async () => {
+		try {
+			await dispatch(logoutThunk()).unwrap()
+			navigate('/login')
+		} catch {
+			// El error ya queda reflejado en auth.error.
+		}
 	}
 
 	const userName = user?.name || 'Usuario sin nombre'

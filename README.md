@@ -1,14 +1,14 @@
 # clase13project
 
-Frontend de e-commerce en React + Vite conectado a un backend real con autenticación JWT, Redux Toolkit y estado global para carrito y wishlist.
+Frontend de e-commerce en React + Vite conectado a un backend real con autenticación JWT en cookie HttpOnly, Redux Toolkit y estado global para carrito y wishlist.
 
 ## Objetivo de esta feature
 
 - Centralizar el estado global con Redux Toolkit.
-- Gestionar autenticación real con token JWT.
+- Gestionar autenticación real con cookie JWT HttpOnly.
 - Proteger rutas privadas.
 - Sincronizar carrito y wishlist con el backend.
-- Mantener sesión tras recargar mediante persistencia local.
+- Restaurar la sesión tras recargar consultando el backend.
 - Permitir checkout y creación de reseñas autenticadas.
 
 ## Stack
@@ -132,10 +132,12 @@ Debe quedar activo en http://localhost:5173
 - GET /products/:id/reviews
 - POST /auth/login
 - POST /auth/register
+- POST /auth/logout
 
 ### Privadas
 
 - GET /cart
+- GET /auth/me
 - POST /cart/items
 - DELETE /cart/items/:itemId
 - POST /cart/checkout
@@ -149,10 +151,10 @@ Debe quedar activo en http://localhost:5173
 - PUT /products/:id
 - DELETE /products/:id
 
-Header requerido en privadas:
+Las peticiones incluyen credenciales para que el navegador envíe la cookie de sesión:
 
-```http
-Authorization: Bearer <token>
+```js
+axios.create({ withCredentials: true })
 ```
 
 ## Rutas del frontend
@@ -176,8 +178,8 @@ Authorization: Bearer <token>
 ## Funcionalidades implementadas
 
 - Login y registro con Redux Toolkit.
-- Persistencia local de token y usuario.
-- Interceptor Axios para adjuntar token automáticamente.
+- Cookie de sesión HttpOnly gestionada por el backend; el token no se expone a JavaScript.
+- Restauración de sesión mediante `GET /auth/me` al iniciar la aplicación.
 - Manejo global de `401` con redirección a login y aviso de sesión expirada.
 - Rutas privadas con `PrivateRoute`.
 - Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
@@ -305,4 +307,4 @@ npm run test:watch
 
 - Si cambias `.env`, reinicia Vite.
 - Si hay errores de red, revisa que backend esté encendido y CORS permita http://localhost:5173.
-- Si el token expira, el frontend limpiará la sesión y pedirá iniciar sesión de nuevo.
+- Si la cookie de sesión expira, el frontend pedirá iniciar sesión de nuevo.

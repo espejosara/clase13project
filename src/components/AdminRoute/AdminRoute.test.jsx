@@ -5,10 +5,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import AdminRoute from './AdminRoute'
 
-function renderAdminRoute(user) {
+function renderAdminRoute(user, sessionChecked = true) {
 	const store = configureStore({
 		reducer: {
-			auth: () => ({ user }),
+			auth: () => ({ sessionChecked, user }),
 		},
 	})
 
@@ -27,6 +27,13 @@ function renderAdminRoute(user) {
 }
 
 describe('AdminRoute', () => {
+	it('espera a comprobar la cookie antes de validar el rol', () => {
+		renderAdminRoute(null, false)
+
+		expect(screen.getByRole('status')).toHaveTextContent('Comprobando sesión...')
+		expect(screen.queryByRole('heading', { name: 'Página de inicio' })).not.toBeInTheDocument()
+	})
+
 	it('redirige al inicio si no hay usuario', () => {
 		renderAdminRoute(null)
 

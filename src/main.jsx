@@ -5,6 +5,9 @@ import { RouterProvider } from 'react-router-dom'
 import './index.css'
 import { router } from './router'
 import { store } from './store'
+import { restoreSessionThunk } from './store/slices/authSlice'
+
+store.dispatch(restoreSessionThunk())
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

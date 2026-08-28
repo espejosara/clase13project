@@ -1,12 +1,16 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import Spinner from '../Spinner/Spinner'
 
 function PrivateRoute({ children, allowedRoles }) {
-	const token = useSelector((state) => state.auth.token)
-	const user = useSelector((state) => state.auth.user)
+	const { sessionChecked, user } = useSelector((state) => state.auth)
 	const location = useLocation()
 
-	if (!token) {
+	if (!sessionChecked) {
+		return <Spinner label="Comprobando sesión..." />
+	}
+
+	if (!user) {
 		return <Navigate to="/login" replace state={{ from: location }} />
 	}
 

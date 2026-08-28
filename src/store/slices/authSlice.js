@@ -1,34 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { fetchCurrentUserRequest, login, register } from '../../api/auth'
-
-const AUTH_TOKEN_KEY = 'auth_token'
-const AUTH_USER_KEY = 'auth_user'
-
-function getStoredUser() {
-	const rawUser = localStorage.getItem(AUTH_USER_KEY)
-	if (!rawUser) return null
-
-	try {
-		return JSON.parse(rawUser)
-	} catch {
-		localStorage.removeItem(AUTH_USER_KEY)
-		return null
-	}
-}
-
-function persistAuth({ token, user }) {
-	if (token) {
-		localStorage.setItem(AUTH_TOKEN_KEY, token)
-	} else {
-		localStorage.removeItem(AUTH_TOKEN_KEY)
-	}
-
-	if (user) {
-		localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user))
-	} else {
-		localStorage.removeItem(AUTH_USER_KEY)
-	}
-}
+import {
+	fetchCurrentUserRequest,
+	login,
+	logoutRequest,
+	register,
+} from '../../api/auth'
 
 function normalizeUser(inputUser) {
 	if (!inputUser || typeof inputUser !== 'object') return null
@@ -103,9 +79,33 @@ export const fetchCurrentUserThunk = createAsyncThunk(
 	},
 )
 
+export const restoreSessionThunk = createAsyncThunk(
+	'auth/restoreSession',
+	async (_, { rejectWithValue }) => {
+		try {
+			return await fetchCurrentUserRequest({ suppressAuthRedirect: true })
+		} catch (error) {
+			return rejectWithValue(error.response?.status === 401
+				? null
+				: error.response?.data?.error || 'No se pudo comprobar la sesión')
+		}
+	},
+)
+
+export const logoutThunk = createAsyncThunk(
+	'auth/logout',
+	async (_, { rejectWithValue }) => {
+		try {
+			return await logoutRequest()
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.error || 'No se pudo cerrar la sesión')
+		}
+	},
+)
+
 const initialState = {
-	token: localStorage.getItem(AUTH_TOKEN_KEY),
-	user: normalizeUser(getStoredUser()),
+	user: null,
+	sessionChecked: false,
 	loading: false,
 	error: null,
 }
@@ -113,14 +113,7 @@ const initialState = {
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
-	reducers: {
-		logout(state) {
-			state.token = null
-			state.user = null
-			state.error = null
-			persistAuth({ token: null, user: null })
-		},
-	},
+	reducers: {},
 	extraReducers: (builder) => {
 		builder
 			.addCase(loginThunk.pending, (state) => {
@@ -130,11 +123,8 @@ const authSlice = createSlice({
 			.addCase(loginThunk.fulfilled, (state, action) => {
 				state.loading = false
 				state.error = null
-
-				state.token = action.payload?.token || state.token
+				state.sessionChecked = true
 				state.user = normalizeUser(action.payload?.user || action.payload)
-
-				persistAuth({ token: state.token, user: state.user })
 			})
 			.addCase(loginThunk.rejected, (state, action) => {
 				state.loading = false
@@ -147,11 +137,8 @@ const authSlice = createSlice({
 			.addCase(registerThunk.fulfilled, (state, action) => {
 				state.loading = false
 				state.error = null
-
-				state.token = action.payload?.token || state.token
+				state.sessionChecked = true
 				state.user = normalizeUser(action.payload?.user || action.payload)
-
-				persistAuth({ token: state.token, user: state.user })
 			})
 			.addCase(registerThunk.rejected, (state, action) => {
 				state.loading = false
@@ -164,18 +151,41 @@ const authSlice = createSlice({
 			.addCase(fetchCurrentUserThunk.fulfilled, (state, action) => {
 				state.loading = false
 				state.error = null
-
 				state.user = normalizeUser(action.payload)
-				persistAuth({ token: state.token, user: state.user })
 			})
 			.addCase(fetchCurrentUserThunk.rejected, (state, action) => {
 				state.loading = false
 				state.error = action.payload || 'No se pudo cargar el perfil del usuario'
 			})
+			.addCase(restoreSessionThunk.pending, (state) => {
+				state.sessionChecked = false
+			})
+			.addCase(restoreSessionThunk.fulfilled, (state, action) => {
+				state.user = normalizeUser(action.payload)
+				state.sessionChecked = true
+				state.error = null
+			})
+			.addCase(restoreSessionThunk.rejected, (state, action) => {
+				state.user = null
+				state.sessionChecked = true
+				state.error = action.payload
+			})
+			.addCase(logoutThunk.pending, (state) => {
+				state.loading = true
+				state.error = null
+			})
+			.addCase(logoutThunk.fulfilled, (state) => {
+				state.user = null
+				state.sessionChecked = true
+				state.loading = false
+				state.error = null
+			})
+			.addCase(logoutThunk.rejected, (state, action) => {
+				state.loading = false
+				state.error = action.payload || 'No se pudo cerrar la sesión'
+			})
 	},
 })
-
-export const { logout } = authSlice.actions
 
 export const selectIsAdmin = (state) => (
 	String(state.auth.user?.role || '').toUpperCase() === 'ADMIN'
