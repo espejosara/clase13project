@@ -236,8 +236,12 @@ No usar useMemo cuando:
 1. Usuario navega por `/products`.
 2. Abre detalle en `/products/:productId`.
 3. Añade al carrito y revisa en `/cart`.
-4. Confirma compra en `/checkout`.
-5. Recibe confirmacion en `/checkout/success`.
+4. Solicita una Checkout Session desde `/checkout` y paga en Stripe.
+5. Stripe vuelve a `/checkout/success?session_id=...` si completa el flujo.
+6. Si cancela, Stripe vuelve a `/checkout?canceled=true` sin vaciar el carrito.
+
+La URL de éxito no demuestra por sí sola que el pago esté confirmado. La creación
+definitiva del pedido debe depender de la confirmación segura recibida por el backend.
 
 ### UX de estados
 
@@ -253,9 +257,11 @@ No usar useMemo cuando:
 4. Comprobar que un usuario USER no ve ni puede abrir `/admin` y que un ADMIN sí puede.
 5. Añadir un producto al carrito desde /products.
 6. Añadir o quitar un producto de favoritos.
-7. Ir a /cart y completar checkout.
-8. Comprobar la redirección a /checkout/success.
-9. Abrir un detalle de producto y crear una reseña autenticada.
+7. Ir a /cart, abrir checkout y continuar al pago de Stripe.
+8. Usar la tarjeta de prueba `4242 4242 4242 4242` con fecha futura y cualquier CVC.
+9. Comprobar el retorno a `/checkout/success?session_id=...`.
+10. Cancelar otro intento y comprobar el retorno a `/checkout?canceled=true`.
+11. Abrir un detalle de producto y crear una reseña autenticada.
 
 ## Checklist de cierre de sprint
 

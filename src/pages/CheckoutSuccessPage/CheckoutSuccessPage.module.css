@@ -24,6 +24,10 @@
 	text-transform: uppercase;
 }
 
+.badgeWarning {
+	color: var(--color-danger);
+}
+
 .title {
 	margin: 0;
 }

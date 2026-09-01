@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
@@ -25,7 +25,9 @@ function getItemImage(item) {
 
 function CheckoutPage() {
 	const dispatch = useDispatch()
+	const [searchParams] = useSearchParams()
 	const { items, loading, isCheckingOut, error } = useSelector((state) => state.cart)
+	const wasCanceled = searchParams.get('canceled') === 'true'
 
 	useEffect(() => {
 		if (!items.length) {
@@ -63,6 +65,16 @@ function CheckoutPage() {
 				<h1 id="checkout-title" className={styles.title}>Resumen de tu pedido</h1>
 				<p className={styles.subtitle}>Verifica tus productos y continúa al pago seguro de Stripe.</p>
 			</section>
+
+			{wasCanceled ? (
+				<div className={styles.returnMessage}>
+					<StatusMessage
+						title="Pago cancelado"
+						description="No se ha realizado ningún cargo. Tu carrito sigue guardado y puedes intentarlo de nuevo cuando quieras."
+						variant="warning"
+					/>
+				</div>
+			) : null}
 
 			{error ? (
 				<div className={styles.messageRow}>
