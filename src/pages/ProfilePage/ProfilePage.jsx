@@ -6,6 +6,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchCurrentUserThunk, logoutThunk } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
+import { formatOrderItemSummary } from '../../utils/orderSummary'
 import styles from './ProfilePage.module.css'
 
 function formatDate(value) {
@@ -151,6 +152,7 @@ function ProfilePage() {
 								const date = order.createdAt ?? order.date ?? order.updatedAt
 								const status = order.status || 'Procesado'
 								const items = getOrderProducts(order)
+								const itemSummary = formatOrderItemSummary(items)
 								const isOpen = openOrderId === String(orderId)
 
 								return (
@@ -170,8 +172,8 @@ function ProfilePage() {
 												<p className={styles.metaItemValue}>{formatPrice(total)}</p>
 											</div>
 											<div className={styles.metaItem}>
-												<span className={styles.metaItemLabel}>Productos</span>
-												<p className={styles.metaItemValue}>{items.length || 0}</p>
+												<span className={styles.metaItemLabel}>Contenido</span>
+												<p className={styles.metaItemValue}>{itemSummary}</p>
 											</div>
 										</div>
 
