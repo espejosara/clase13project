@@ -1,16 +1,13 @@
 .homePage {
-	max-width: var(--container-width);
-	margin: 0 auto;
-	padding: 3rem 1.5rem;
 	display: grid;
-	gap: 1.25rem;
+	gap: var(--space-section);
 }
 
 .panel {
 	background: linear-gradient(160deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
 	border: 1px solid var(--color-border);
-	border-radius: 1rem;
-	padding: 1.5rem;
+	border-radius: var(--radius-card);
+	padding: var(--space-card);
 	box-shadow: var(--shadow-soft);
 	position: relative;
 	overflow: hidden;
@@ -74,7 +71,7 @@
 	justify-content: center;
 	min-height: 2.75rem;
 	padding: 0.65rem 1rem;
-	border-radius: 0.65rem;
+	border-radius: var(--radius-control);
 	font-weight: 700;
 	transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-fast);
 }
@@ -124,21 +121,12 @@
 }
 
 @media (max-width: 900px) {
-	.homePage {
-		padding: 2rem 1rem;
-		gap: 1rem;
-	}
-
 	.panel {
 		padding: 1.15rem;
 	}
 }
 
 @media (max-width: 560px) {
-	.homePage {
-		padding: 1.4rem 0.75rem;
-	}
-
 	.title {
 		font-size: 1.8rem;
 	}
@@ -149,7 +137,7 @@
 
 	.panel {
 		padding: 1rem;
-		border-radius: 0.85rem;
+		border-radius: var(--radius-card);
 	}
 
 	.panel::before {

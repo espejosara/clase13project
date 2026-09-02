@@ -1,9 +1,9 @@
 .page {
-	padding-bottom: 3rem;
+	min-width: 0;
 }
 
 .hero {
-	padding: 1rem 0 2rem;
+	margin-bottom: var(--space-section);
 }
 
 .eyebrow {
@@ -32,7 +32,7 @@
 	height: 42px;
 	padding: 0.55rem 0.9rem;
 	border: 1px solid var(--color-border-strong);
-	border-radius: 0.7rem;
+	border-radius: var(--radius-control);
 }
 
 .input {
@@ -53,7 +53,7 @@
 
 @media (max-width: 900px) {
 	.hero {
-		padding: 0.75rem 0 1.5rem;
+		margin-bottom: 1.5rem;
 	}
 
 	.title {
@@ -85,7 +85,7 @@
 		height: 44px;
 		padding: 0.5rem 0.7rem;
 		font-size: 0.95rem;
-		border-radius: 0.6rem;
+		border-radius: var(--radius-control);
 	}
 
 	.input {

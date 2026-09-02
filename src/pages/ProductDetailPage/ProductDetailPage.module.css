@@ -1,9 +1,6 @@
 .productDetailPage {
-	max-width: var(--container-width);
-	margin: 0 auto;
-	padding: 2.5rem 1.5rem;
 	display: grid;
-	gap: 1rem;
+	gap: var(--space-section);
 }
 
 .back {
@@ -33,7 +30,7 @@
 .image {
 	width: 100%;
 	max-width: 520px;
-	border-radius: 1rem;
+	border-radius: var(--radius-card);
 	border: 1px solid var(--color-border);
 	object-fit: cover;
 }
@@ -69,7 +66,7 @@
 
 .addButton {
 	border: 1px solid var(--color-border);
-	border-radius: 0.55rem;
+	border-radius: var(--radius-control);
 	padding: 0.55rem 0.85rem;
 	background: var(--color-surface);
 	color: var(--color-text);
@@ -131,7 +128,6 @@
 
 @media (max-width: 640px) {
 	.productDetailPage {
-		padding: 1.25rem 0;
 		gap: 0.85rem;
 	}
 

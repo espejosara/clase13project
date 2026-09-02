@@ -11,10 +11,10 @@
 	--color-text-soft: #475569;
 	--color-text-muted: #64748b;
 	--color-text-inverse: #ffffff;
-	--color-border: #64748b;
+	--color-border: #cbd5e1;
 	--color-border-subtle: #dbe3ef;
 	--color-border-muted: color-mix(in srgb, var(--color-border) 72%, transparent);
-	--color-border-strong: #64748b;
+	--color-border-strong: #94a3b8;
 
 	/* Acciones y estados */
 	--color-primary: #2563eb;
@@ -42,11 +42,18 @@
 	--color-accent-outline: color-mix(in srgb, var(--color-accent) 30%, transparent);
 	--color-overlay: color-mix(in srgb, var(--color-text) 18%, transparent);
 	--color-glow: color-mix(in srgb, var(--color-accent-2) 22%, transparent);
-	--shadow-soft: 0 12px 26px color-mix(in srgb, var(--color-text) 10%, transparent);
-	--shadow-strong: 0 18px 40px color-mix(in srgb, var(--color-text) 18%, transparent);
+	--shadow-soft: 0 6px 18px color-mix(in srgb, var(--color-text) 8%, transparent);
+	--shadow-strong: 0 14px 32px color-mix(in srgb, var(--color-text) 14%, transparent);
 	--focus-ring: 0 0 0 3px var(--color-accent-outline);
 	--transition-fast: 0.15s ease;
 	--transition-base: 0.2s ease;
 	--font-base: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
 	--container-width: 1200px;
+	--container-shell-width: calc(var(--container-width) + 3.2rem);
+	--space-page-inline: clamp(0.75rem, 2.6vw, 1.6rem);
+	--space-page-block: clamp(1.25rem, 3vw, 2.5rem);
+	--space-section: clamp(1rem, 2vw, 1.5rem);
+	--space-card: clamp(1rem, 2vw, 1.5rem);
+	--radius-card: 1rem;
+	--radius-control: 0.65rem;
 }

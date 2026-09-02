@@ -1,7 +1,7 @@
 .productCard {
 	overflow: hidden;
 	border: 1px solid var(--color-border);
-	border-radius: 0.9rem;
+	border-radius: var(--radius-card);
 	background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
 	width: 100%;
 	max-width: none;
