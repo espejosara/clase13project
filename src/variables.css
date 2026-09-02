@@ -56,4 +56,5 @@
 	--space-card: clamp(1rem, 2vw, 1.5rem);
 	--radius-card: 1rem;
 	--radius-control: 0.65rem;
+	--size-touch-target: 2.75rem;
 }

@@ -2,7 +2,7 @@
 	border: none;
 	border-radius: var(--radius-control);
 	padding: 0.56rem 0.86rem;
-	min-height: 2.75rem;
+	min-height: var(--size-touch-target);
 	font-weight: 600;
 	font-size: 0.95rem;
 	line-height: 1.2;
@@ -75,7 +75,6 @@
 
 @media (max-width: 480px) {
 	.button {
-		width: 100%;
 		padding: 0.6rem 0.8rem;
 	}
 }

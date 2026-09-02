@@ -65,8 +65,8 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0;
-	width: 2.75rem;
-	height: 2.75rem;
+	width: var(--size-touch-target);
+	height: var(--size-touch-target);
 	border-radius: 999px;
 	font-weight: 600;
 	color: var(--color-text);
@@ -117,10 +117,16 @@
 	z-index: 40;
 }
 
-.iconOnly:hover::after {
+.iconOnly:hover::after,
+.iconOnly:focus-visible::after {
 	opacity: 1;
 	visibility: visible;
 	transform: translateX(-50%) translateY(0);
+}
+
+.iconOnly.isOpen::after {
+	opacity: 0;
+	visibility: hidden;
 }
 
 .icon {
@@ -156,8 +162,8 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0;
-	width: 2.75rem;
-	height: 2.75rem;
+	width: var(--size-touch-target);
+	height: var(--size-touch-target);
 	border-radius: 999px;
 	font-weight: 600;
 }
@@ -183,6 +189,9 @@
 }
 
 .dropdownItem {
+	display: flex;
+	align-items: center;
+	min-height: var(--size-touch-target);
 	padding: 0.5rem 0.6rem;
 	border-radius: 0.5rem;
 	border: none;
@@ -209,8 +218,8 @@
 	justify-content: center;
 	flex-direction: column;
 	gap: 0.24rem;
-	width: 2.75rem;
-	height: 2.75rem;
+	width: var(--size-touch-target);
+	height: var(--size-touch-target);
 	padding: 0;
 	border: 1px solid var(--color-border);
 	border-radius: 0.6rem;
@@ -240,6 +249,10 @@
 }
 
 .link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--size-touch-target);
 	padding: 0.5rem 0.75rem;
 	border-radius: 999px;
 	font-weight: 600;
@@ -304,7 +317,7 @@
 	.nav {
 		display: none;
 		width: 100%;
-		padding-top: 0.3rem;
+		padding-top: 0.7rem;
 		border-top: 1px solid var(--color-border-muted);
 	}
 
@@ -317,12 +330,21 @@
 	.navLeft,
 	.navRight {
 		justify-content: flex-start;
+		align-items: stretch;
 		flex-wrap: wrap;
 		width: 100%;
 	}
 
+	.navLeft .link {
+		width: 100%;
+	}
+
+	.navRight .link {
+		flex: 1 1 8rem;
+	}
+
 	.link {
-		padding: 0.45rem 0.6rem;
+		padding: 0.55rem 0.7rem;
 		text-align: center;
 		font-size: 0.9rem;
 	}
@@ -334,10 +356,8 @@
 	}
 }
 
-@media (max-width: 420px) {
-	.iconLink,
-	.profileButton {
-		width: 2.5rem;
-		height: 2.5rem;
+@media (hover: none) {
+	.iconOnly::after {
+		display: none;
 	}
 }
