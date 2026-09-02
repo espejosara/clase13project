@@ -71,10 +71,10 @@ function CheckoutSuccessPage() {
 		if (confirmation.status === 'confirmed') {
 			return (
 				<>
-					<p className={`${styles.badge} ${styles.badgeConfirmed}`}>Pago confirmado</p>
-					<h1 id="success-title" className={styles.title}>Pago confirmado</h1>
+					<p className={`${styles.badge} ${styles.badgeConfirmed}`}>Pedido confirmado</p>
+					<h1 id="success-title" className={styles.title}>¡Pago completado!</h1>
 					<p className={styles.copy}>
-						Tu pedido #{confirmation.order.id} ya está registrado correctamente.
+						Gracias por tu compra. Tu pedido #{confirmation.order.id} ya aparece en tu historial.
 					</p>
 				</>
 			)
@@ -83,10 +83,10 @@ function CheckoutSuccessPage() {
 		if (confirmation.status === 'checking') {
 			return (
 				<>
-					<p className={styles.badge}>Verificando pago</p>
-					<h1 id="success-title" className={styles.title}>Confirmando tu pago</h1>
+					<p className={styles.badge}>Procesando pedido</p>
+					<h1 id="success-title" className={styles.title}>Estamos confirmando tu compra</h1>
 					<p className={styles.copy}>
-						Stripe ha recibido el pago. Estamos esperando la confirmación segura del webhook.
+						Solo tardaremos unos segundos. No necesitas hacer nada ni volver a pagar.
 					</p>
 				</>
 			)
@@ -95,12 +95,13 @@ function CheckoutSuccessPage() {
 		if (confirmation.status === 'pending') {
 			return (
 				<>
-					<p className={`${styles.badge} ${styles.badgeWarning}`}>Confirmación pendiente</p>
-					<h1 id="success-title" className={styles.title}>El pedido aún se está procesando</h1>
+					<p className={`${styles.badge} ${styles.badgeWarning}`}>Estamos terminando</p>
+					<h1 id="success-title" className={styles.title}>Tu pedido está casi listo</h1>
 					<p className={styles.copy}>
-						No vuelvas a pagar. Puedes comprobar de nuevo la confirmación o consultar tu historial.
+						La confirmación está tardando un poco más de lo habitual. No necesitas volver a pagar;
+						 puedes comprobarlo de nuevo o revisar tus pedidos.
 					</p>
-					<Button onClick={retryConfirmation}>Comprobar de nuevo</Button>
+					<Button onClick={retryConfirmation}>Volver a comprobar</Button>
 				</>
 			)
 		}
@@ -108,22 +109,24 @@ function CheckoutSuccessPage() {
 		if (confirmation.status === 'error') {
 			return (
 				<>
-					<p className={`${styles.badge} ${styles.badgeWarning}`}>No se pudo comprobar</p>
-					<h1 id="success-title" className={styles.title}>No pudimos verificar el pedido</h1>
+					<p className={`${styles.badge} ${styles.badgeWarning}`}>No hemos podido comprobarlo</p>
+					<h1 id="success-title" className={styles.title}>Tu pedido todavía no aparece</h1>
 					<p className={styles.copy}>
-						{confirmation.message || 'Consulta tu historial antes de volver a intentarlo.'}
+						No realices otro pago. Espera unos segundos y vuelve a comprobarlo,
+						 o revisa tu historial de pedidos.
 					</p>
-					<Button onClick={retryConfirmation}>Reintentar comprobación</Button>
+					<Button onClick={retryConfirmation}>Volver a comprobar</Button>
 				</>
 			)
 		}
 
 		return (
 			<>
-				<p className={`${styles.badge} ${styles.badgeWarning}`}>Confirmación pendiente</p>
-				<h1 id="success-title" className={styles.title}>No podemos identificar la sesión de Stripe</h1>
+				<p className={`${styles.badge} ${styles.badgeWarning}`}>No encontramos la compra</p>
+				<h1 id="success-title" className={styles.title}>No podemos mostrar la confirmación</h1>
 				<p className={styles.copy}>
-					Consulta tu historial de pedidos antes de volver a intentar el pago.
+					Accede a tu historial para comprobar si el pedido se ha registrado
+					 antes de intentar pagar de nuevo.
 				</p>
 			</>
 		)
@@ -138,7 +141,7 @@ function CheckoutSuccessPage() {
 				<div className={styles.actions}>
 					<Link to="/products" className={styles.primaryAction}>Seguir comprando</Link>
 					<Link to="/cart" className="app-action-link">Ver carrito</Link>
-					<Link to="/profile" className="app-action-link">Ir a mi perfil</Link>
+					<Link to="/profile" className="app-action-link">Ver mis pedidos</Link>
 				</div>
 			</section>
 		</section>

@@ -30,7 +30,7 @@ describe('CheckoutSuccessPage', () => {
 		renderSuccessPage('/checkout/success?session_id=cs_test_123')
 
 		expect(
-			await screen.findByRole('heading', { name: 'Pago confirmado' }),
+			await screen.findByRole('heading', { name: '¡Pago completado!' }),
 		).toBeInTheDocument()
 		expect(screen.getByText(/pedido #41/i)).toBeInTheDocument()
 		expect(getCheckoutOrderRequest).toHaveBeenCalledWith('cs_test_123')
@@ -46,19 +46,32 @@ describe('CheckoutSuccessPage', () => {
 		})
 
 		expect(
-			screen.getByRole('heading', { name: 'El pedido aún se está procesando' }),
+			screen.getByRole('heading', { name: 'Tu pedido está casi listo' }),
 		).toBeInTheDocument()
-		expect(screen.queryByRole('heading', { name: 'Pago confirmado' })).not.toBeInTheDocument()
+		expect(screen.queryByRole('heading', { name: '¡Pago completado!' })).not.toBeInTheDocument()
 		expect(getCheckoutOrderRequest).toHaveBeenCalledTimes(8)
+	})
+
+	it('oculta los errores técnicos y orienta al usuario si falla la comprobación', async () => {
+		getCheckoutOrderRequest.mockRejectedValue({
+			response: { data: { error: 'Ruta no encontrada' } },
+		})
+		renderSuccessPage('/checkout/success?session_id=cs_test_error')
+
+		expect(
+			await screen.findByRole('heading', { name: 'Tu pedido todavía no aparece' }),
+		).toBeInTheDocument()
+		expect(screen.queryByText('Ruta no encontrada')).not.toBeInTheDocument()
+		expect(screen.getByText(/no realices otro pago/i)).toBeInTheDocument()
 	})
 
 	it('no presenta el pago como confirmado si falta session_id', () => {
 		renderSuccessPage('/checkout/success')
 
 		expect(
-			screen.getByRole('heading', { name: 'No podemos identificar la sesión de Stripe' }),
+			screen.getByRole('heading', { name: 'No podemos mostrar la confirmación' }),
 		).toBeInTheDocument()
-		expect(screen.queryByRole('heading', { name: 'Pago confirmado' })).not.toBeInTheDocument()
+		expect(screen.queryByRole('heading', { name: '¡Pago completado!' })).not.toBeInTheDocument()
 		expect(getCheckoutOrderRequest).not.toHaveBeenCalled()
 	})
 })
