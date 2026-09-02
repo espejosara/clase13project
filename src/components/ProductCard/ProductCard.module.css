@@ -4,17 +4,17 @@
 	border-radius: var(--radius-card);
 	background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
 	width: 100%;
-	max-width: none;
-	min-height: 490px;
 	box-shadow: var(--shadow-soft);
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 	display: grid;
 	grid-template-rows: 1fr auto;
 }
 
-.productCard:hover {
+.productCard:hover,
+.productCard:focus-within {
 	transform: translateY(-2px);
 	box-shadow: var(--shadow-strong);
+	border-color: var(--color-border-strong);
 }
 
 .link {
@@ -27,9 +27,16 @@
 
 .image {
 	width: 100%;
-	height: 220px;
+	height: auto;
+	aspect-ratio: 4 / 3;
 	object-fit: cover;
 	background: var(--color-surface-muted);
+	transition: transform 0.35s ease;
+}
+
+.productCard:hover .image,
+.productCard:focus-within .image {
+	transform: scale(1.015);
 }
 
 .content {
@@ -54,8 +61,8 @@
 
 .title {
 	margin: 0;
-	font-size: 1.05rem;
-	line-height: 1.2;
+	font-size: 1.1rem;
+	line-height: 1.25;
 }
 
 .description {
@@ -75,28 +82,30 @@
 	justify-content: space-between;
 	gap: 0.75rem;
 	flex-wrap: wrap;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--color-border-subtle);
 	font-size: 0.95rem;
 }
 
 .price {
 	font-weight: 800;
 	color: var(--color-text);
+	font-size: 1.05rem;
 }
 
 .stock {
 	color: var(--color-text-soft);
+	align-self: center;
 }
 
 .actions {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
+	display: grid;
 	gap: 0.5rem;
 	padding: 0 1rem 1rem;
 }
 
 .actionButton {
-	width: auto;
+	width: 100%;
 	white-space: normal;
 }
 
@@ -138,43 +147,16 @@
 	color: var(--color-text);
 }
 
-@media (max-width: 900px) {
-	.productCard {
-		min-height: 470px;
-	}
-
-	.image {
-		height: 205px;
-	}
-}
-
 @media (max-width: 768px) {
-	.productCard {
-		min-height: 450px;
-	}
-
 	.meta {
 		flex-direction: column;
 		gap: 0.25rem;
 	}
-
-	.actions {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.actionButton {
-		width: 100%;
-	}
 }
 
 @media (max-width: 560px) {
-	.productCard {
-		min-height: auto;
-	}
-
 	.image {
-		height: 190px;
+		aspect-ratio: 16 / 10;
 	}
 
 	.content {
@@ -182,9 +164,6 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
 		padding: 0 0.85rem 0.85rem;
 	}
 }
