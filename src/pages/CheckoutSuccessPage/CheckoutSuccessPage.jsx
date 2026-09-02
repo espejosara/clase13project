@@ -134,7 +134,10 @@ function CheckoutSuccessPage() {
 
 	return (
 		<section className={styles.page} aria-labelledby="success-title">
-			<CheckoutSteps currentStep="payment" />
+			<CheckoutSteps
+				currentStep="payment"
+				currentStepCompleted={confirmation.status === 'confirmed'}
+			/>
 			<section className={styles.card}>
 				{renderConfirmation()}
 

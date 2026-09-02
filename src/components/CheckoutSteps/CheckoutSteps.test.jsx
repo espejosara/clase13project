@@ -10,4 +10,14 @@ describe('CheckoutSteps', () => {
 		expect(screen.getByText('Revisión').closest('li')).toHaveAttribute('aria-current', 'step')
 		expect(screen.getByText('Carrito').closest('li')).not.toHaveAttribute('aria-current')
 	})
+
+	it('muestra en verde el número del último paso cuando el pago está completado', () => {
+		render(<CheckoutSteps currentStep="payment" currentStepCompleted />)
+
+		const paymentStep = screen.getByText('Pago').closest('li')
+
+		expect(paymentStep).toHaveAttribute('data-state', 'completed')
+		expect(paymentStep).not.toHaveAttribute('aria-current')
+		expect(paymentStep).toHaveTextContent('3')
+	})
 })

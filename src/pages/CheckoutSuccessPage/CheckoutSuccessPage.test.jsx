@@ -33,6 +33,7 @@ describe('CheckoutSuccessPage', () => {
 			await screen.findByRole('heading', { name: '¡Pago completado!' }),
 		).toBeInTheDocument()
 		expect(screen.getByText(/pedido #41/i)).toBeInTheDocument()
+		expect(screen.getByText('Pago').closest('li')).toHaveAttribute('data-state', 'completed')
 		expect(getCheckoutOrderRequest).toHaveBeenCalledWith('cs_test_123')
 	})
 

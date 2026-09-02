@@ -6,27 +6,29 @@ const CHECKOUT_STEPS = [
 	{ id: 'payment', label: 'Pago' },
 ]
 
-function CheckoutSteps({ currentStep }) {
+function CheckoutSteps({ currentStep, currentStepCompleted = false }) {
 	const currentIndex = CHECKOUT_STEPS.findIndex((step) => step.id === currentStep)
 
 	return (
 		<nav className={styles.checkoutSteps} aria-label="Progreso de compra">
 			<ol className={styles.list}>
 				{CHECKOUT_STEPS.map((step, index) => {
-					const isCurrent = index === currentIndex
+					const isCurrentStep = index === currentIndex
 					const isCompleted = currentIndex > index
-					const stateClass = isCurrent
-						? styles.current
-						: isCompleted ? styles.completed : styles.pending
+						|| (isCurrentStep && currentStepCompleted)
+					const isCurrent = isCurrentStep && !currentStepCompleted
+					const state = isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'
+					const stateClass = styles[state]
 
 					return (
 						<li
 							key={step.id}
 							className={`${styles.step} ${stateClass}`}
+							data-state={state}
 							aria-current={isCurrent ? 'step' : undefined}
 						>
 							<span className={styles.marker} aria-hidden="true">
-								{isCompleted ? '✓' : index + 1}
+								{isCompleted && !isCurrentStep ? '✓' : index + 1}
 							</span>
 							<span className={styles.label}>{step.label}</span>
 						</li>
