@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
+import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import {
 	addCartItemThunk,
@@ -104,6 +105,7 @@ function CartPage() {
 			<section className={styles.hero}>
 				<h1 id="cart-title" className={styles.title}>Tu carrito de compra</h1>
 			</section>
+			<CheckoutSteps currentStep="cart" />
 
 			{error ? (
 				<div className={styles.messageRow}>
@@ -189,7 +191,7 @@ function CartPage() {
 						items={items}
 						onCheckout={handleGoToCheckout}
 						loading={loading || isCheckingOut}
-						checkoutLabel="Ir a checkout"
+						checkoutLabel="Revisar pedido"
 					/>
 				</div>
 			</section>

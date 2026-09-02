@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getCheckoutOrderRequest } from '../../api/payments'
 import Button from '../../components/Button/Button'
+import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import styles from './CheckoutSuccessPage.module.css'
 
 const POLL_INTERVAL_MS = 1500
@@ -130,6 +131,7 @@ function CheckoutSuccessPage() {
 
 	return (
 		<section className={styles.page} aria-labelledby="success-title">
+			<CheckoutSteps currentStep="payment" />
 			<section className={styles.card}>
 				{renderConfirmation()}
 

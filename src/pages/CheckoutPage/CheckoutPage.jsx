@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
+import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
 import { checkoutThunk, fetchCartThunk } from '../../store/slices/cartSlice'
@@ -21,6 +22,22 @@ function getItemName(item) {
 
 function getItemImage(item) {
 	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
+}
+
+function getItemQuantity(item) {
+	const quantity = Number(item?.quantity ?? 1)
+	return Number.isFinite(quantity) && quantity > 0 ? quantity : 1
+}
+
+function getItemPrice(item) {
+	return Number(item?.product?.price ?? item?.price ?? 0)
+}
+
+function formatPrice(value) {
+	return new Intl.NumberFormat('es-ES', {
+		style: 'currency',
+		currency: 'EUR',
+	}).format(value)
 }
 
 function CheckoutPage() {
@@ -65,6 +82,7 @@ function CheckoutPage() {
 				<h1 id="checkout-title" className={styles.title}>Resumen de tu pedido</h1>
 				<p className={styles.subtitle}>Verifica tus productos y continúa al pago seguro de Stripe.</p>
 			</section>
+			<CheckoutSteps currentStep="review" />
 
 			{wasCanceled ? (
 				<div className={styles.returnMessage}>
@@ -93,21 +111,30 @@ function CheckoutPage() {
 			) : (
 				<section className={styles.layout}>
 					<ul className={styles.list}>
-						{items.map((item) => (
-							<li key={getItemId(item)} className={styles.item}>
-								<div className={styles.itemTop}>
-									<img
-										src={getItemImage(item)}
-										alt={getItemName(item)}
-										className={styles.thumb}
-									/>
-									<div>
-										<p className={styles.name}>{getItemName(item)}</p>
-										<p className={styles.meta}>Cantidad: {item.quantity ?? 1}</p>
+						{items.map((item) => {
+							const quantity = getItemQuantity(item)
+							const unitPrice = getItemPrice(item)
+							const subtotal = quantity * unitPrice
+
+							return (
+								<li key={getItemId(item)} className={styles.item}>
+									<div className={styles.itemTop}>
+										<img
+											src={getItemImage(item)}
+											alt={getItemName(item)}
+											className={styles.thumb}
+										/>
+										<div className={styles.itemInfo}>
+											<p className={styles.name}>{getItemName(item)}</p>
+											<div className={styles.itemBreakdown}>
+												<span>{quantity} × {formatPrice(unitPrice)}</span>
+												<strong>Subtotal: {formatPrice(subtotal)}</strong>
+											</div>
+										</div>
 									</div>
-								</div>
-							</li>
-						))}
+								</li>
+							)
+						})}
 					</ul>
 
 					<div className={styles.side}>
@@ -116,6 +143,9 @@ function CheckoutPage() {
 							onCheckout={handleConfirmCheckout}
 							loading={loading || isCheckingOut}
 							checkoutLabel="Pagar con Stripe"
+							loadingLabel="Abriendo pago seguro..."
+							showCheckoutTotal
+							note="Pago seguro procesado por Stripe. No guardamos los datos de tu tarjeta."
 						/>
 						<Link to="/cart" className={`app-action-link ${styles.backLink}`}>Volver al carrito</Link>
 					</div>

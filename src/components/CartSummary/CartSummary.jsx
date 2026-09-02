@@ -12,11 +12,21 @@ function getItemPrice(item) {
 	return Number(item?.product?.price ?? item?.price ?? 0)
 }
 
+function formatPrice(value) {
+	return new Intl.NumberFormat('es-ES', {
+		style: 'currency',
+		currency: 'EUR',
+	}).format(value)
+}
+
 function CartSummary({
 	items = [],
 	onCheckout,
 	loading = false,
 	checkoutLabel = 'Ir a checkout',
+	loadingLabel = 'Procesando...',
+	showCheckoutTotal = false,
+	note = 'Impuestos incluidos. Envío calculado en checkout.',
 	explorePath = '/products',
 }) {
 	const totalItems = useMemo(() => {
@@ -28,13 +38,17 @@ function CartSummary({
 	}, [items])
 
 	const isEmpty = totalItems === 0
+	const formattedTotal = formatPrice(totalPrice)
+	const finalCheckoutLabel = showCheckoutTotal
+		? `${checkoutLabel} · ${formattedTotal}`
+		: checkoutLabel
 
 	return (
 		<aside className={styles.box}>
 			<p className={styles.label}>Resumen</p>
-			<p className={styles.line}>Items: {totalItems}</p>
-			<p className={styles.line}>Total: {totalPrice.toFixed(2)} EUR</p>
-			<p className={styles.note}>Impuestos incluidos. Envío calculado en checkout.</p>
+			<p className={styles.line}>Unidades: {totalItems}</p>
+			<p className={`${styles.line} ${styles.totalLine}`}>Total: {formattedTotal}</p>
+			<p className={styles.note}>{note}</p>
 			{onCheckout ? (
 				<Button
 					type="button"
@@ -43,7 +57,7 @@ function CartSummary({
 					disabled={loading || isEmpty}
 					className={styles.checkoutButton}
 				>
-					{loading ? 'Procesando...' : checkoutLabel}
+					{loading ? loadingLabel : finalCheckoutLabel}
 				</Button>
 			) : null}
 			{isEmpty ? (
