@@ -28,6 +28,10 @@
 	color: var(--color-danger);
 }
 
+.badgeConfirmed {
+	color: var(--color-success, #15803d);
+}
+
 .title {
 	margin: 0;
 }
