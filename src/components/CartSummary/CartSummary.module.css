@@ -6,24 +6,46 @@
 	box-shadow: var(--shadow-soft);
 }
 
-.label {
-	margin: 0 0 0.75rem;
-	color: var(--color-accent);
-	font-size: 0.85rem;
-	font-weight: 700;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+.title {
+	margin: 0;
+	font-size: 1.15rem;
+}
+
+.breakdown {
+	display: grid;
+	gap: 0.65rem;
+	margin: 1rem 0 0;
 }
 
 .line {
-	margin: 0.35rem 0;
-	font-weight: 600;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	color: var(--color-text-soft);
+}
+
+.line dt,
+.line dd {
+	margin: 0;
+}
+
+.line dd {
 	color: var(--color-text);
+	font-weight: 750;
 }
 
 .totalLine {
-	font-size: 1.15rem;
+	padding-top: 0.8rem;
+	border-top: 1px solid var(--color-border-subtle);
+	color: var(--color-text);
+	font-size: 1rem;
 	font-weight: 800;
+}
+
+.totalLine dd {
+	color: var(--color-primary-hover);
+	font-size: 1.3rem;
 }
 
 .note {

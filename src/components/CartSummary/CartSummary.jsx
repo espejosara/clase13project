@@ -26,7 +26,7 @@ function CartSummary({
 	checkoutLabel = 'Ir a checkout',
 	loadingLabel = 'Procesando...',
 	showCheckoutTotal = false,
-	note = 'Impuestos incluidos. Envío calculado en checkout.',
+	note = 'Revisa el pedido antes de continuar al pago.',
 	explorePath = '/products',
 }) {
 	const totalItems = useMemo(() => {
@@ -45,9 +45,17 @@ function CartSummary({
 
 	return (
 		<aside className={styles.box}>
-			<p className={styles.label}>Resumen</p>
-			<p className={styles.line}>Unidades: {totalItems}</p>
-			<p className={`${styles.line} ${styles.totalLine}`}>Total: {formattedTotal}</p>
+			<h2 className={styles.title}>Resumen del pedido</h2>
+			<dl className={styles.breakdown}>
+				<div className={styles.line}>
+					<dt>Artículos</dt>
+					<dd>{totalItems}</dd>
+				</div>
+				<div className={`${styles.line} ${styles.totalLine}`}>
+					<dt>Total</dt>
+					<dd>{formattedTotal}</dd>
+				</div>
+			</dl>
 			<p className={styles.note}>{note}</p>
 			{onCheckout ? (
 				<Button

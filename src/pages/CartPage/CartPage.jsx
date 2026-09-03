@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
 import Spinner from '../../components/Spinner/Spinner'
@@ -15,7 +15,7 @@ import {
 import styles from './CartPage.module.css'
 
 const FALLBACK_IMAGE =
-	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="%23fff7ed"/><text x="50%25" y="54%25" text-anchor="middle" font-size="10" fill="%23c2410c" font-family="Arial">IMG</text></svg>'
+	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="160" height="160" fill="%23eff6ff"/><text x="50%25" y="52%25" text-anchor="middle" font-size="14" fill="%2364748b" font-family="Arial">Sin imagen</text></svg>'
 
 function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
@@ -41,6 +41,24 @@ function getItemImage(item) {
 	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
 }
 
+function getItemQuantity(item) {
+	const quantity = Number(item?.quantity ?? 1)
+	return Number.isInteger(quantity) && quantity > 0 ? quantity : 1
+}
+
+function formatPrice(value) {
+	return new Intl.NumberFormat('es-ES', {
+		style: 'currency',
+		currency: 'EUR',
+	}).format(Number(value ?? 0))
+}
+
+function getCartDescription(totalItems) {
+	if (totalItems === 1) return 'Tienes 1 artículo preparado para revisar.'
+	if (totalItems > 1) return `Tienes ${totalItems} artículos preparados para revisar.`
+	return 'Tu selección aparecerá aquí antes de continuar con la compra.'
+}
+
 function CartPage() {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -49,6 +67,10 @@ function CartPage() {
 	useEffect(() => {
 		dispatch(fetchCartThunk())
 	}, [dispatch])
+
+	const totalItems = useMemo(() => {
+		return items.reduce((total, item) => total + getItemQuantity(item), 0)
+	}, [items])
 
 	const handleRemoveLine = (item) => {
 		const itemId = getBackendItemId(item)
@@ -68,9 +90,9 @@ function CartPage() {
 		const itemId = getBackendItemId(item)
 		if (itemId == null) return
 
-		const quantity = Number(item.quantity ?? 1)
+		const quantity = getItemQuantity(item)
 
-		if (Number.isInteger(quantity) && quantity > 1) {
+		if (quantity > 1) {
 			dispatch(updateCartItemQuantityThunk({ itemId, quantity: quantity - 1 }))
 			return
 		}
@@ -86,31 +108,27 @@ function CartPage() {
 		dispatch(fetchCartThunk())
 	}
 
-	if (loading && !items.length) {
-		return <Spinner label="Cargando carrito..." />
-	}
-
-	if (error && !items.length) {
-		return (
-			<StatusMessage
-				title="Error"
-				description={error}
-				variant="warning"
-			/>
-		)
-	}
-
 	return (
 		<section className={styles.page} aria-labelledby="cart-title">
-			<section className={styles.hero}>
-				<h1 id="cart-title" className={styles.title}>Tu carrito de compra</h1>
-			</section>
+			<header className={styles.hero}>
+				<div className={styles.heroCopy}>
+					<p className={styles.eyebrow}>Tu compra</p>
+					<h1 id="cart-title" className={styles.title}>Mi carrito</h1>
+					<p className={styles.subtitle}>{getCartDescription(totalItems)}</p>
+				</div>
+				<div className={styles.heroBadge} aria-label={`${totalItems} ${totalItems === 1 ? 'artículo' : 'artículos'}`}>
+					<span className={styles.bagIcon} aria-hidden="true">▢</span>
+					<strong>{totalItems}</strong>
+					<span>{totalItems === 1 ? 'artículo' : 'artículos'}</span>
+				</div>
+			</header>
+
 			<CheckoutSteps currentStep="cart" />
 
 			{error ? (
 				<div className={styles.messageRow}>
 					<StatusMessage
-						title="Aviso"
+						title="No pudimos actualizar el carrito"
 						description={error}
 						variant="warning"
 					/>
@@ -125,76 +143,105 @@ function CartPage() {
 				</div>
 			) : null}
 
-			<section className={styles.layout}>
-				{!items.length ? (
-					<StatusMessage
-						title="Carrito vacío"
-						description="Añade productos antes de comprar."
-					/>
-				) : (
-					<ul className={styles.list} aria-label="Productos en el carrito">
-						{items.map((item, index) => (
-							<li key={`${getItemId(item)}-${index}`} className={styles.item}>
-								<div className={styles.itemMain}>
-									<img
-										src={getItemImage(item)}
-										alt={getItemName(item)}
-										className={styles.thumb}
-									/>
-									<div className={styles.itemInfo}>
-										<p className={styles.name}>{getItemName(item)}</p>
-										<p className={styles.price}>{getItemPrice(item).toFixed(2)} EUR</p>
-									</div>
-								</div>
-								<div className={styles.itemActions}>
-									<div className={styles.quantityControls} role="group" aria-label={`Cantidad de ${getItemName(item)}`}>
-										<button
-											type="button"
-											className={styles.quantityButton}
-											onClick={() => handleDecrease(item)}
-											disabled={loading || isCheckingOut}
-											aria-label={`Quitar una unidad de ${getItemName(item)}`}
-										>
-											-
-										</button>
-										<span className={styles.quantityValue} aria-hidden="true">{item.quantity ?? 1}</span>
-										<span className="visually-hidden" aria-live="polite" aria-atomic="true">
-											Cantidad de {getItemName(item)}: {item.quantity ?? 1}
-										</span>
-										<button
-											type="button"
-											className={styles.quantityButton}
-											onClick={() => handleIncrease(item)}
-											disabled={loading || isCheckingOut}
-											aria-label={`Añadir una unidad de ${getItemName(item)}`}
-										>
-											+
-										</button>
-									</div>
-									<button
-										type="button"
-										className={styles.removeButton}
-										onClick={() => handleRemoveLine(item)}
-										disabled={loading || isCheckingOut}
-										aria-label={`Eliminar ${getItemName(item)} del carrito`}
-									>
-										🗑️
-									</button>
-								</div>
-							</li>
-						))}
-					</ul>
-				)}
+			{loading && !items.length ? <Spinner label="Cargando carrito..." /> : null}
 
-				<div className={styles.summaryColumn}>
-					<CartSummary
-						items={items}
-						onCheckout={handleGoToCheckout}
-						loading={loading || isCheckingOut}
-						checkoutLabel="Revisar pedido"
-					/>
-				</div>
-			</section>
+			{!loading && !error && !items.length ? (
+				<section className={styles.emptyState} aria-labelledby="empty-cart-title">
+					<span className={styles.emptyIcon} aria-hidden="true">▢</span>
+					<h2 id="empty-cart-title">Tu carrito está vacío</h2>
+					<p>Explora el catálogo y añade los productos que quieras comprar.</p>
+					<Link to="/products" className={styles.catalogButton}>Explorar catálogo</Link>
+				</section>
+			) : null}
+
+			{items.length ? (
+				<section className={styles.layout} aria-label="Contenido del carrito">
+					<div className={styles.listColumn}>
+						<div className={styles.listHeader}>
+							<h2>Productos</h2>
+							<Link to="/products" className={styles.continueLink}>Seguir comprando</Link>
+						</div>
+
+						<ul className={styles.list} aria-label="Productos en el carrito">
+							{items.map((item, index) => {
+								const itemId = getItemId(item)
+								const productId = getProductId(item)
+								const itemName = getItemName(item)
+								const quantity = getItemQuantity(item)
+								const unitPrice = getItemPrice(item)
+								const subtotal = quantity * unitPrice
+								const controlsDisabled = loading || isCheckingOut
+
+								return (
+									<li key={`${itemId}-${index}`} className={styles.item}>
+										<Link to={`/products/${productId}`} className={styles.imageLink}>
+											<img src={getItemImage(item)} alt={itemName} className={styles.thumb} />
+										</Link>
+
+										<div className={styles.itemInfo}>
+											<h3 className={styles.name}>
+												<Link to={`/products/${productId}`}>{itemName}</Link>
+											</h3>
+											<p className={styles.unitPrice}>{formatPrice(unitPrice)} por unidad</p>
+											<div className={styles.subtotalRow}>
+												<span>Subtotal</span>
+												<strong>{formatPrice(subtotal)}</strong>
+											</div>
+										</div>
+
+										<div className={styles.itemActions}>
+											<span className={styles.quantityLabel}>Cantidad</span>
+											<div className={styles.quantityControls} role="group" aria-label={`Cantidad de ${itemName}`}>
+												<button
+													type="button"
+													className={styles.quantityButton}
+													onClick={() => handleDecrease(item)}
+													disabled={controlsDisabled}
+													aria-label={`Quitar una unidad de ${itemName}`}
+												>
+													−
+												</button>
+												<span className={styles.quantityValue} aria-hidden="true">{quantity}</span>
+												<span className="visually-hidden" aria-live="polite" aria-atomic="true">
+													Cantidad de {itemName}: {quantity}
+												</span>
+												<button
+													type="button"
+													className={styles.quantityButton}
+													onClick={() => handleIncrease(item)}
+													disabled={controlsDisabled}
+													aria-label={`Añadir una unidad de ${itemName}`}
+												>
+													+
+												</button>
+											</div>
+											<button
+												type="button"
+												className={styles.removeButton}
+												onClick={() => handleRemoveLine(item)}
+												disabled={controlsDisabled}
+												aria-label={`Eliminar ${itemName} del carrito`}
+											>
+												<span aria-hidden="true">×</span> Eliminar
+											</button>
+										</div>
+									</li>
+								)
+							})}
+						</ul>
+					</div>
+
+					<div className={styles.summaryColumn}>
+						<CartSummary
+							items={items}
+							onCheckout={handleGoToCheckout}
+							loading={loading || isCheckingOut}
+							checkoutLabel="Revisar pedido"
+							note="Comprueba los artículos y el total antes de continuar."
+						/>
+					</div>
+				</section>
+			) : null}
 		</section>
 	)
 }

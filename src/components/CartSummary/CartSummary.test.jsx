@@ -16,7 +16,8 @@ describe('CartSummary', () => {
 			</MemoryRouter>,
 		)
 
-		expect(screen.getByText('Unidades: 2')).toBeInTheDocument()
+		expect(screen.getByText('Artículos')).toBeInTheDocument()
+		expect(screen.getByText('2')).toBeInTheDocument()
 		expect(
 			screen.getByRole('button', { name: /Pagar con Stripe.*25,00/ }),
 		).toBeInTheDocument()
