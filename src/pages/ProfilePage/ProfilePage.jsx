@@ -117,9 +117,7 @@ function ProfilePage() {
 	const firstName = userName.split(' ').filter(Boolean)[0] || 'Usuario'
 	const memberSince = user?.memberSince || user?.createdAt
 	const profileWishlistCount = Number(user?.wishlistCount ?? user?.wishlist?.count ?? 0)
-	const profileOrdersCount = Number(user?.checkoutOrdersCount ?? user?.checkout?.ordersCount ?? 0)
 	const wishlistCount = wishlistIds.length || profileWishlistCount
-	const ordersCount = orders.length || profileOrdersCount
 	const lastOrder = user?.lastOrder ?? user?.checkout?.lastOrder ?? null
 	const roleLabel = String(user?.role).toUpperCase() === 'ADMIN'
 		? 'Cuenta de administrador'
@@ -191,26 +189,18 @@ function ProfilePage() {
 				</section>
 
 				<nav className={styles.shortcuts} aria-label="Accesos de mi cuenta">
-					<button
-						type="button"
-						className={`${styles.shortcut} ${styles.ordersShortcut}`}
-						onClick={() => setOrdersOpen((current) => !current)}
-						aria-expanded={ordersOpen}
-						aria-controls="orders-panel"
-					>
-						<span className={styles.shortcutIcon} aria-hidden="true">▣</span>
+					<Link to="/products" className={`${styles.shortcut} ${styles.recommendationsShortcut}`}>
+						<span className={styles.shortcutIcon} aria-hidden="true">✦</span>
 						<span className={styles.shortcutContent}>
-							<span className={styles.shortcutTitle}>Mis pedidos</span>
+							<span className={styles.shortcutTitle}>Recomendaciones</span>
 							<span className={styles.shortcutDescription}>
-								{loading && !orders.length
-									? 'Consultando tu historial…'
-									: getCountLabel(ordersCount, 'pedido realizado', 'pedidos realizados')}
+								Encuentra más productos entre todo nuestro catálogo.
 							</span>
 						</span>
 						<span className={styles.shortcutAction} aria-hidden="true">
-							{ordersOpen ? 'Ocultar' : 'Ver historial'} <span>→</span>
+							Ver catálogo <span>→</span>
 						</span>
-					</button>
+					</Link>
 
 					<Link to="/wishlist" className={`${styles.shortcut} ${styles.wishlistShortcut}`}>
 						<span className={styles.shortcutIcon} aria-hidden="true">♡</span>

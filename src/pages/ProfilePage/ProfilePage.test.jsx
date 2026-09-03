@@ -66,19 +66,20 @@ function renderProfile() {
 }
 
 describe('ProfilePage', () => {
-	it('organiza pedidos y favoritos como accesos de cuenta sin duplicar el logout', async () => {
+	it('muestra recomendaciones y favoritos sin duplicar el historial ni el logout', async () => {
 		const user = userEvent.setup()
 		renderProfile()
 
 		expect(screen.getByRole('heading', { name: 'Hola, Ana' })).toBeInTheDocument()
 		expect(screen.getByText('2 productos guardados')).toBeInTheDocument()
+		expect(screen.getByRole('link', { name: /recomendaciones/i })).toHaveAttribute('href', '/products')
 		expect(screen.getByRole('link', { name: /mis favoritos/i })).toHaveAttribute('href', '/wishlist')
 		expect(screen.queryByText('Pedido #55')).not.toBeInTheDocument()
 		expect(screen.queryByRole('button', { name: /cerrar sesión/i })).not.toBeInTheDocument()
 
-		await user.click(screen.getByRole('button', { name: /mis pedidos/i }))
+		await user.click(screen.getByRole('button', { name: /historial de pedidos/i }))
 
 		expect(screen.getByText('Pedido #55')).toBeInTheDocument()
-		expect(screen.getByRole('button', { name: /mis pedidos/i })).toHaveAttribute('aria-expanded', 'true')
+		expect(screen.getByRole('button', { name: /historial de pedidos/i })).toHaveAttribute('aria-expanded', 'true')
 	})
 })
