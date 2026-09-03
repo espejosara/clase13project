@@ -220,7 +220,7 @@
 		box-shadow var(--transition-base);
 }
 
-.recommendationsShortcut {
+.catalogShortcut {
 	background: linear-gradient(135deg, var(--color-surface), var(--color-primary-soft));
 }
 

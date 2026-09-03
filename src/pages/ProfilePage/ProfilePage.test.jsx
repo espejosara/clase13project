@@ -80,14 +80,19 @@ function renderProfile() {
 }
 
 describe('ProfilePage', () => {
-	it('muestra recomendaciones y favoritos sin duplicar el historial ni el logout', async () => {
+	it('separa el catálogo, las recomendaciones y los favoritos sin duplicar contenidos', async () => {
 		const user = userEvent.setup()
 		renderProfile()
 
 		expect(screen.getByRole('heading', { name: 'Hola, Ana' })).toBeInTheDocument()
 		expect(screen.getByText('2 productos guardados')).toBeInTheDocument()
-		expect(screen.getByRole('link', { name: /recomendaciones/i })).toHaveAttribute('href', '/products')
+		expect(screen.getByRole('link', { name: /explorar catálogo/i })).toHaveAttribute('href', '/products')
 		expect(screen.getByRole('link', { name: /mis favoritos/i })).toHaveAttribute('href', '/wishlist')
+		const ordersSection = screen.getByRole('button', { name: /historial de pedidos/i }).closest('section')
+		const recommendationsSection = screen
+			.getByRole('heading', { name: 'Productos recomendados' })
+			.closest('section')
+		expect(ordersSection.nextElementSibling).toBe(recommendationsSection)
 		expect(await screen.findByRole('link', { name: /figura recomendada/i })).toHaveAttribute('href', '/products/9')
 		expect(screen.getByText(/basadas en tu interés por figuras/i)).toBeInTheDocument()
 		expect(screen.queryByText('Pedido #55')).not.toBeInTheDocument()
@@ -96,6 +101,7 @@ describe('ProfilePage', () => {
 		await user.click(screen.getByRole('button', { name: /historial de pedidos/i }))
 
 		expect(screen.getByText('Pedido #55')).toBeInTheDocument()
+		expect(screen.getByText('2 artículos')).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: /historial de pedidos/i })).toHaveAttribute('aria-expanded', 'true')
 	})
 })

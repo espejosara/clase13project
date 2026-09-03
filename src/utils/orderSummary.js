@@ -38,11 +38,8 @@ export function getOrderItemCounts(items = []) {
 }
 
 export function formatOrderItemSummary(items = []) {
-	const { totalUnits, distinctProducts } = getOrderItemCounts(items)
-	const unitsLabel = totalUnits === 1 ? 'unidad' : 'unidades'
-	const productsLabel = distinctProducts === 1
-		? 'producto diferente'
-		: 'productos diferentes'
+	const { totalUnits } = getOrderItemCounts(items)
+	const itemsLabel = totalUnits === 1 ? 'artículo' : 'artículos'
 
-	return `${totalUnits} ${unitsLabel} · ${distinctProducts} ${productsLabel}`
+	return `${totalUnits} ${itemsLabel}`
 }

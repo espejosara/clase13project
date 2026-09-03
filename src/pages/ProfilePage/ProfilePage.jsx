@@ -159,13 +159,6 @@ function ProfilePage() {
 	const wishlistCount = wishlistIds.length || profileWishlistCount
 	const lastOrder = user?.lastOrder ?? user?.checkout?.lastOrder ?? null
 	const recommendationCount = recommendations.items.length
-	const recommendationDescription = recommendations.loading
-		? 'Calculando sugerencias para ti...'
-		: recommendationCount
-			? recommendations.strategy === 'category_affinity'
-				? `${getCountLabel(recommendationCount, 'producto elegido', 'productos elegidos')} según tu actividad.`
-				: `${getCountLabel(recommendationCount, 'producto destacado', 'productos destacados')} disponibles.`
-			: 'Encuentra más productos entre todo nuestro catálogo.'
 	const recommendationReason = recommendations.strategy === 'category_affinity'
 		? `Basadas en tu interés por ${recommendations.categories.join(', ')}.`
 		: 'Una selección de productos disponibles mejor valorados.'
@@ -239,16 +232,16 @@ function ProfilePage() {
 				</section>
 
 				<nav className={styles.shortcuts} aria-label="Accesos de mi cuenta">
-					<Link to="/products" className={`${styles.shortcut} ${styles.recommendationsShortcut}`}>
-						<span className={styles.shortcutIcon} aria-hidden="true">✦</span>
+					<Link to="/products" className={`${styles.shortcut} ${styles.catalogShortcut}`}>
+						<span className={styles.shortcutIcon} aria-hidden="true">⌕</span>
 						<span className={styles.shortcutContent}>
-							<span className={styles.shortcutTitle}>Recomendaciones</span>
+							<span className={styles.shortcutTitle}>Explorar catálogo</span>
 							<span className={styles.shortcutDescription}>
-								{recommendationDescription}
+								Consulta todos los productos disponibles en la tienda.
 							</span>
 						</span>
 						<span className={styles.shortcutAction} aria-hidden="true">
-							Ver catálogo <span>→</span>
+							Ir al catálogo <span>→</span>
 						</span>
 					</Link>
 
@@ -266,53 +259,6 @@ function ProfilePage() {
 					</Link>
 				</nav>
 			</div>
-
-			<section id="recomendaciones" className={`${styles.card} ${styles.recommendationsCard}`}>
-				<header className={styles.recommendationsHeader}>
-					<div>
-						<p className={styles.sectionEyebrow}>Selección para ti</p>
-						<h2 className={styles.recommendationsTitle}>Productos recomendados</h2>
-						{!recommendations.loading && !recommendations.error && recommendationCount ? (
-							<p className={styles.recommendationsReason}>{recommendationReason}</p>
-						) : null}
-					</div>
-					<Link to="/products" className={styles.catalogLink}>Ver todo el catálogo →</Link>
-				</header>
-
-				{recommendations.loading ? (
-					<Spinner label="Calculando recomendaciones..." />
-				) : recommendations.error ? (
-					<StatusMessage
-						title="No pudimos cargar las recomendaciones"
-						description={recommendations.error}
-						variant="warning"
-					/>
-				) : recommendationCount ? (
-					<ul className={styles.recommendationsGrid}>
-						{recommendations.items.map((product) => (
-							<li key={product.id} className={styles.recommendationItem}>
-								<Link to={`/products/${product.id}`} className={styles.recommendationLink}>
-									<img
-										src={product.imageUrl || FALLBACK_PRODUCT_IMAGE}
-										alt={product.name}
-										className={styles.recommendationImage}
-									/>
-									<span className={styles.recommendationContent}>
-										<span className={styles.recommendationCategory}>{product.category}</span>
-										<strong className={styles.recommendationName}>{product.name}</strong>
-										<span className={styles.recommendationPrice}>{formatPrice(product.price)}</span>
-									</span>
-								</Link>
-							</li>
-						))}
-					</ul>
-				) : (
-					<div className={styles.emptyState}>
-						<strong>No hay productos disponibles para recomendar</strong>
-						<span>Vuelve a consultar cuando se añadan nuevos productos al catálogo.</span>
-					</div>
-				)}
-			</section>
 
 			<section id="historial-pedidos" className={`${styles.card} ${styles.ordersCard}`}>
 				<button
@@ -366,7 +312,7 @@ function ProfilePage() {
 
 											<div className={styles.orderMeta}>
 												<div className={styles.metaItem}>
-													<span className={styles.metaItemLabel}>Contenido</span>
+													<span className={styles.metaItemLabel}>Resumen</span>
 													<p className={styles.metaItemValue}>{itemSummary}</p>
 												</div>
 												<div className={`${styles.metaItem} ${styles.totalItem}`}>
@@ -442,6 +388,53 @@ function ProfilePage() {
 						)}
 					</div>
 				) : null}
+			</section>
+
+			<section id="recomendaciones" className={`${styles.card} ${styles.recommendationsCard}`}>
+				<header className={styles.recommendationsHeader}>
+					<div>
+						<p className={styles.sectionEyebrow}>Selección para ti</p>
+						<h2 className={styles.recommendationsTitle}>Productos recomendados</h2>
+						{!recommendations.loading && !recommendations.error && recommendationCount ? (
+							<p className={styles.recommendationsReason}>{recommendationReason}</p>
+						) : null}
+					</div>
+					<Link to="/products" className={styles.catalogLink}>Ver todo el catálogo →</Link>
+				</header>
+
+				{recommendations.loading ? (
+					<Spinner label="Calculando recomendaciones..." />
+				) : recommendations.error ? (
+					<StatusMessage
+						title="No pudimos cargar las recomendaciones"
+						description={recommendations.error}
+						variant="warning"
+					/>
+				) : recommendationCount ? (
+					<ul className={styles.recommendationsGrid}>
+						{recommendations.items.map((product) => (
+							<li key={product.id} className={styles.recommendationItem}>
+								<Link to={`/products/${product.id}`} className={styles.recommendationLink}>
+									<img
+										src={product.imageUrl || FALLBACK_PRODUCT_IMAGE}
+										alt={product.name}
+										className={styles.recommendationImage}
+									/>
+									<span className={styles.recommendationContent}>
+										<span className={styles.recommendationCategory}>{product.category}</span>
+										<strong className={styles.recommendationName}>{product.name}</strong>
+										<span className={styles.recommendationPrice}>{formatPrice(product.price)}</span>
+									</span>
+								</Link>
+							</li>
+						))}
+					</ul>
+				) : (
+					<div className={styles.emptyState}>
+						<strong>No hay productos disponibles para recomendar</strong>
+						<span>Vuelve a consultar cuando se añadan nuevos productos al catálogo.</span>
+					</div>
+				)}
 			</section>
 		</section>
 	)
