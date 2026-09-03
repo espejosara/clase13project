@@ -41,10 +41,12 @@ describe('CheckoutPage', () => {
 	it('muestra precio unitario, subtotal y total antes de pagar', () => {
 		renderCheckoutPage()
 
+		expect(screen.getByRole('heading', { name: 'Revisa y confirma tu pedido' })).toBeInTheDocument()
 		expect(screen.getByText(/1 × 25,00/)).toBeInTheDocument()
 		expect(screen.getByText(/Subtotal: 25,00/)).toBeInTheDocument()
 		expect(
-			screen.getByRole('button', { name: /Pagar con Stripe.*25,00/ }),
+			screen.getByRole('button', { name: /Ir al pago seguro.*25,00/ }),
 		).toBeInTheDocument()
+		expect(screen.getByRole('link', { name: 'Modificar carrito' })).toHaveAttribute('href', '/cart')
 	})
 })

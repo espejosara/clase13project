@@ -3,12 +3,16 @@
 }
 
 .hero {
-	margin-bottom: var(--space-section);
+	padding: clamp(1.2rem, 3vw, 1.75rem);
+	border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+	border-radius: var(--radius-card);
+	background: linear-gradient(120deg, var(--color-surface), var(--color-primary-soft));
+	box-shadow: var(--shadow-soft);
 }
 
 .eyebrow {
 	margin: 0 0 0.35rem;
-	color: var(--color-warning);
+	color: var(--color-primary);
 	font-size: 0.82rem;
 	font-weight: 700;
 	letter-spacing: 0.14em;
@@ -20,8 +24,10 @@
 }
 
 .subtitle {
+	max-width: 42rem;
 	margin: 0.5rem 0 0;
 	color: var(--color-text-soft);
+	line-height: 1.5;
 }
 
 .messageRow,
@@ -115,10 +121,6 @@
 
 	.side {
 		position: static;
-	}
-
-	.hero {
-		margin-bottom: 1.5rem;
 	}
 
 	.title {

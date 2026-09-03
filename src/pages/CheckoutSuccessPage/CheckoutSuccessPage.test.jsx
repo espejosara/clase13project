@@ -34,6 +34,10 @@ describe('CheckoutSuccessPage', () => {
 		).toBeInTheDocument()
 		expect(screen.getByText(/pedido #41/i)).toBeInTheDocument()
 		expect(screen.getByText('Pago').closest('li')).toHaveAttribute('data-state', 'completed')
+		expect(screen.getByRole('link', { name: 'Ver mi pedido' }))
+			.toHaveAttribute('href', '/profile#historial-pedidos')
+		expect(screen.getByRole('link', { name: 'Seguir comprando' })).toHaveAttribute('href', '/products')
+		expect(screen.queryByRole('link', { name: 'Ver carrito' })).not.toBeInTheDocument()
 		expect(getCheckoutOrderRequest).toHaveBeenCalledWith('cs_test_123')
 	})
 
@@ -50,6 +54,9 @@ describe('CheckoutSuccessPage', () => {
 			screen.getByRole('heading', { name: 'Tu pedido está casi listo' }),
 		).toBeInTheDocument()
 		expect(screen.queryByRole('heading', { name: '¡Pago completado!' })).not.toBeInTheDocument()
+		expect(screen.getByRole('link', { name: 'Ver mis pedidos' }))
+			.toHaveAttribute('href', '/profile#historial-pedidos')
+		expect(screen.queryByRole('link', { name: 'Seguir comprando' })).not.toBeInTheDocument()
 		expect(getCheckoutOrderRequest).toHaveBeenCalledTimes(8)
 	})
 

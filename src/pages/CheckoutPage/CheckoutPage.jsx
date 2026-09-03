@@ -78,9 +78,11 @@ function CheckoutPage() {
 	return (
 		<section className={styles.page} aria-labelledby="checkout-title">
 			<section className={styles.hero}>
-				<p className={styles.eyebrow}>Checkout</p>
-				<h1 id="checkout-title" className={styles.title}>Resumen de tu pedido</h1>
-				<p className={styles.subtitle}>Verifica tus productos y continúa al pago seguro de Stripe.</p>
+				<p className={styles.eyebrow}>Finaliza tu compra</p>
+				<h1 id="checkout-title" className={styles.title}>Revisa y confirma tu pedido</h1>
+				<p className={styles.subtitle}>
+					Comprueba los artículos y el total. Al continuar, te llevaremos al pago seguro.
+				</p>
 			</section>
 			<CheckoutSteps currentStep="review" />
 
@@ -142,12 +144,12 @@ function CheckoutPage() {
 							items={items}
 							onCheckout={handleConfirmCheckout}
 							loading={loading || isCheckingOut}
-							checkoutLabel="Pagar con Stripe"
-							loadingLabel="Abriendo pago seguro..."
+							checkoutLabel="Ir al pago seguro"
+							loadingLabel="Preparando el pago..."
 							showCheckoutTotal
-							note="Pago seguro procesado por Stripe. No guardamos los datos de tu tarjeta."
+							note="El pago se completa en Stripe. Los datos de tu tarjeta no pasan por esta tienda."
 						/>
-						<Link to="/cart" className={`app-action-link ${styles.backLink}`}>Volver al carrito</Link>
+						<Link to="/cart" className={`app-action-link ${styles.backLink}`}>Modificar carrito</Link>
 					</div>
 				</section>
 			)}

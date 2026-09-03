@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchRecommendationsRequest } from '../../api/recommendations'
@@ -99,10 +99,13 @@ function getCountLabel(count, singular, plural) {
 
 function ProfilePage() {
 	const dispatch = useDispatch()
+	const location = useLocation()
 	const { user } = useSelector((state) => state.auth)
 	const { items: orders, loading, error } = useSelector((state) => state.orders)
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
-	const [ordersOpen, setOrdersOpen] = useState(false)
+	const [ordersOpen, setOrdersOpen] = useState(
+		() => location.hash === '#historial-pedidos',
+	)
 	const [openOrderId, setOpenOrderId] = useState(null)
 	const [recommendations, setRecommendations] = useState({
 		items: [],
@@ -116,6 +119,12 @@ function ProfilePage() {
 		dispatch(fetchCurrentUserThunk())
 		dispatch(fetchOrdersThunk())
 	}, [dispatch])
+
+	useEffect(() => {
+		if (location.hash !== '#historial-pedidos') return
+
+		document.getElementById('historial-pedidos')?.scrollIntoView?.({ block: 'start' })
+	}, [location.hash])
 
 	useEffect(() => {
 		let isActive = true

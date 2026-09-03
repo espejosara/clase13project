@@ -43,13 +43,12 @@ function CheckoutSuccessPage() {
 				}
 
 				timeoutId = window.setTimeout(checkConfirmation, POLL_INTERVAL_MS)
-			} catch (error) {
+			} catch {
 				if (!isActive) return
 
 				setConfirmation({
 					status: 'error',
 					order: null,
-					message: error.response?.data?.error || error.message,
 				})
 			}
 		}
@@ -98,8 +97,8 @@ function CheckoutSuccessPage() {
 					<p className={`${styles.badge} ${styles.badgeWarning}`}>Estamos terminando</p>
 					<h1 id="success-title" className={styles.title}>Tu pedido está casi listo</h1>
 					<p className={styles.copy}>
-						La confirmación está tardando un poco más de lo habitual. No necesitas volver a pagar;
-						 puedes comprobarlo de nuevo o revisar tus pedidos.
+						La confirmación está tardando un poco más de lo habitual. No necesitas volver a pagar.
+						 Puedes comprobarlo de nuevo o revisar tus pedidos.
 					</p>
 					<Button onClick={retryConfirmation}>Volver a comprobar</Button>
 				</>
@@ -112,7 +111,7 @@ function CheckoutSuccessPage() {
 					<p className={`${styles.badge} ${styles.badgeWarning}`}>No hemos podido comprobarlo</p>
 					<h1 id="success-title" className={styles.title}>Tu pedido todavía no aparece</h1>
 					<p className={styles.copy}>
-						No realices otro pago. Espera unos segundos y vuelve a comprobarlo,
+						No realices otro pago. Espera unos segundos y vuelve a comprobarlo
 						 o revisa tu historial de pedidos.
 					</p>
 					<Button onClick={retryConfirmation}>Volver a comprobar</Button>
@@ -132,6 +131,34 @@ function CheckoutSuccessPage() {
 		)
 	}
 
+	const renderActions = () => {
+		if (confirmation.status === 'checking') return null
+
+		if (confirmation.status === 'confirmed') {
+			return (
+				<div className={styles.actions}>
+					<Link to="/profile#historial-pedidos" className={styles.primaryAction}>Ver mi pedido</Link>
+					<Link to="/products" className={styles.secondaryAction}>Seguir comprando</Link>
+				</div>
+			)
+		}
+
+		if (confirmation.status === 'pending' || confirmation.status === 'error') {
+			return (
+				<div className={styles.actions}>
+					<Link to="/profile#historial-pedidos" className={styles.secondaryAction}>Ver mis pedidos</Link>
+				</div>
+			)
+		}
+
+		return (
+			<div className={styles.actions}>
+				<Link to="/profile#historial-pedidos" className={styles.primaryAction}>Ver mis pedidos</Link>
+				<Link to="/products" className={styles.secondaryAction}>Volver al catálogo</Link>
+			</div>
+		)
+	}
+
 	return (
 		<section className={styles.page} aria-labelledby="success-title">
 			<CheckoutSteps
@@ -140,12 +167,7 @@ function CheckoutSuccessPage() {
 			/>
 			<section className={styles.card}>
 				{renderConfirmation()}
-
-				<div className={styles.actions}>
-					<Link to="/products" className={styles.primaryAction}>Seguir comprando</Link>
-					<Link to="/cart" className="app-action-link">Ver carrito</Link>
-					<Link to="/profile" className="app-action-link">Ver mis pedidos</Link>
-				</div>
+				{renderActions()}
 			</section>
 		</section>
 	)

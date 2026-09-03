@@ -43,20 +43,44 @@
 }
 
 .actions {
-	margin-top: 0.4rem;
-	display: grid;
-	gap: 0.45rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin-top: 0.5rem;
+}
+
+.primaryAction,
+.secondaryAction {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--size-touch-target);
+	padding: 0.55rem 0.9rem;
+	border: 1px solid transparent;
+	border-radius: var(--radius-control);
+	font-weight: 700;
 }
 
 .primaryAction {
-	display: inline-flex;
-	width: fit-content;
-	padding: 0.5rem 0.85rem;
-	border-radius: 0.5rem;
-	text-decoration: none;
 	background: var(--color-primary);
-	color: var(--color-surface);
-	font-weight: 700;
+	color: var(--color-text-inverse);
+}
+
+.secondaryAction {
+	border-color: var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text);
+}
+
+@media (hover: hover) {
+	.primaryAction:hover {
+		background: var(--color-primary-hover);
+	}
+
+	.secondaryAction:hover {
+		border-color: var(--color-primary);
+		background: var(--color-primary-soft);
+	}
 }
 
 @media (max-width: 640px) {
@@ -74,8 +98,7 @@
 	}
 
 	.primaryAction,
-	.actions :global(.app-action-link) {
+	.secondaryAction {
 		width: 100%;
-		justify-content: center;
 	}
 }

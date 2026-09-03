@@ -61,7 +61,7 @@ const profileState = {
 	},
 }
 
-function renderProfile() {
+function renderProfile(route = '/profile') {
 	const store = configureStore({
 		reducer: {
 			auth: () => profileState.auth,
@@ -72,7 +72,7 @@ function renderProfile() {
 
 	return render(
 		<Provider store={store}>
-			<MemoryRouter>
+			<MemoryRouter initialEntries={[route]}>
 				<ProfilePage />
 			</MemoryRouter>
 		</Provider>,
@@ -103,5 +103,13 @@ describe('ProfilePage', () => {
 		expect(screen.getByText('Pedido #55')).toBeInTheDocument()
 		expect(screen.getByText('2 artículos')).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: /historial de pedidos/i })).toHaveAttribute('aria-expanded', 'true')
+	})
+
+	it('abre directamente el historial cuando se accede desde la confirmación', () => {
+		renderProfile('/profile#historial-pedidos')
+
+		expect(screen.getByRole('button', { name: /historial de pedidos/i }))
+			.toHaveAttribute('aria-expanded', 'true')
+		expect(screen.getByText('Pedido #55')).toBeInTheDocument()
 	})
 })
