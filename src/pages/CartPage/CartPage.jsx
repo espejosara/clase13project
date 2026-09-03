@@ -59,6 +59,24 @@ function getCartDescription(totalItems) {
 	return 'Tu selección aparecerá aquí antes de continuar con la compra.'
 }
 
+function CartIcon({ className = '' }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.8"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+		>
+			<path d="M3 3h2l2.2 10.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 1.9-1.4L21 7H6" />
+			<path d="M9.5 19.5h.01M17.5 19.5h.01" />
+		</svg>
+	)
+}
+
 function CartPage() {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -117,7 +135,7 @@ function CartPage() {
 					<p className={styles.subtitle}>{getCartDescription(totalItems)}</p>
 				</div>
 				<div className={styles.heroBadge} aria-label={`${totalItems} ${totalItems === 1 ? 'artículo' : 'artículos'}`}>
-					<span className={styles.bagIcon} aria-hidden="true">▢</span>
+					<CartIcon className={styles.bagIcon} />
 					<strong>{totalItems}</strong>
 					<span>{totalItems === 1 ? 'artículo' : 'artículos'}</span>
 				</div>
@@ -147,7 +165,9 @@ function CartPage() {
 
 			{!loading && !error && !items.length ? (
 				<section className={styles.emptyState} aria-labelledby="empty-cart-title">
-					<span className={styles.emptyIcon} aria-hidden="true">▢</span>
+					<span className={styles.emptyIcon} aria-hidden="true">
+						<CartIcon />
+					</span>
 					<h2 id="empty-cart-title">Tu carrito está vacío</h2>
 					<p>Explora el catálogo y añade los productos que quieras comprar.</p>
 					<Link to="/products" className={styles.catalogButton}>Explorar catálogo</Link>
