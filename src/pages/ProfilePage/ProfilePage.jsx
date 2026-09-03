@@ -7,6 +7,7 @@ import { fetchRecommendationsRequest } from '../../api/recommendations'
 import { fetchCurrentUserThunk } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import { formatOrderItemSummary } from '../../utils/orderSummary'
+import { getInitials } from '../../utils/user'
 import styles from './ProfilePage.module.css'
 
 const FALLBACK_PRODUCT_IMAGE =
@@ -64,6 +65,14 @@ function getOrderProductImage(item) {
 		|| FALLBACK_PRODUCT_IMAGE
 }
 
+function getOrderProductId(item) {
+	return item?.productId
+		?? item?.product?.id
+		?? item?.productDetails?.id
+		?? item?.product_id
+		?? null
+}
+
 function getOrderStatus(order) {
 	return order.status || (order.paidAt ? 'Pagado' : 'Pedido registrado')
 }
@@ -82,19 +91,52 @@ function getOrderDetailsId(orderId) {
 	return `order-${String(orderId).replace(/[^a-zA-Z0-9_-]/g, '-')}-details`
 }
 
-function getInitials(name) {
-	if (!name) return 'U'
-
-	return name
-		.split(' ')
-		.filter(Boolean)
-		.slice(0, 2)
-		.map((part) => part[0]?.toUpperCase() ?? '')
-		.join('')
-}
-
 function getCountLabel(count, singular, plural) {
 	return `${count} ${count === 1 ? singular : plural}`
+}
+
+function OrderProductItem({ item, index }) {
+	const quantity = Number(item?.quantity ?? item?.qty ?? 1)
+	const unitPrice = Number(item?.unitPrice ?? item?.price ?? 0)
+	const subtotal = Number(item?.subtotal ?? item?.total ?? quantity * unitPrice)
+	const itemName = item?.name || item?.productName || `Producto ${getOrderProductId(item) ?? item?.id ?? index + 1}`
+	const imageUrl = getOrderProductImage(item)
+	const productId = getOrderProductId(item)
+	const quantityLabel = `${quantity} ${quantity === 1 ? 'unidad' : 'unidades'}`
+
+	return (
+		<li className={styles.productItem}>
+			<img src={imageUrl} alt={itemName} className={styles.productThumb} />
+			<div className={styles.productMeta}>
+				<div className={styles.productHeading}>
+					<p className={styles.productName}>{itemName}</p>
+					<span className={styles.quantityBadge}>{quantityLabel}</span>
+				</div>
+				{productId != null ? (
+					<>
+						<p className={styles.productReference}>Referencia #{productId}</p>
+						<Link
+							to={`/products/${productId}#write-review`}
+							className={styles.reviewLink}
+							aria-label={`Escribir una reseña sobre ${itemName}`}
+						>
+							Escribir reseña <span aria-hidden="true">→</span>
+						</Link>
+					</>
+				) : null}
+			</div>
+			<div className={styles.productPricing}>
+				<div>
+					<span className={styles.priceLabel}>Precio unitario</span>
+					<p className={styles.priceValue}>{formatPrice(unitPrice)}</p>
+				</div>
+				<div>
+					<span className={styles.priceLabel}>Subtotal</span>
+					<p className={`${styles.priceValue} ${styles.subtotalValue}`}>{formatPrice(subtotal)}</p>
+				</div>
+			</div>
+		</li>
+	)
 }
 
 function ProfilePage() {
@@ -345,40 +387,13 @@ function ProfilePage() {
 												<div id={detailsId} className={styles.itemsSection}>
 													<span className={styles.metaItemLabel}>Artículos comprados</span>
 													<ul className={styles.itemsList}>
-														{items.length ? items.map((item, index) => {
-															const quantity = Number(item?.quantity ?? item?.qty ?? 1)
-															const unitPrice = Number(item?.unitPrice ?? item?.price ?? 0)
-															const subtotal = Number(item?.subtotal ?? item?.total ?? quantity * unitPrice)
-															const itemName = item?.name || item?.productName || `Producto ${item?.productId ?? item?.id ?? index + 1}`
-															const imageUrl = getOrderProductImage(item)
-															const productId = item?.productId ?? item?.product?.id
-															const quantityLabel = `${quantity} ${quantity === 1 ? 'unidad' : 'unidades'}`
-
-															return (
-																<li key={`${String(orderId)}-${item?.productId ?? item?.id ?? index}`} className={styles.productItem}>
-																	<img src={imageUrl} alt={itemName} className={styles.productThumb} />
-																	<div className={styles.productMeta}>
-																		<div className={styles.productHeading}>
-																			<p className={styles.productName}>{itemName}</p>
-																			<span className={styles.quantityBadge}>{quantityLabel}</span>
-																		</div>
-																		{productId != null ? (
-																			<p className={styles.productReference}>Referencia #{productId}</p>
-																		) : null}
-																	</div>
-																	<div className={styles.productPricing}>
-																		<div>
-																			<span className={styles.priceLabel}>Precio unitario</span>
-																			<p className={styles.priceValue}>{formatPrice(unitPrice)}</p>
-																		</div>
-																		<div>
-																			<span className={styles.priceLabel}>Subtotal</span>
-																			<p className={`${styles.priceValue} ${styles.subtotalValue}`}>{formatPrice(subtotal)}</p>
-																		</div>
-																	</div>
-																</li>
-															)
-														}) : (
+														{items.length ? items.map((item, index) => (
+															<OrderProductItem
+																key={`${String(orderId)}-${getOrderProductId(item) ?? item?.id ?? index}`}
+																item={item}
+																index={index}
+															/>
+														)) : (
 															<li className={styles.itemRow}>Sin productos registrados</li>
 														)}
 													</ul>

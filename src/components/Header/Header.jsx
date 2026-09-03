@@ -8,6 +8,7 @@ import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlic
 import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
 import useTheme from '../../hooks/useTheme'
+import { getInitials } from '../../utils/user'
 import styles from './Header.module.css'
 
 const HEADER_SYNC_TTL_MS = 12000
@@ -34,6 +35,7 @@ function Header() {
 	const isProfileMenuOpen = openProfileMenuPath === location.pathname
 	const isDarkTheme = theme === 'dark'
 	const nextThemeLabel = isDarkTheme ? 'claro' : 'oscuro'
+	const userInitials = getInitials(authenticatedUser?.name)
 
 	const getNavLinkClass = ({ isActive }) =>
 		isActive ? `${styles.link} ${styles.linkActive}` : styles.link
@@ -288,7 +290,7 @@ function Header() {
 										aria-label={isProfileMenuOpen ? 'Cerrar menú de usuario' : 'Abrir menú de usuario'}
 										data-label="Usuario"
 									>
-										<span className={styles.icon} aria-hidden="true">👤</span>
+										<span className={styles.profileInitials} aria-hidden="true">{userInitials}</span>
 										<span className={styles.srOnly}>Usuario</span>
 									</Button>
 

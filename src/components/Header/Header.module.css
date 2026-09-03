@@ -190,6 +190,22 @@
 	box-shadow: 0 8px 18px color-mix(in srgb, var(--color-primary) 24%, transparent);
 }
 
+.profileInitials {
+	display: grid;
+	place-items: center;
+	width: 1.9rem;
+	height: 1.9rem;
+	flex: 0 0 auto;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+	box-shadow: 0 5px 12px color-mix(in srgb, var(--color-primary) 22%, transparent);
+	color: var(--color-text-inverse);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	line-height: 1;
+}
+
 .dropdown {
 	position: absolute;
 	top: calc(100% + 0.45rem);
@@ -402,6 +418,10 @@
 	}
 
 	.navRight .icon {
+		display: none;
+	}
+
+	.profileInitials {
 		display: none;
 	}
 

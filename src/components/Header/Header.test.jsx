@@ -53,7 +53,7 @@ function renderHeader({ authenticated = false, route = '/products' } = {}) {
 		reducer: {
 			auth: () => ({
 				user: authenticated
-					? { id: 1, name: 'Ana', role: 'USER' }
+					? { id: 1, name: 'Ana Pérez', role: 'USER' }
 					: null,
 			}),
 			cart: () => ({ items: [] }),
@@ -110,6 +110,7 @@ describe('Header', () => {
 
 		await user.click(menuButton)
 		const profileButton = screen.getByRole('button', { name: 'Abrir menú de usuario' })
+		expect(within(profileButton).getByText('AP')).toHaveAttribute('aria-hidden', 'true')
 		await user.click(profileButton)
 		const profileMenu = screen.getByRole('group', { name: 'Menú de usuario' })
 

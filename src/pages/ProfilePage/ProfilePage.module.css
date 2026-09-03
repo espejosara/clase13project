@@ -650,6 +650,23 @@
 	font-size: 0.78rem;
 }
 
+.reviewLink {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	width: fit-content;
+	min-height: var(--size-touch-target);
+	padding: 0.45rem 0.65rem;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-control);
+	background: var(--color-surface);
+	color: var(--color-primary-hover);
+	font-size: 0.82rem;
+	font-weight: 800;
+	transition: background-color var(--transition-base), border-color var(--transition-base);
+}
+
 .productPricing {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(6.5rem, auto));
@@ -714,6 +731,11 @@
 		transform: translateY(-2px);
 		border-color: var(--color-primary);
 		box-shadow: var(--shadow-soft);
+	}
+
+	.reviewLink:hover {
+		border-color: var(--color-primary);
+		background: var(--color-primary-soft);
 	}
 }
 

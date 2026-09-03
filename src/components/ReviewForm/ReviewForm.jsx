@@ -1,16 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import { createReview } from '../../api/reviews'
 import Button from '../Button/Button'
 import styles from './ReviewForm.module.css'
 
 function ReviewForm({ productId, onReviewCreated }) {
 	const { sessionChecked, user } = useSelector((state) => state.auth)
+	const location = useLocation()
+	const formRef = useRef(null)
 	const [rating, setRating] = useState('5')
 	const [comment, setComment] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState('')
 	const [successMessage, setSuccessMessage] = useState('')
+	const titleId = `review-form-title-${productId}`
+
+	useEffect(() => {
+		if (location.hash !== '#write-review' || !sessionChecked || !user) return
+
+		formRef.current?.scrollIntoView?.({ block: 'start' })
+		formRef.current?.focus({ preventScroll: true })
+	}, [location.hash, sessionChecked, user])
 
 	if (!sessionChecked) {
 		return null
@@ -50,8 +61,15 @@ function ReviewForm({ productId, onReviewCreated }) {
 	}
 
 	return (
-		<form className={styles.reviewForm} onSubmit={handleSubmit}>
-			<h3 className={styles.title}>Escribir una reseña</h3>
+		<form
+			id="write-review"
+			ref={formRef}
+			tabIndex="-1"
+			className={styles.reviewForm}
+			onSubmit={handleSubmit}
+			aria-labelledby={titleId}
+		>
+			<h3 id={titleId} className={styles.title}>Escribir una reseña</h3>
 			<label className={styles.label} htmlFor="review-rating">
 				Valoración
 			</label>

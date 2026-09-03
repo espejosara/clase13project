@@ -103,6 +103,11 @@ describe('ProfilePage', () => {
 		expect(screen.getByText('Pedido #55')).toBeInTheDocument()
 		expect(screen.getByText('2 artículos')).toBeInTheDocument()
 		expect(screen.getByRole('button', { name: /historial de pedidos/i })).toHaveAttribute('aria-expanded', 'true')
+
+		await user.click(screen.getByRole('button', { name: 'Ver productos' }))
+
+		expect(screen.getByRole('link', { name: 'Escribir una reseña sobre Figura de prueba' }))
+			.toHaveAttribute('href', '/products/7#write-review')
 	})
 
 	it('abre directamente el historial cuando se accede desde la confirmación', () => {
