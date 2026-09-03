@@ -17,7 +17,10 @@ function Header() {
 	const [openProfileMenuPath, setOpenProfileMenuPath] = useState(null)
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+	const menuButtonRef = useRef(null)
+	const navigationRef = useRef(null)
 	const profileMenuRef = useRef(null)
+	const profileButtonRef = useRef(null)
 	const lastHeaderSyncRef = useRef(0)
 	const authenticatedUser = useSelector((state) => state.auth.user)
 	const isAdmin = useSelector(selectIsAdmin)
@@ -110,6 +113,7 @@ function Header() {
 		const handleEscape = (event) => {
 			if (event.key === 'Escape') {
 				setOpenProfileMenuPath(null)
+				profileButtonRef.current?.focus()
 			}
 		}
 
@@ -122,7 +126,36 @@ function Header() {
 		}
 	}, [isProfileMenuOpen])
 
+	useEffect(() => {
+		if (!isMenuOpen) return undefined
+
+		const handleOutsideClick = (event) => {
+			const clickedMenuButton = menuButtonRef.current?.contains(event.target)
+			const clickedNavigation = navigationRef.current?.contains(event.target)
+
+			if (!clickedMenuButton && !clickedNavigation) {
+				setOpenMenuPath(null)
+			}
+		}
+
+		const handleEscape = (event) => {
+			if (event.key === 'Escape' && !isProfileMenuOpen) {
+				setOpenMenuPath(null)
+				menuButtonRef.current?.focus()
+			}
+		}
+
+		document.addEventListener('mousedown', handleOutsideClick)
+		document.addEventListener('keydown', handleEscape)
+
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick)
+			document.removeEventListener('keydown', handleEscape)
+		}
+	}, [isMenuOpen, isProfileMenuOpen])
+
 	const handleToggleMenu = () => {
+		setOpenProfileMenuPath(null)
 		setOpenMenuPath((previousPath) => (
 			previousPath === location.pathname ? null : location.pathname
 		))
@@ -132,6 +165,13 @@ function Header() {
 		setOpenProfileMenuPath((previousPath) => (
 			previousPath === location.pathname ? null : location.pathname
 		))
+	}
+
+	const handleNavigationClick = (event) => {
+		if (!event.target.closest?.('a')) return
+
+		setOpenMenuPath(null)
+		setOpenProfileMenuPath(null)
 	}
 
 	const handleLogout = async () => {
@@ -152,7 +192,15 @@ function Header() {
 			<a className="skip-link" href="#main-content">Saltar al contenido principal</a>
 			<header className={styles.header}>
 				<div className={styles.top}>
-					<Link to="/" className={styles.brand} aria-label="Ir al inicio">
+					<Link
+						to="/"
+						className={styles.brand}
+						aria-label="Ir al inicio"
+						onClick={() => {
+							setOpenMenuPath(null)
+							setOpenProfileMenuPath(null)
+						}}
+					>
 						<img
 							className={styles.brandMark}
 							src={BRAND_MARK_URL}
@@ -166,13 +214,14 @@ function Header() {
 						</span>
 					</Link>
 
-				<Button
-					type="button"
-					variant="outline"
-					className={`${styles.menuButton} ${isMenuOpen ? styles.isOpen : ''}`}
-					onClick={handleToggleMenu}
-					aria-expanded={isMenuOpen}
-					aria-controls="main-navigation"
+					<Button
+						ref={menuButtonRef}
+						type="button"
+						variant="outline"
+						className={`${styles.menuButton} ${isMenuOpen ? styles.isOpen : ''}`}
+						onClick={handleToggleMenu}
+						aria-expanded={isMenuOpen}
+						aria-controls="main-navigation"
 						aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
 					>
 						<span className={styles.menuLine} />
@@ -181,94 +230,97 @@ function Header() {
 					</Button>
 				</div>
 
-			<nav
-				id="main-navigation"
-				className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}
-				aria-label="Navegación principal"
-			>
-				<div className={styles.navLeft}>
-					<NavLink to="/products" className={getNavLinkClass}>
-						Catálogo
-					</NavLink>
-				</div>
+				<nav
+					ref={navigationRef}
+					id="main-navigation"
+					className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}
+					aria-label="Navegación principal"
+					onClick={handleNavigationClick}
+				>
+					<div className={styles.navLeft}>
+						<NavLink to="/products" className={getNavLinkClass}>
+							Catálogo
+						</NavLink>
+					</div>
 
-				<div className={styles.navRight}>
-					{isAuthenticated ? (
-						<>
-							<div className={styles.profile} ref={profileMenuRef}>
-								<Button
-									type="button"
-									variant="outline"
-									className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
-									onClick={handleToggleProfileMenu}
-									aria-expanded={isProfileMenuOpen}
-									aria-controls="profile-menu"
-									aria-label="Usuario"
-									data-label="Usuario"
-								>
-									<span className={styles.icon} aria-hidden="true">👤</span>
-									<span className={styles.srOnly}>Usuario</span>
-								</Button>
+					<div className={styles.navRight}>
+						{isAuthenticated ? (
+							<>
+								<div className={styles.profile} ref={profileMenuRef}>
+									<Button
+										ref={profileButtonRef}
+										type="button"
+										variant="outline"
+										className={`${styles.profileButton} ${styles.iconOnly} ${isProfileMenuOpen ? styles.isOpen : ''}`}
+										onClick={handleToggleProfileMenu}
+										aria-expanded={isProfileMenuOpen}
+										aria-controls="profile-menu"
+										aria-label={isProfileMenuOpen ? 'Cerrar menú de usuario' : 'Abrir menú de usuario'}
+										data-label="Usuario"
+									>
+										<span className={styles.icon} aria-hidden="true">👤</span>
+										<span className={styles.srOnly}>Usuario</span>
+									</Button>
 
-								{isProfileMenuOpen ? (
-									<div id="profile-menu" className={styles.dropdown} aria-label="Menú de usuario">
-										<Link to="/profile" className={styles.dropdownItem}>
-											Mi cuenta
-										</Link>
-										{isAdmin ? (
-											<Link to="/admin" className={styles.dropdownItem}>
-												Panel admin
+									{isProfileMenuOpen ? (
+										<div id="profile-menu" className={styles.dropdown} role="group" aria-label="Menú de usuario">
+											<Link to="/profile" className={styles.dropdownItem}>
+												Mi cuenta
 											</Link>
-										) : null}
-										<button
-											type="button"
-											className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
-											onClick={handleLogout}
-										>
-											Cerrar sesión
-										</button>
-									</div>
-								) : null}
-							</div>
+											{isAdmin ? (
+												<Link to="/admin" className={styles.dropdownItem}>
+													Panel admin
+												</Link>
+											) : null}
+											<button
+												type="button"
+												className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+												onClick={handleLogout}
+											>
+												Cerrar sesión
+											</button>
+										</div>
+									) : null}
+								</div>
 
-							<NavLink
-								to="/wishlist"
-								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-								aria-label={`Favoritos, ${wishlistCount} productos guardados`}
-								data-label="Favoritos"
-							>
-								<span className={styles.icon} aria-hidden="true">❤</span>
-								<span className={styles.srOnly}>Favoritos</span>
-								<span className={styles.badge} aria-hidden="true">
-									{wishlistCount}
-								</span>
-							</NavLink>
+								<NavLink
+									to="/wishlist"
+									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+									aria-label={`Favoritos, ${wishlistCount} productos guardados`}
+									data-label="Favoritos"
+								>
+									<span className={styles.icon} aria-hidden="true">❤</span>
+									<span className={styles.srOnly}>Favoritos</span>
+									<span className={styles.badge} aria-hidden="true">
+										{wishlistCount}
+									</span>
+								</NavLink>
 
-							<NavLink
-								to="/cart"
-								className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-								aria-label={`Carrito, ${cartCount} unidades`}
-								data-label="Carrito"
-							>
-								<span className={styles.icon} aria-hidden="true">🛒</span>
-								<span className={styles.srOnly}>Carrito</span>
-								<span className={styles.badge} aria-hidden="true">
-									{cartCount}
-								</span>
-							</NavLink>
-						</>
-					) : (
-						<>
-							<NavLink to="/login" className={getNavLinkClass}>
-								Entrar
-							</NavLink>
-							<NavLink to="/register" className={getNavLinkClass}>
-								Registrarse
-							</NavLink>
-						</>
-					)}
-				</div>
-			</nav>
+								<NavLink
+									to="/cart"
+									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+									aria-label={`Carrito, ${cartCount} unidades`}
+									data-label="Carrito"
+								>
+									<span className={styles.icon} aria-hidden="true">🛒</span>
+									<span className={styles.srOnly}>Carrito</span>
+									<span className={styles.badge} aria-hidden="true">
+										{cartCount}
+									</span>
+								</NavLink>
+							</>
+						) : (
+							<>
+								<NavLink to="/login" className={getNavLinkClass}>
+									Entrar
+								</NavLink>
+								<NavLink to="/register" className={getNavLinkClass}>
+									Registrarse
+								</NavLink>
+							</>
+						)}
+					</div>
+				</nav>
 			</header>
 		</>
 	)

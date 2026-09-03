@@ -110,7 +110,12 @@ function AdminProductsPage() {
 			) : null}
 
 			{!loading && products.length > 0 ? (
-				<div className={styles.tableWrapper}>
+				<div
+					className={styles.tableWrapper}
+					role="region"
+					aria-label="Listado de productos; desplázate horizontalmente para ver todas las columnas"
+					tabIndex="0"
+				>
 					<table className={styles.table}>
 						<caption className="visually-hidden">Listado de productos administrables</caption>
 						<thead>

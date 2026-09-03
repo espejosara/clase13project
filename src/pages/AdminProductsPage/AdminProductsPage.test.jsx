@@ -37,6 +37,11 @@ describe('AdminProductsPage', () => {
 		)
 
 		expect(await screen.findByText('Figura de prueba')).toBeInTheDocument()
+		const tableRegion = screen.getByRole('region', { name: /listado de productos/i })
+		expect(tableRegion).toHaveAttribute('tabindex', '0')
+		tableRegion.focus()
+		expect(tableRegion).toHaveFocus()
+
 		await user.click(screen.getByRole('button', { name: 'Eliminar' }))
 
 		expect(window.confirm).toHaveBeenCalled()
