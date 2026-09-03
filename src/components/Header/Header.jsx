@@ -10,6 +10,7 @@ import { fetchWishlistRequest } from '../../api/wishlist'
 import styles from './Header.module.css'
 
 const HEADER_SYNC_TTL_MS = 12000
+const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788436986/favicon-32x32_sjpkgu.png'
 
 function Header() {
 	const [openMenuPath, setOpenMenuPath] = useState(null)
@@ -152,8 +153,17 @@ function Header() {
 			<header className={styles.header}>
 				<div className={styles.top}>
 					<Link to="/" className={styles.brand} aria-label="Ir al inicio">
-						<p className={styles.eyebrow}>Tienda oficial</p>
-						<p className={styles.title}>NeoKensei Chronicles</p>
+						<img
+							className={styles.brandMark}
+							src={BRAND_MARK_URL}
+							alt=""
+							width="32"
+							height="32"
+						/>
+						<span className={styles.brandCopy}>
+							<span className={styles.eyebrow}>Tienda oficial</span>
+							<span className={styles.title}>NeoKensei Chronicles</span>
+						</span>
 					</Link>
 
 				<Button
