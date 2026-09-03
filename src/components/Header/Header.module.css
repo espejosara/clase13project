@@ -173,7 +173,8 @@
 	position: relative;
 }
 
-.profileButton {
+.profileButton,
+.themeButton {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -222,6 +223,16 @@
 
 .dropdownItem:hover {
 	background: var(--color-primary-soft);
+}
+
+.themeMenuItem {
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.themeMenuIcon {
+	font-size: 1rem;
+	line-height: 1;
 }
 
 .dropdownItemDanger {
@@ -379,7 +390,8 @@
 	}
 
 	.navRight .iconLink,
-	.profileButton {
+	.profileButton,
+	.themeButton {
 		justify-content: flex-start;
 		gap: 0.55rem;
 		width: 100%;

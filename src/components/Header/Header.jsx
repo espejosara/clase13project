@@ -7,6 +7,7 @@ import { logoutThunk, selectIsAdmin } from '../../store/slices/authSlice'
 import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlice'
 import { clearCart } from '../../store/slices/cartSlice'
 import { fetchWishlistRequest } from '../../api/wishlist'
+import useTheme from '../../hooks/useTheme'
 import styles from './Header.module.css'
 
 const HEADER_SYNC_TTL_MS = 12000
@@ -26,10 +27,13 @@ function Header() {
 	const isAdmin = useSelector(selectIsAdmin)
 	const cartItems = useSelector((state) => state.cart.items)
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
+	const { theme, toggleTheme } = useTheme()
 	const location = useLocation()
 	const isAuthenticated = Boolean(authenticatedUser)
 	const isMenuOpen = openMenuPath === location.pathname
 	const isProfileMenuOpen = openProfileMenuPath === location.pathname
+	const isDarkTheme = theme === 'dark'
+	const nextThemeLabel = isDarkTheme ? 'claro' : 'oscuro'
 
 	const getNavLinkClass = ({ isActive }) =>
 		isActive ? `${styles.link} ${styles.linkActive}` : styles.link
@@ -246,6 +250,32 @@ function Header() {
 					<div className={styles.navRight}>
 						{isAuthenticated ? (
 							<>
+								<NavLink
+									to="/wishlist"
+									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+									aria-label={`Favoritos, ${wishlistCount} productos guardados`}
+									data-label="Favoritos"
+								>
+									<span className={styles.icon} aria-hidden="true">❤</span>
+									<span className={styles.srOnly}>Favoritos</span>
+									<span className={styles.badge} aria-hidden="true">
+										{wishlistCount}
+									</span>
+								</NavLink>
+
+								<NavLink
+									to="/cart"
+									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
+									aria-label={`Carrito, ${cartCount} unidades`}
+									data-label="Carrito"
+								>
+									<span className={styles.icon} aria-hidden="true">🛒</span>
+									<span className={styles.srOnly}>Carrito</span>
+									<span className={styles.badge} aria-hidden="true">
+										{cartCount}
+									</span>
+								</NavLink>
+
 								<div className={styles.profile} ref={profileMenuRef}>
 									<Button
 										ref={profileButtonRef}
@@ -274,6 +304,15 @@ function Header() {
 											) : null}
 											<button
 												type="button"
+												className={`${styles.dropdownItem} ${styles.themeMenuItem}`}
+												onClick={toggleTheme}
+												aria-label={`Cambiar a modo ${nextThemeLabel}`}
+											>
+												Modo {nextThemeLabel}
+												<span className={styles.themeMenuIcon} aria-hidden="true">{isDarkTheme ? '☀' : '☾'}</span>
+											</button>
+											<button
+												type="button"
 												className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
 												onClick={handleLogout}
 											>
@@ -282,32 +321,6 @@ function Header() {
 										</div>
 									) : null}
 								</div>
-
-								<NavLink
-									to="/wishlist"
-									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-									aria-label={`Favoritos, ${wishlistCount} productos guardados`}
-									data-label="Favoritos"
-								>
-									<span className={styles.icon} aria-hidden="true">❤</span>
-									<span className={styles.srOnly}>Favoritos</span>
-									<span className={styles.badge} aria-hidden="true">
-										{wishlistCount}
-									</span>
-								</NavLink>
-
-								<NavLink
-									to="/cart"
-									className={({ isActive }) => `${getIconLinkClass({ isActive })} ${styles.iconOnly}`}
-									aria-label={`Carrito, ${cartCount} unidades`}
-									data-label="Carrito"
-								>
-									<span className={styles.icon} aria-hidden="true">🛒</span>
-									<span className={styles.srOnly}>Carrito</span>
-									<span className={styles.badge} aria-hidden="true">
-										{cartCount}
-									</span>
-								</NavLink>
 							</>
 						) : (
 							<>
@@ -317,8 +330,22 @@ function Header() {
 								<NavLink to="/register" className={getNavLinkClass}>
 									Registrarse
 								</NavLink>
+								<Button
+									type="button"
+									variant="outline"
+									className={`${styles.themeButton} ${styles.iconOnly}`}
+									onClick={toggleTheme}
+									aria-label={`Cambiar a modo ${nextThemeLabel}`}
+									data-label={`Modo ${nextThemeLabel}`}
+								>
+									<span className={styles.icon} aria-hidden="true">{isDarkTheme ? '☀' : '☾'}</span>
+									<span className={styles.srOnly}>Modo {nextThemeLabel}</span>
+								</Button>
 							</>
 						)}
+						<span className="visually-hidden" role="status" aria-live="polite">
+							Modo {isDarkTheme ? 'oscuro' : 'claro'} activado
+						</span>
 					</div>
 				</nav>
 			</header>

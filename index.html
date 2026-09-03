@@ -2,6 +2,28 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="theme-color" content="#f1f5f9" />
+    <script>
+      (() => {
+        const storageKey = 'neokensei-theme'
+
+        try {
+          const storedTheme = localStorage.getItem(storageKey)
+          const theme = storedTheme === 'light' || storedTheme === 'dark'
+            ? storedTheme
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+          document.querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', theme === 'dark' ? '#090f1f' : '#f1f5f9')
+        } catch {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
     <link rel="preconnect" href="https://res.cloudinary.com" />
     <link
       rel="icon"
