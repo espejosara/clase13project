@@ -6,6 +6,20 @@ import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import ProfilePage from './ProfilePage'
 
+vi.mock('../../api/recommendations', () => ({
+	fetchRecommendationsRequest: vi.fn(() => Promise.resolve({
+		strategy: 'category_affinity',
+		categories: ['Figuras'],
+		items: [{
+			id: 9,
+			name: 'Figura recomendada',
+			category: 'Figuras',
+			price: 24.99,
+			imageUrl: 'https://example.com/figura.jpg',
+		}],
+	})),
+}))
+
 vi.mock('../../store/slices/authSlice', () => ({
 	fetchCurrentUserThunk: () => ({ type: 'auth/fetchCurrentUser' }),
 }))
@@ -74,6 +88,8 @@ describe('ProfilePage', () => {
 		expect(screen.getByText('2 productos guardados')).toBeInTheDocument()
 		expect(screen.getByRole('link', { name: /recomendaciones/i })).toHaveAttribute('href', '/products')
 		expect(screen.getByRole('link', { name: /mis favoritos/i })).toHaveAttribute('href', '/wishlist')
+		expect(await screen.findByRole('link', { name: /figura recomendada/i })).toHaveAttribute('href', '/products/9')
+		expect(screen.getByText(/basadas en tu interés por figuras/i)).toBeInTheDocument()
 		expect(screen.queryByText('Pedido #55')).not.toBeInTheDocument()
 		expect(screen.queryByRole('button', { name: /cerrar sesión/i })).not.toBeInTheDocument()
 

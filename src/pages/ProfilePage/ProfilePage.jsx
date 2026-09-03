@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import { fetchRecommendationsRequest } from '../../api/recommendations'
 import { fetchCurrentUserThunk } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import { formatOrderItemSummary } from '../../utils/orderSummary'
@@ -103,11 +104,49 @@ function ProfilePage() {
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const [ordersOpen, setOrdersOpen] = useState(false)
 	const [openOrderId, setOpenOrderId] = useState(null)
+	const [recommendations, setRecommendations] = useState({
+		items: [],
+		categories: [],
+		strategy: 'featured',
+		loading: true,
+		error: null,
+	})
 
 	useEffect(() => {
 		dispatch(fetchCurrentUserThunk())
 		dispatch(fetchOrdersThunk())
 	}, [dispatch])
+
+	useEffect(() => {
+		let isActive = true
+
+		fetchRecommendationsRequest()
+			.then((result) => {
+				if (!isActive) return
+
+				setRecommendations({
+					...result,
+					loading: false,
+					error: null,
+				})
+			})
+			.catch((recommendationsError) => {
+				if (!isActive) return
+
+				setRecommendations({
+					items: [],
+					categories: [],
+					strategy: 'featured',
+					loading: false,
+					error: recommendationsError.response?.data?.error
+						|| 'No pudimos calcular tus recomendaciones',
+				})
+			})
+
+		return () => {
+			isActive = false
+		}
+	}, [])
 
 	const toggleOrder = (orderId) => {
 		setOpenOrderId((current) => (current === orderId ? null : orderId))
@@ -119,6 +158,17 @@ function ProfilePage() {
 	const profileWishlistCount = Number(user?.wishlistCount ?? user?.wishlist?.count ?? 0)
 	const wishlistCount = wishlistIds.length || profileWishlistCount
 	const lastOrder = user?.lastOrder ?? user?.checkout?.lastOrder ?? null
+	const recommendationCount = recommendations.items.length
+	const recommendationDescription = recommendations.loading
+		? 'Calculando sugerencias para ti...'
+		: recommendationCount
+			? recommendations.strategy === 'category_affinity'
+				? `${getCountLabel(recommendationCount, 'producto elegido', 'productos elegidos')} según tu actividad.`
+				: `${getCountLabel(recommendationCount, 'producto destacado', 'productos destacados')} disponibles.`
+			: 'Encuentra más productos entre todo nuestro catálogo.'
+	const recommendationReason = recommendations.strategy === 'category_affinity'
+		? `Basadas en tu interés por ${recommendations.categories.join(', ')}.`
+		: 'Una selección de productos disponibles mejor valorados.'
 	const roleLabel = String(user?.role).toUpperCase() === 'ADMIN'
 		? 'Cuenta de administrador'
 		: 'Cuenta personal'
@@ -194,7 +244,7 @@ function ProfilePage() {
 						<span className={styles.shortcutContent}>
 							<span className={styles.shortcutTitle}>Recomendaciones</span>
 							<span className={styles.shortcutDescription}>
-								Encuentra más productos entre todo nuestro catálogo.
+								{recommendationDescription}
 							</span>
 						</span>
 						<span className={styles.shortcutAction} aria-hidden="true">
@@ -216,6 +266,53 @@ function ProfilePage() {
 					</Link>
 				</nav>
 			</div>
+
+			<section id="recomendaciones" className={`${styles.card} ${styles.recommendationsCard}`}>
+				<header className={styles.recommendationsHeader}>
+					<div>
+						<p className={styles.sectionEyebrow}>Selección para ti</p>
+						<h2 className={styles.recommendationsTitle}>Productos recomendados</h2>
+						{!recommendations.loading && !recommendations.error && recommendationCount ? (
+							<p className={styles.recommendationsReason}>{recommendationReason}</p>
+						) : null}
+					</div>
+					<Link to="/products" className={styles.catalogLink}>Ver todo el catálogo →</Link>
+				</header>
+
+				{recommendations.loading ? (
+					<Spinner label="Calculando recomendaciones..." />
+				) : recommendations.error ? (
+					<StatusMessage
+						title="No pudimos cargar las recomendaciones"
+						description={recommendations.error}
+						variant="warning"
+					/>
+				) : recommendationCount ? (
+					<ul className={styles.recommendationsGrid}>
+						{recommendations.items.map((product) => (
+							<li key={product.id} className={styles.recommendationItem}>
+								<Link to={`/products/${product.id}`} className={styles.recommendationLink}>
+									<img
+										src={product.imageUrl || FALLBACK_PRODUCT_IMAGE}
+										alt={product.name}
+										className={styles.recommendationImage}
+									/>
+									<span className={styles.recommendationContent}>
+										<span className={styles.recommendationCategory}>{product.category}</span>
+										<strong className={styles.recommendationName}>{product.name}</strong>
+										<span className={styles.recommendationPrice}>{formatPrice(product.price)}</span>
+									</span>
+								</Link>
+							</li>
+						))}
+					</ul>
+				) : (
+					<div className={styles.emptyState}>
+						<strong>No hay productos disponibles para recomendar</strong>
+						<span>Vuelve a consultar cuando se añadan nuevos productos al catálogo.</span>
+					</div>
+				)}
+			</section>
 
 			<section id="historial-pedidos" className={`${styles.card} ${styles.ordersCard}`}>
 				<button
