@@ -6,13 +6,23 @@ import WishlistButton from '../WishlistButton/WishlistButton'
 import Button from '../Button/Button'
 import styles from './ProductCard.module.css'
 
+const priceFormatter = new Intl.NumberFormat('es-ES', {
+	style: 'currency',
+	currency: 'EUR',
+})
+
 function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
+	const stock = Number(product.stock)
+	const isOutOfStock = Number.isFinite(stock) && stock <= 0
+	const stockLabel = isOutOfStock
+		? 'Agotado'
+		: `${stock} ${stock === 1 ? 'unidad disponible' : 'unidades disponibles'}`
 
 	const handleAddToCart = async () => {
-		if (isAddingToCart) return
+		if (isAddingToCart || isOutOfStock) return
 
 		setCartError('')
 		setIsAddingToCart(true)
@@ -36,6 +46,8 @@ function ProductCard({ product, onAddToCart }) {
 					className={styles.image}
 					src={product.imageUrl}
 					alt={product.name}
+					loading="lazy"
+					decoding="async"
 				/>
 				<div className={styles.content}>
 					<p className={styles.category}>{product.category}</p>
@@ -43,21 +55,25 @@ function ProductCard({ product, onAddToCart }) {
 					<p className={styles.description}>{product.description}</p>
 					<div className={styles.meta}>
 						<span className={styles.price}>
-							{product.price.toFixed(2)} EUR
+							{priceFormatter.format(product.price)}
 						</span>
-						<span className={styles.stock}>Stock: {product.stock}</span>
+						<span className={`${styles.stock} ${isOutOfStock ? styles.outOfStock : ''}`}>
+							{stockLabel}
+						</span>
 					</div>
 				</div>
 			</Link>
 			<div className={styles.actions}>
 				<Button
-					variant="outline"
+					variant="primary"
 					className={`${styles.actionButton} ${isAddingToCart ? styles.isLoading : ''}`}
 					onClick={handleAddToCart}
-					disabled={isAddingToCart}
+					disabled={isAddingToCart || isOutOfStock}
 					aria-busy={isAddingToCart}
 				>
-					{isAddingToCart ? (
+					{isOutOfStock ? (
+						'No disponible'
+					) : isAddingToCart ? (
 						<>
 							<span className={styles.buttonDot} aria-hidden="true" /> Añadiendo...
 						</>

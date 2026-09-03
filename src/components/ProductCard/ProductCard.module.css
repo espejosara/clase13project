@@ -98,6 +98,11 @@
 	align-self: center;
 }
 
+.outOfStock {
+	color: var(--color-danger-hover);
+	font-weight: 700;
+}
+
 .actions {
 	display: grid;
 	gap: 0.5rem;
@@ -118,8 +123,11 @@
 }
 
 .isLoading {
-	border-color: var(--color-accent);
-	background: var(--color-surface-muted);
+	background: var(--color-accent);
+}
+
+.isLoading .buttonDot {
+	background: currentColor;
 }
 
 .buttonDot {
