@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './Footer.module.css'
 
-const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788436986/favicon-32x32_sjpkgu.png'
+const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788527218/Gemini_Generated_Image_9p1rhd9p1rhd9p1r-removebg-preview_uqida1.png'
 const INSTAGRAM_URL = 'https://www.instagram.com/neokenseichronicles/'
 
 function Footer() {
