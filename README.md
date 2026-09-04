@@ -2,6 +2,11 @@
 
 Frontend de e-commerce en React + Vite conectado a un backend real con autenticación JWT en cookie HttpOnly, Redux Toolkit y estado global para carrito y wishlist.
 
+## Repositorios del proyecto
+
+- Frontend: [espejosara/clase13project](https://github.com/espejosara/clase13project)
+- Backend: [espejosara/backend-lite-sprint13](https://github.com/espejosara/backend-lite-sprint13)
+
 ## Objetivo de esta feature
 
 - Centralizar el estado global con Redux Toolkit.
@@ -133,18 +138,19 @@ Debe quedar activo en http://localhost:5173
 - POST /auth/login
 - POST /auth/register
 - POST /auth/logout
-- POST /payments/checkout-session
 
 ### Privadas
 
 - GET /cart
 - GET /auth/me
 - POST /cart/items
+- PATCH /cart/items/:itemId
 - DELETE /cart/items/:itemId
-- POST /cart/checkout
 - GET /wishlist
 - POST /wishlist/:productId
 - POST /products/:id/reviews
+- POST /payments/checkout-session
+- GET /payments/checkout-session/:sessionId/order
 
 ### Administración (rol ADMIN)
 
@@ -185,7 +191,7 @@ axios.create({ withCredentials: true })
 - Rutas privadas con `PrivateRoute`.
 - Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
 - CRUD de productos con listado, creación, edición y eliminación confirmada.
-- Formulario único de alta y edición con validaciones de campos, precio, stock e imagen por URL.
+- Formulario único de alta y edición con validaciones de campos, precio, stock y archivo de imagen.
 - Carrito global con fetch, add, remove y redirección a Stripe Checkout.
 - Wishlist global con fetch y toggle.
 - Perfil con datos del usuario y logout.
@@ -277,6 +283,7 @@ definitiva del pedido debe depender de la confirmación segura recibida por el b
 ```bash
 npm run dev
 npm run build
+npm run check
 npm run preview
 npm run lint
 npm test
@@ -315,3 +322,5 @@ npm run test:watch
 - Si cambias `.env`, reinicia Vite.
 - Si hay errores de red, revisa que backend esté encendido y CORS permita http://localhost:5173.
 - Si la cookie de sesión expira, el frontend pedirá iniciar sesión de nuevo.
+- `netlify.toml` configura el build, publica `dist` y redirige las rutas de la SPA a `index.html`.
+- `.github/workflows/ci.yml` valida lint, pruebas y build en cada push y pull request.
