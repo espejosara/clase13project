@@ -401,8 +401,15 @@
 		padding: 0.55rem 0.7rem;
 		justify-content: flex-start;
 		border-radius: var(--radius-control);
+		border-color: var(--color-border-muted);
+		background: var(--color-surface);
 		text-align: left;
 		font-size: 0.9rem;
+	}
+
+	.linkActive {
+		border-color: var(--color-primary);
+		background: linear-gradient(95deg, var(--color-primary) 0%, var(--color-accent-2) 100%);
 	}
 
 	.navRight .iconLink,
