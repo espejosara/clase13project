@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { normalizeId } from '../../utils/id'
+import { logoutThunk } from './authSlice'
 
 function extractProductIds(payload) {
 	const extractIdsFromList = (items) => items
@@ -80,6 +81,12 @@ const wishlistSlice = createSlice({
 			state.ids = []
 			state.productIds = []
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(logoutThunk.fulfilled, (state) => {
+			state.ids = []
+			state.productIds = []
+		})
 	},
 })
 

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { fetchOrdersRequest } from '../../api/orders'
+import { logoutThunk } from './authSlice'
 
 const initialState = {
 	items: [],
@@ -24,6 +25,11 @@ const ordersSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
+			.addCase(logoutThunk.fulfilled, (state) => {
+				state.items = []
+				state.loading = false
+				state.error = null
+			})
 			.addCase(fetchOrdersThunk.pending, (state) => {
 				state.loading = true
 				state.error = null

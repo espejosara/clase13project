@@ -6,6 +6,7 @@ import {
 	updateCartItemQuantity,
 } from '../../api/cart'
 import { createCheckoutSessionRequest } from '../../api/payments'
+import { logoutThunk } from './authSlice'
 
 function extractItems(payload) {
 	if (Array.isArray(payload)) return payload
@@ -190,6 +191,12 @@ const cartSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(logoutThunk.fulfilled, (state) => {
+				state.items = []
+				state.loading = false
+				state.isCheckingOut = false
+				state.error = null
+			})
 			.addCase(fetchCartThunk.pending, (state) => {
 				state.loading = true
 					state.isCheckingOut = false
