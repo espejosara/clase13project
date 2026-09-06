@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
@@ -13,9 +13,9 @@ import {
 import CartPage from './CartPage'
 
 vi.mock('../../store/slices/cartSlice', () => ({
-	addCartItemThunk: vi.fn(() => ({ type: 'cart/addItem' })),
+	addCartItemThunk: vi.fn(() => () => ({ unwrap: () => Promise.resolve() })),
 	fetchCartThunk: vi.fn(() => ({ type: 'cart/fetch' })),
-	removeCartItemThunk: vi.fn(() => ({ type: 'cart/removeItem' })),
+	removeCartItemThunk: vi.fn(() => () => ({ unwrap: () => Promise.resolve() })),
 	updateCartItemQuantityThunk: vi.fn(() => ({ type: 'cart/updateQuantity' })),
 }))
 
@@ -66,6 +66,14 @@ describe('CartPage', () => {
 
 		await user.click(screen.getByRole('button', { name: 'Eliminar Figura del carrito del carrito' }))
 		expect(removeCartItemThunk).toHaveBeenCalledWith({ itemId: 44 })
+		expect(await screen.findByRole('status', { name: 'Producto eliminado' }))
+			.toHaveTextContent('Figura del carrito se ha eliminado del carrito.')
+
+		await user.click(screen.getByRole('button', { name: 'Deshacer' }))
+		expect(addCartItemThunk).toHaveBeenLastCalledWith({ productId: 7, quantity: 2 })
+		await waitFor(() => {
+			expect(screen.queryByRole('status', { name: 'Producto eliminado' })).not.toBeInTheDocument()
+		})
 		expect(fetchCartThunk).toHaveBeenCalled()
 	})
 
