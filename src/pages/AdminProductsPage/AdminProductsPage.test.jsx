@@ -16,6 +16,7 @@ const product = {
 	category: 'acción',
 	price: 24.99,
 	stock: 3,
+	isFeatured: true,
 	imageUrl: 'https://example.com/figura.jpg',
 }
 
@@ -37,6 +38,7 @@ describe('AdminProductsPage', () => {
 		)
 
 		expect(await screen.findByText('Figura de prueba')).toBeInTheDocument()
+		expect(screen.getByText('Sí')).toBeInTheDocument()
 		const tableRegion = screen.getByRole('region', { name: /listado de productos/i })
 		expect(tableRegion).toHaveAttribute('tabindex', '0')
 		tableRegion.focus()

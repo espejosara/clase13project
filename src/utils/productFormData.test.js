@@ -7,6 +7,7 @@ const product = {
 	description: 'Figura de prueba',
 	price: '24.99',
 	stock: '5',
+	isFeatured: true,
 }
 
 describe('buildProductFormData', () => {
@@ -19,6 +20,7 @@ describe('buildProductFormData', () => {
 		expect(formData.get('description')).toBe('Figura de prueba')
 		expect(formData.get('price')).toBe('24.99')
 		expect(formData.get('stock')).toBe('5')
+		expect(formData.get('isFeatured')).toBe('true')
 		expect(formData.get('image')).toBe(image)
 	})
 

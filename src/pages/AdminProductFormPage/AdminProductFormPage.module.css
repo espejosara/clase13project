@@ -93,6 +93,35 @@
 	grid-column: 1 / -1;
 }
 
+.featuredField {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 0.85rem;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: var(--radius-control);
+	background: var(--color-surface-alt);
+	cursor: pointer;
+}
+
+.featuredField input {
+	width: 1.15rem;
+	height: 1.15rem;
+	margin: 0.15rem 0 0;
+	accent-color: var(--color-primary);
+	cursor: pointer;
+}
+
+.featuredCopy {
+	display: grid;
+	gap: 0.2rem;
+}
+
+.featuredCopy small {
+	color: var(--color-text-soft);
+	font-weight: 400;
+}
+
 .currentImage {
 	display: flex;
 	align-items: center;

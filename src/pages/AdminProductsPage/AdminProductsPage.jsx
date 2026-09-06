@@ -124,6 +124,7 @@ function AdminProductsPage() {
 								<th scope="col">Categoría</th>
 								<th scope="col">Precio</th>
 								<th scope="col">Stock</th>
+								<th scope="col">Destacado</th>
 								<th scope="col">Acciones</th>
 							</tr>
 						</thead>
@@ -139,6 +140,11 @@ function AdminProductsPage() {
 									<td>{product.category}</td>
 									<td>{priceFormatter.format(Number(product.price) || 0)}</td>
 									<td>{product.stock}</td>
+									<td>
+										<span className={product.isFeatured ? styles.featuredBadge : styles.regularBadge}>
+											{product.isFeatured ? 'Sí' : 'No'}
+										</span>
+									</td>
 									<td>
 										<div className={styles.actions}>
 											<Link className="app-action-link" to={`/admin/products/${product.id}/edit`}>

@@ -4,6 +4,7 @@ const PRODUCT_FIELDS = [
 	'description',
 	'price',
 	'stock',
+	'isFeatured',
 ]
 
 export function buildProductFormData(product, imageFile = null) {

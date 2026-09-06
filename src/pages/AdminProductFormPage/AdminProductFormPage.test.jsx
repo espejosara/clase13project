@@ -34,6 +34,7 @@ async function completeForm(user) {
 	await user.type(screen.getByLabelText('Categoría'), 'acción')
 	await user.type(screen.getByLabelText('Precio (€)'), '29.95')
 	await user.type(screen.getByLabelText('Stock'), '5')
+	await user.click(screen.getByLabelText('Mostrar en productos destacados'))
 	await user.upload(screen.getByLabelText('Imagen'), image)
 	await user.type(screen.getByLabelText('Descripción'), 'Descripción de la figura')
 
@@ -74,6 +75,7 @@ describe('AdminProductFormPage', () => {
 			description: 'Descripción de la figura',
 			price: '29.95',
 			stock: '5',
+			isFeatured: 'true',
 			image,
 		})
 		expect(await screen.findByRole('heading', { name: 'Listado admin' })).toBeInTheDocument()
@@ -88,14 +90,18 @@ describe('AdminProductFormPage', () => {
 			description: 'Descripción existente',
 			price: 19.5,
 			stock: 2,
+			isFeatured: true,
 			imageUrl: 'https://example.com/existente.jpg',
 		})
 		updateProduct.mockResolvedValue({ id: 7 })
 		renderForm('/admin/products/7/edit')
 
 		const nameInput = await screen.findByDisplayValue('Figura existente')
+		const featuredInput = screen.getByLabelText('Mostrar en productos destacados')
+		expect(featuredInput).toBeChecked()
 		await user.clear(nameInput)
 		await user.type(nameInput, 'Figura actualizada')
+		await user.click(featuredInput)
 		await user.click(screen.getByRole('button', { name: 'Actualizar producto' }))
 
 		expect(updateProduct).toHaveBeenCalledOnce()
@@ -108,6 +114,7 @@ describe('AdminProductFormPage', () => {
 			description: 'Descripción existente',
 			price: '19.5',
 			stock: '2',
+			isFeatured: 'false',
 		})
 		expect(payload.has('image')).toBe(false)
 		expect(await screen.findByRole('heading', { name: 'Listado admin' })).toBeInTheDocument()

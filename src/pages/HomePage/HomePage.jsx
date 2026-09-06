@@ -10,7 +10,7 @@ const HERO_IMAGE_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v17884
 
 function HomePage() {
 	const { data: products, loading, error, refetch } = useProducts()
-	const featuredProducts = products.slice(0, 4)
+	const featuredProducts = products.filter((product) => product.isFeatured)
 
 	return (
 		<section className={styles.homePage}>

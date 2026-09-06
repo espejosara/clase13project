@@ -26,6 +26,7 @@ const emptyForm = {
 	description: '',
 	price: '',
 	stock: '',
+	isFeatured: false,
 }
 
 function getErrorMessage(error, fallback) {
@@ -95,6 +96,7 @@ function AdminProductFormPage() {
 					description: product.description || '',
 					price: String(product.price ?? ''),
 					stock: String(product.stock ?? ''),
+					isFeatured: Boolean(product.isFeatured),
 				})
 				setExistingImageUrl(product.imageUrl || '')
 			} catch (requestError) {
@@ -114,8 +116,11 @@ function AdminProductFormPage() {
 	}, [id, isEditing])
 
 	const handleChange = (event) => {
-		const { name, value } = event.target
-		setFormData((currentData) => ({ ...currentData, [name]: value }))
+		const { checked, name, type, value } = event.target
+		setFormData((currentData) => ({
+			...currentData,
+			[name]: type === 'checkbox' ? checked : value,
+		}))
 		setFieldErrors((currentErrors) => ({ ...currentErrors, [name]: '' }))
 	}
 
@@ -140,6 +145,7 @@ function AdminProductFormPage() {
 			description: formData.description.trim(),
 			price: formData.price,
 			stock: formData.stock,
+			isFeatured: formData.isFeatured,
 		}
 		const payload = buildProductFormData(normalizedProduct, imageFile)
 
@@ -225,6 +231,20 @@ function AdminProductFormPage() {
 						onChange={handleChange}
 						error={fieldErrors.stock}
 					/>
+
+					<label className={`${styles.featuredField} ${styles.fullWidth}`}>
+						<input
+							type="checkbox"
+							name="isFeatured"
+							aria-label="Mostrar en productos destacados"
+							checked={formData.isFeatured}
+							onChange={handleChange}
+						/>
+						<span className={styles.featuredCopy}>
+							<strong>Mostrar en productos destacados</strong>
+							<small>Aparecerá en la cinta de la página principal.</small>
+						</span>
+					</label>
 
 					<div className={`${styles.field} ${styles.fullWidth}`}>
 						<label htmlFor="product-image">

@@ -62,7 +62,7 @@
 .table {
 	width: 100%;
 	border-collapse: collapse;
-	min-width: 760px;
+	min-width: 850px;
 }
 
 .table th,
@@ -98,6 +98,28 @@
 	border-radius: 0.55rem;
 	object-fit: cover;
 	background: var(--color-surface-muted);
+}
+
+.featuredBadge,
+.regularBadge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 2.5rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 800;
+}
+
+.featuredBadge {
+	background: var(--color-primary-soft);
+	color: var(--color-primary);
+}
+
+.regularBadge {
+	background: var(--color-surface-muted);
+	color: var(--color-text-soft);
 }
 
 .actions {
