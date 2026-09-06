@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
+import useRequireAuthentication from '../../hooks/useRequireAuthentication'
 import WishlistButton from '../WishlistButton/WishlistButton'
 import Button from '../Button/Button'
 import styles from './ProductCard.module.css'
@@ -13,6 +14,7 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
 
 function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
+	const requireAuthentication = useRequireAuthentication()
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
 	const stock = Number(product.stock)
@@ -23,6 +25,7 @@ function ProductCard({ product, onAddToCart }) {
 
 	const handleAddToCart = async () => {
 		if (isAddingToCart || isOutOfStock) return
+		if (!requireAuthentication()) return
 
 		setCartError('')
 		setIsAddingToCart(true)

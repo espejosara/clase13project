@@ -61,7 +61,10 @@ function LoginPage() {
 			const userName = authData?.user?.name || authData?.name || 'usuario'
 			setSuccessMessage(`Sesión iniciada como ${userName}`)
 			setSessionMessage('')
-			const redirectTo = location.state?.from?.pathname || '/profile'
+			const previousLocation = location.state?.from
+			const redirectTo = previousLocation
+				? `${previousLocation.pathname}${previousLocation.search || ''}${previousLocation.hash || ''}`
+				: '/profile'
 			navigate(redirectTo, { replace: true })
 		} catch {
 			// El error ya queda reflejado en auth.error.

@@ -8,6 +8,7 @@ import {
 } from '../../store/slices/wishlistSlice'
 import { showNotification } from '../../store/slices/notificationSlice'
 import { idsAreEqual } from '../../utils/id'
+import useRequireAuthentication from '../../hooks/useRequireAuthentication'
 import styles from './WishlistButton.module.css'
 
 function WishlistButton({ productId, className = '', activeClassName = '' }) {
@@ -15,12 +16,14 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 	const [error, setError] = useState('')
 	const errorId = useId()
 	const dispatch = useDispatch()
+	const requireAuthentication = useRequireAuthentication()
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const isInWishlist = wishlistIds.some((id) => idsAreEqual(id, productId))
 
 	// Toggle optimista: actualiza la UI primero y luego sincroniza con backend.
 	const handleToggleWishlist = async () => {
 		if (loading) return
+		if (!requireAuthentication()) return
 
 		const previousWishlistIds = [...wishlistIds]
 

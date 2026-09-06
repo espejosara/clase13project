@@ -10,12 +10,14 @@ import Spinner from '../../components/Spinner/Spinner'
 import WishlistButton from '../../components/WishlistButton/WishlistButton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
+import useRequireAuthentication from '../../hooks/useRequireAuthentication'
 import NotFoundPage from '../NotFoundPage/NotFoundPage'
 import styles from './ProductDetailPage.module.css'
 
 function ProductDetailPage() {
 	const { productId } = useParams()
 	const dispatch = useDispatch()
+	const requireAuthentication = useRequireAuthentication()
 	const [createdReviews, setCreatedReviews] = useState([])
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
@@ -36,6 +38,7 @@ function ProductDetailPage() {
 
 	const handleAddToCart = async () => {
 		if (!product || isAddingToCart) return
+		if (!requireAuthentication()) return
 
 		setCartError('')
 		setIsAddingToCart(true)
