@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getProducts } from '../../api/products'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
@@ -6,13 +7,17 @@ import Button from '../../components/Button/Button'
 import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import styles from './ProductsPage.module.css'
 
+const validSortOptions = new Set(['name-asc', 'price-asc', 'price-desc'])
+
 function ProductsPage() {
 	const [products, setProducts] = useState([])
-	const [search, setSearch] = useState('')
-	const [category, setCategory] = useState('')
-	const [sortBy, setSortBy] = useState('name-asc')
+	const [searchParams, setSearchParams] = useSearchParams()
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
+	const search = searchParams.get('search') ?? ''
+	const category = searchParams.get('category') ?? ''
+	const requestedSort = searchParams.get('sort') ?? 'name-asc'
+	const sortBy = validSortOptions.has(requestedSort) ? requestedSort : 'name-asc'
 
 	useEffect(() => {
 		async function loadProducts() {
@@ -71,9 +76,26 @@ function ProductsPage() {
 	const hasSearch = Boolean(search.trim())
 	const hasActiveFilters = hasSearch || Boolean(category)
 	const resultText = `${filteredProducts.length} ${filteredProducts.length === 1 ? 'producto' : 'productos'}`
+	const updateSearchParam = (key, value, options) => {
+		setSearchParams((currentParams) => {
+			const nextParams = new URLSearchParams(currentParams)
+
+			if (value && !(key === 'sort' && value === 'name-asc')) {
+				nextParams.set(key, value)
+			} else {
+				nextParams.delete(key)
+			}
+
+			return nextParams
+		}, options)
+	}
 	const clearFilters = () => {
-		setSearch('')
-		setCategory('')
+		setSearchParams((currentParams) => {
+			const nextParams = new URLSearchParams(currentParams)
+			nextParams.delete('search')
+			nextParams.delete('category')
+			return nextParams
+		})
 	}
 
 	return (
@@ -121,7 +143,7 @@ function ProductsPage() {
 									type="search"
 									placeholder="Nombre, categoría o descripción"
 									value={search}
-									onChange={(event) => setSearch(event.target.value)}
+									onChange={(event) => updateSearchParam('search', event.target.value, { replace: true })}
 									aria-controls="products-grid"
 								/>
 							</div>
@@ -133,7 +155,7 @@ function ProductsPage() {
 								id="product-category"
 								className={styles.select}
 								value={category}
-								onChange={(event) => setCategory(event.target.value)}
+								onChange={(event) => updateSearchParam('category', event.target.value)}
 								aria-controls="products-grid"
 							>
 								<option value="">Todas las categorías</option>
@@ -149,7 +171,7 @@ function ProductsPage() {
 								id="product-sort"
 								className={styles.select}
 								value={sortBy}
-								onChange={(event) => setSortBy(event.target.value)}
+								onChange={(event) => updateSearchParam('sort', event.target.value)}
 								aria-controls="products-grid"
 							>
 								<option value="name-asc">Nombre: A–Z</option>

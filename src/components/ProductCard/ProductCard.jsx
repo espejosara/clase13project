@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
@@ -14,6 +14,7 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
 
 function ProductCard({ product, onAddToCart }) {
 	const dispatch = useDispatch()
+	const location = useLocation()
 	const requireAuthentication = useRequireAuthentication()
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
@@ -49,7 +50,11 @@ function ProductCard({ product, onAddToCart }) {
 
 	return (
 		<article className={styles.productCard}>
-			<Link to={`/products/${product.id}`} className={styles.link}>
+			<Link
+				to={`/products/${product.id}`}
+				state={{ catalogSearch: location.pathname === '/products' ? location.search : '' }}
+				className={styles.link}
+			>
 				<img
 					className={styles.image}
 					src={product.imageUrl}

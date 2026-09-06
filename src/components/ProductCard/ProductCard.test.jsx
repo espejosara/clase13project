@@ -21,7 +21,12 @@ function LoginDestination() {
 	return <h1>Iniciar sesión para {location.state?.authIntent}</h1>
 }
 
-function renderProductCard(productData = product) {
+function ProductDestination() {
+	const location = useLocation()
+	return <p>Volver con {location.state?.catalogSearch}</p>
+}
+
+function renderProductCard(productData = product, initialEntry = '/products') {
 	const store = configureStore({
 		reducer: {
 			auth: () => ({ user: null }),
@@ -31,9 +36,10 @@ function renderProductCard(productData = product) {
 
 	return render(
 		<Provider store={store}>
-			<MemoryRouter initialEntries={['/products']}>
+			<MemoryRouter initialEntries={[initialEntry]}>
 				<Routes>
 					<Route path="/products" element={<ProductCard product={productData} />} />
+					<Route path="/products/:productId" element={<ProductDestination />} />
 					<Route path="/login" element={<LoginDestination />} />
 				</Routes>
 			</MemoryRouter>
@@ -55,5 +61,14 @@ describe('ProductCard', () => {
 		renderProductCard({ ...product, stock: null })
 
 		expect(screen.getByText('Stock por confirmar')).toBeInTheDocument()
+	})
+
+	it('conserva los filtros del catálogo al abrir el detalle', async () => {
+		const user = userEvent.setup()
+		renderProductCard(product, '/products?category=Colecci%C3%B3n&sort=price-asc')
+
+		await user.click(screen.getByRole('link'))
+
+		expect(screen.getByText('Volver con ?category=Colecci%C3%B3n&sort=price-asc')).toBeInTheDocument()
 	})
 })

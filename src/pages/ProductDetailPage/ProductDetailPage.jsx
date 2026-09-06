@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useLocation, useParams, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
@@ -17,6 +17,7 @@ import styles from './ProductDetailPage.module.css'
 
 function ProductDetailPage() {
 	const { productId } = useParams()
+	const location = useLocation()
 	const dispatch = useDispatch()
 	const requireAuthentication = useRequireAuthentication()
 	const [createdReviews, setCreatedReviews] = useState([])
@@ -70,10 +71,14 @@ function ProductDetailPage() {
 		: isAddingToCart
 			? 'Añadiendo...'
 			: 'Añadir al carrito'
+	const savedCatalogSearch = location.state?.catalogSearch
+	const catalogSearch = typeof savedCatalogSearch === 'string' && savedCatalogSearch.startsWith('?')
+		? savedCatalogSearch
+		: ''
 
 	return (
 		<section className={styles.productDetailPage} aria-labelledby="product-title">
-			<Link to="/products" className={`app-action-link ${styles.back}`}>
+			<Link to={`/products${catalogSearch}`} className={`app-action-link ${styles.back}`}>
 				← Volver al catálogo
 			</Link>
 
