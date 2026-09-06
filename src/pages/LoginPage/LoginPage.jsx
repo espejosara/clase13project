@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import FormInput from '../../components/FormInput/FormInput'
 import Button from '../../components/Button/Button'
@@ -96,6 +96,9 @@ function LoginPage() {
 				<Button type="submit" variant="primary" disabled={loading}>
 					{loading ? 'Enviando...' : 'Entrar'}
 				</Button>
+				<p className={styles.authPrompt}>
+					¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+				</p>
 				{sessionMessage ? <p className={`${styles.authMessage} ${styles.authMessageError}`} role="alert">{sessionMessage}</p> : null}
 				{serverError ? <p className={`${styles.authMessage} ${styles.authMessageError}`} role="alert">{serverError}</p> : null}
 				{successMessage ? <p className={`${styles.authMessage} ${styles.authMessageSuccess}`} role="status">{successMessage}</p> : null}

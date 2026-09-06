@@ -26,6 +26,25 @@
 	font-size: 0.9rem;
 }
 
+.authPrompt {
+	margin: -0.2rem 0 0;
+	color: var(--color-text-muted);
+	font-size: 0.86rem;
+	text-align: center;
+}
+
+.authPrompt a {
+	color: var(--color-primary);
+	font-weight: 700;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+}
+
+.authPrompt a:hover {
+	color: var(--color-primary-hover);
+}
+
 .authMessageError {
 	color: var(--color-danger-hover);
 }

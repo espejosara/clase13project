@@ -34,6 +34,7 @@ describe('formularios de autenticación', () => {
 
 		expect(screen.getByText('El email es obligatorio')).toBeInTheDocument()
 		expect(screen.getByText('La contraseña es obligatoria')).toBeInTheDocument()
+		expect(screen.getByRole('link', { name: 'Regístrate' })).toHaveAttribute('href', '/register')
 	})
 
 	it('permite mostrar y volver a ocultar la contraseña del login', async () => {
