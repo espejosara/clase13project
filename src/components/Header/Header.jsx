@@ -14,6 +14,22 @@ import styles from './Header.module.css'
 const HEADER_SYNC_TTL_MS = 12000
 const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788527218/Gemini_Generated_Image_9p1rhd9p1rhd9p1r-removebg-preview_uqida1.png'
 
+function HeaderIcon({ type }) {
+	return (
+		<svg className={styles.navIcon} viewBox="0 0 24 24" aria-hidden="true">
+			{type === 'heart' ? (
+				<path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.3 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+			) : (
+				<>
+					<path d="M3 3h1.5l1.8 10.1a2 2 0 0 0 2 1.65h8.85a2 2 0 0 0 1.95-1.55L20.5 7H5.2" />
+					<circle cx="9" cy="19" r="1.25" />
+					<circle cx="17" cy="19" r="1.25" />
+				</>
+			)}
+		</svg>
+	)
+}
+
 function Header() {
 	const [openProfileMenuPath, setOpenProfileMenuPath] = useState(null)
 	const dispatch = useDispatch()
@@ -151,7 +167,7 @@ function Header() {
 		<>
 			<a className="skip-link" href="#main-content">Saltar al contenido principal</a>
 			<header className={styles.header}>
-				<div className={styles.top}>
+				<div className={styles.headerInner}>
 					<Link
 						to="/"
 						className={styles.brand}
@@ -172,20 +188,22 @@ function Header() {
 							<span className={styles.title}>NeoKensei Chronicles</span>
 						</span>
 					</Link>
-				</div>
 
-				<nav
-					className={styles.nav}
-					aria-label="Navegación principal"
-				>
-					<div className={styles.navLeft}>
-						<NavLink to="/products" className={getNavLinkClass}>
-							Catálogo
-						</NavLink>
-					</div>
+					<nav
+						className={styles.nav}
+						aria-label="Navegación principal"
+					>
+						<div className={styles.navLeft}>
+							<NavLink to="/" end className={getNavLinkClass}>
+								Inicio
+							</NavLink>
+							<NavLink to="/products" className={getNavLinkClass}>
+								Catálogo
+							</NavLink>
+						</div>
 
-					<div className={styles.navRight}>
-						{isAuthenticated ? (
+						<div className={styles.navRight}>
+							{isAuthenticated ? (
 							<>
 								<NavLink
 									to="/wishlist"
@@ -193,7 +211,7 @@ function Header() {
 									aria-label={`Favoritos, ${wishlistCount} productos guardados`}
 									data-label="Favoritos"
 								>
-									<span className={styles.icon} aria-hidden="true">❤</span>
+									<HeaderIcon type="heart" />
 									<span className={styles.srOnly}>Favoritos</span>
 									<span className={styles.badge} aria-hidden="true">
 										{wishlistCount}
@@ -206,7 +224,7 @@ function Header() {
 									aria-label={`Carrito, ${cartCount} unidades`}
 									data-label="Carrito"
 								>
-									<span className={styles.icon} aria-hidden="true">🛒</span>
+									<HeaderIcon type="cart" />
 									<span className={styles.srOnly}>Carrito</span>
 									<span className={styles.badge} aria-hidden="true">
 										{cartCount}
@@ -259,13 +277,19 @@ function Header() {
 									) : null}
 								</div>
 							</>
-						) : (
+							) : (
 							<>
-								<NavLink to="/login" className={getNavLinkClass}>
+								<NavLink
+									to="/login"
+									className={({ isActive }) => `${styles.link} ${styles.loginLink} ${isActive ? styles.authLinkActive : ''}`}
+								>
 									Entrar
 								</NavLink>
-								<NavLink to="/register" className={getNavLinkClass}>
-									Registrarse
+								<NavLink
+									to="/register"
+									className={({ isActive }) => `${styles.link} ${styles.registerLink} ${isActive ? styles.authLinkActive : ''}`}
+								>
+									Crear cuenta
 								</NavLink>
 								<Button
 									type="button"
@@ -279,12 +303,13 @@ function Header() {
 									<span className={styles.srOnly}>Modo {nextThemeLabel}</span>
 								</Button>
 							</>
-						)}
-						<span className="visually-hidden" role="status" aria-live="polite">
-							Modo {isDarkTheme ? 'oscuro' : 'claro'} activado
-						</span>
-					</div>
-				</nav>
+							)}
+							<span className="visually-hidden" role="status" aria-live="polite">
+								Modo {isDarkTheme ? 'oscuro' : 'claro'} activado
+							</span>
+						</div>
+					</nav>
+				</div>
 			</header>
 		</>
 	)

@@ -72,6 +72,15 @@ function renderHeader({ authenticated = false, route = '/products' } = {}) {
 }
 
 describe('Header', () => {
+	it('muestra una navegación de escritorio clara y prioriza crear cuenta', () => {
+		renderHeader()
+
+		expect(screen.getByRole('link', { name: 'Inicio' })).toHaveAttribute('href', '/')
+		expect(screen.getByRole('link', { name: 'Catálogo' })).toHaveAttribute('href', '/products')
+		expect(screen.getByRole('link', { name: 'Entrar' })).toHaveAttribute('href', '/login')
+		expect(screen.getByRole('link', { name: 'Crear cuenta' })).toHaveAttribute('href', '/register')
+	})
+
 	it('cierra el menú de usuario con Escape y devuelve el foco a su botón', async () => {
 		const user = userEvent.setup()
 		renderHeader({ authenticated: true })
