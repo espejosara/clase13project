@@ -6,6 +6,7 @@ import {
 	setLocalWishlist,
 	toggleLocalWishlist,
 } from '../../store/slices/wishlistSlice'
+import { showNotification } from '../../store/slices/notificationSlice'
 import { idsAreEqual } from '../../utils/id'
 import styles from './WishlistButton.module.css'
 
@@ -32,6 +33,10 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 
 			if (syncedWishlist) {
 				dispatch(setLocalWishlist(syncedWishlist))
+			}
+
+			if (!isInWishlist) {
+				dispatch(showNotification('Producto añadido a favoritos'))
 			}
 		} catch (toggleError) {
 			// Revierte el cambio optimista si el servidor rechaza la operación.

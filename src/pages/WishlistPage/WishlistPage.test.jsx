@@ -69,7 +69,6 @@ describe('WishlistPage', () => {
 
 		await user.click(screen.getByRole('button', { name: 'Añadir al carrito' }))
 
-		expect(await screen.findByText('Figura favorita se ha añadido al carrito.')).toBeInTheDocument()
 		expect(screen.getByRole('heading', { name: 'Figura favorita' })).toBeInTheDocument()
 		expect(addCartItemThunk).toHaveBeenCalledWith({ productId: 7, quantity: 1 })
 		expect(toggleWishlistRequest).not.toHaveBeenCalled()

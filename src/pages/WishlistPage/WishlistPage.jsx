@@ -37,7 +37,6 @@ function WishlistPage() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
 	const [actionError, setActionError] = useState('')
-	const [actionMessage, setActionMessage] = useState('')
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const [addingToCart, setAddingToCart] = useState(null)
 	const dispatch = useDispatch()
@@ -96,7 +95,6 @@ function WishlistPage() {
 
 		try {
 			setActionError('')
-			setActionMessage('')
 			setTogglingWishlist(productId)
 			dispatch(toggleLocalWishlist(productId))
 
@@ -119,7 +117,6 @@ function WishlistPage() {
 	const handleRetry = async () => {
 		setLoading(true)
 		setActionError('')
-		setActionMessage('')
 		refetchProducts()
 
 		try {
@@ -138,10 +135,8 @@ function WishlistPage() {
 
 		try {
 			setActionError('')
-			setActionMessage('')
 			setAddingToCart(product.id)
 			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
-			setActionMessage(`${product.name} se ha añadido al carrito.`)
 		} catch (addError) {
 			setActionError('No pudimos añadir el producto al carrito. Inténtalo de nuevo.')
 			console.error('No se pudo añadir al carrito desde favoritos', addError)
@@ -181,10 +176,6 @@ function WishlistPage() {
 						Reintentar
 					</Button>
 				</div>
-			) : null}
-
-			{actionMessage ? (
-				<StatusMessage title="Añadido al carrito" description={actionMessage} variant="success" />
 			) : null}
 
 			{actionError ? (

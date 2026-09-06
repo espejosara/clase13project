@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
+import ActionToast from '../ActionToast/ActionToast'
+import FloatingCartButton from '../FloatingCartButton/FloatingCartButton'
 import styles from './Layout.module.css'
 
 function Layout() {
@@ -21,6 +23,8 @@ function Layout() {
 	return (
 		<div className={styles.layout}>
 			<Header />
+			<ActionToast />
+			<FloatingCartButton />
 			<main id="main-content" ref={mainContentRef} tabIndex="-1" className={styles.main}>
 				<Outlet />
 			</main>

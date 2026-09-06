@@ -1,0 +1,42 @@
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import styles from './ActionToast.module.css'
+
+const AUTO_HIDE_MS = 2800
+
+function ActionToast() {
+	const notification = useSelector((state) => state.notification)
+	const [dismissedNoticeId, setDismissedNoticeId] = useState(0)
+	const isVisible = notification.id > dismissedNoticeId
+
+	useEffect(() => {
+		if (!isVisible) return undefined
+
+		const timeoutId = window.setTimeout(() => {
+			setDismissedNoticeId(notification.id)
+		}, AUTO_HIDE_MS)
+
+		return () => window.clearTimeout(timeoutId)
+	}, [isVisible, notification.id])
+
+	if (!isVisible) return null
+
+	return (
+		<aside key={notification.id} className={styles.toast} aria-label="Notificación">
+			<span className={styles.icon} aria-hidden="true">✓</span>
+			<p className={styles.message} role="status" aria-live="polite" aria-atomic="true">
+				{notification.message}
+			</p>
+			<button
+				type="button"
+				className={styles.closeButton}
+				aria-label="Cerrar notificación"
+				onClick={() => setDismissedNoticeId(notification.id)}
+			>
+				<span aria-hidden="true">×</span>
+			</button>
+		</aside>
+	)
+}
+
+export default ActionToast
