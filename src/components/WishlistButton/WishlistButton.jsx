@@ -39,7 +39,11 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 			}
 
 			if (!isInWishlist) {
-				dispatch(showNotification('Producto añadido a favoritos'))
+				dispatch(showNotification({
+					message: 'Producto añadido a favoritos',
+					actionLabel: 'Ver favoritos',
+					actionTo: '/wishlist',
+				}))
 			}
 		} catch (toggleError) {
 			// Revierte el cambio optimista si el servidor rechaza la operación.

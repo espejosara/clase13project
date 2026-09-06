@@ -54,10 +54,12 @@ describe('WishlistButton', () => {
 		await user.click(screen.getByRole('button', { name: 'Añadir a favoritos' }))
 
 		await waitFor(() => {
-			expect(store.getState().notification).toEqual({
-				id: 1,
-				message: 'Producto añadido a favoritos',
-			})
+				expect(store.getState().notification).toEqual({
+					id: 1,
+					message: 'Producto añadido a favoritos',
+					actionLabel: 'Ver favoritos',
+					actionTo: '/wishlist',
+				})
 		})
 
 		await user.click(screen.getByRole('button', { name: 'Quitar de favoritos' }))

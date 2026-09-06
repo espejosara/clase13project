@@ -12,12 +12,26 @@ describe('notificationSlice', () => {
 
 		const state = reducer(undefined, action)
 
-		expect(state).toEqual({ id: 1, message: 'Producto añadido al carrito' })
+		expect(state).toEqual({
+			id: 1,
+			message: 'Producto añadido al carrito',
+			actionLabel: 'Ver carrito',
+			actionTo: '/cart',
+		})
 	})
 
 	it('permite avisar cuando se añade un producto a favoritos', () => {
-		const state = reducer(undefined, showNotification('Producto añadido a favoritos'))
+		const state = reducer(undefined, showNotification({
+			message: 'Producto añadido a favoritos',
+			actionLabel: 'Ver favoritos',
+			actionTo: '/wishlist',
+		}))
 
-		expect(state).toEqual({ id: 1, message: 'Producto añadido a favoritos' })
+		expect(state).toEqual({
+			id: 1,
+			message: 'Producto añadido a favoritos',
+			actionLabel: 'Ver favoritos',
+			actionTo: '/wishlist',
+		})
 	})
 })

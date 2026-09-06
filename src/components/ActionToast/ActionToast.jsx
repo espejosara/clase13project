@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import styles from './ActionToast.module.css'
 
 const AUTO_HIDE_MS = 2800
@@ -24,9 +25,20 @@ function ActionToast() {
 	return (
 		<aside key={notification.id} className={styles.toast} aria-label="Notificación">
 			<span className={styles.icon} aria-hidden="true">✓</span>
-			<p className={styles.message} role="status" aria-live="polite" aria-atomic="true">
-				{notification.message}
-			</p>
+			<div className={styles.content}>
+				<p className={styles.message} role="status" aria-live="polite" aria-atomic="true">
+					{notification.message}
+				</p>
+				{notification.actionLabel && notification.actionTo ? (
+					<Link
+						to={notification.actionTo}
+						className={styles.actionLink}
+						onClick={() => setDismissedNoticeId(notification.id)}
+					>
+						{notification.actionLabel} <span aria-hidden="true">→</span>
+					</Link>
+				) : null}
+			</div>
 			<button
 				type="button"
 				className={styles.closeButton}
