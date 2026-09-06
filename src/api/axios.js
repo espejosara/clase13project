@@ -1,9 +1,20 @@
 import axios from 'axios'
 
 const LOCAL_API_BASE_URL = 'http://localhost:3000'
-const PRODUCTION_API_BASE_URL = 'https://backend-lite-sprint13.onrender.com'
-const baseURL = import.meta.env.VITE_API_BASE_URL
-	|| (import.meta.env.PROD ? PRODUCTION_API_BASE_URL : LOCAL_API_BASE_URL)
+const PRODUCTION_API_BASE_URL = '/api'
+
+export function resolveApiBaseUrl({
+	isProduction = import.meta.env.PROD,
+	configuredUrl = import.meta.env.VITE_API_BASE_URL,
+} = {}) {
+	if (isProduction) {
+		return PRODUCTION_API_BASE_URL
+	}
+
+	return configuredUrl || LOCAL_API_BASE_URL
+}
+
+const baseURL = resolveApiBaseUrl()
 const AUTH_EXPIRED_KEY = 'auth_session_expired'
 
 const api = axios.create({

@@ -80,15 +80,18 @@ VITE_API_BASE_URL=http://localhost:3000
 
 ### Configuración de producción en Netlify
 
-El build de producción utiliza `https://backend-lite-sprint13.onrender.com`, definido en `.env.production`.
+El build de producción utiliza `/api`. La primera regla de `netlify.toml`
+actúa como proxy hacia Render:
 
-En Netlify, revisar **Site configuration → Environment variables** y configurar:
-
-```env
-VITE_API_BASE_URL=https://backend-lite-sprint13.onrender.com
+```text
+/api/* → https://backend-lite-sprint13.onrender.com/*
 ```
 
-La variable no debe contener comillas, espacios finales ni `/products`. Después de cambiarla es necesario desplegar nuevamente el sitio para que Vite incorpore el valor al bundle.
+El navegador solo se comunica con el dominio de Netlify, por lo que la cookie
+`HttpOnly` se trata como first-party también en Safari/iOS. No es necesario
+configurar `VITE_API_BASE_URL` en el panel de Netlify; si existe una variable
+antigua con la URL directa de Render, puede eliminarse o cambiarse a `/api`.
+Después del cambio hay que volver a desplegar el sitio.
 
 2. Instalar dependencias:
 
@@ -322,5 +325,6 @@ npm run test:watch
 - Si cambias `.env`, reinicia Vite.
 - Si hay errores de red, revisa que backend esté encendido y CORS permita http://localhost:5173.
 - Si la cookie de sesión expira, el frontend pedirá iniciar sesión de nuevo.
-- `netlify.toml` configura el build, publica `dist` y redirige las rutas de la SPA a `index.html`.
+- `netlify.toml` configura el build, publica `dist`, sirve el proxy `/api`
+  hacia Render y redirige las rutas de la SPA a `index.html`.
 - `.github/workflows/ci.yml` valida lint, pruebas y build en cada push y pull request.
