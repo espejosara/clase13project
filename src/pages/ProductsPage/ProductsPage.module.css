@@ -73,7 +73,7 @@
 
 .toolbar {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(13.5rem, 0.35fr);
+	grid-template-columns: minmax(0, 1fr) repeat(2, minmax(12rem, 0.32fr));
 	gap: 1rem;
 	align-items: end;
 	padding: var(--space-card);
@@ -84,6 +84,7 @@
 }
 
 .searchField,
+.filterField,
 .sortField {
 	display: grid;
 	gap: 0.45rem;

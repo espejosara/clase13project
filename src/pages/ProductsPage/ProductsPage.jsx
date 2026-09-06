@@ -9,6 +9,7 @@ import styles from './ProductsPage.module.css'
 function ProductsPage() {
 	const [products, setProducts] = useState([])
 	const [search, setSearch] = useState('')
+	const [category, setCategory] = useState('')
 	const [sortBy, setSortBy] = useState('name-asc')
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
@@ -30,11 +31,17 @@ function ProductsPage() {
 		loadProducts()
 	}, [])
 
+	const categories = useMemo(() => {
+		return [...new Set(products.map((product) => product.category).filter(Boolean))]
+			.sort((a, b) => a.localeCompare(b, 'es'))
+	}, [products])
+
 	const filteredProducts = useMemo(() => {
 		const normalizedSearch = search.trim().toLocaleLowerCase('es')
 
 		return products
 			.filter((product) => {
+				if (category && product.category !== category) return false
 				if (!normalizedSearch) return true
 
 				return [product.name, product.category, product.description]
@@ -46,7 +53,7 @@ function ProductsPage() {
 				if (sortBy === 'price-desc') return b.price - a.price
 				return a.name.localeCompare(b.name, 'es')
 			})
-	}, [products, search, sortBy])
+	}, [category, products, search, sortBy])
 
 	const handleRetry = async () => {
 		try {
@@ -62,7 +69,12 @@ function ProductsPage() {
 	}
 
 	const hasSearch = Boolean(search.trim())
+	const hasActiveFilters = hasSearch || Boolean(category)
 	const resultText = `${filteredProducts.length} ${filteredProducts.length === 1 ? 'producto' : 'productos'}`
+	const clearFilters = () => {
+		setSearch('')
+		setCategory('')
+	}
 
 	return (
 		<section className={styles.page} aria-labelledby="products-title">
@@ -115,6 +127,22 @@ function ProductsPage() {
 							</div>
 						</div>
 
+						<div className={styles.filterField}>
+							<label className={styles.label} htmlFor="product-category">Categoría</label>
+							<select
+								id="product-category"
+								className={styles.select}
+								value={category}
+								onChange={(event) => setCategory(event.target.value)}
+								aria-controls="products-grid"
+							>
+								<option value="">Todas las categorías</option>
+								{categories.map((item) => (
+									<option key={item} value={item}>{item}</option>
+								))}
+							</select>
+						</div>
+
 						<div className={styles.sortField}>
 							<label className={styles.label} htmlFor="product-sort">Ordenar por</label>
 							<select
@@ -134,11 +162,12 @@ function ProductsPage() {
 					<div className={styles.resultsHeader}>
 						<p className={styles.resultsText} aria-live="polite" aria-atomic="true">
 							<strong>{resultText}</strong>
-							{hasSearch ? ` para “${search.trim()}”` : ' en el catálogo'}
+							{hasSearch ? ` para “${search.trim()}”` : ''}
+							{category ? ` en ${category}` : hasSearch ? '' : ' en el catálogo'}
 						</p>
-						{hasSearch ? (
-							<Button variant="outline" className={styles.clearButton} onClick={() => setSearch('')}>
-								Limpiar búsqueda
+						{hasActiveFilters ? (
+							<Button variant="outline" className={styles.clearButton} onClick={clearFilters}>
+								Limpiar filtros
 							</Button>
 						) : null}
 					</div>
@@ -150,8 +179,8 @@ function ProductsPage() {
 							<div className={styles.emptyState}>
 								<p className={styles.emptyIcon} aria-hidden="true">⌕</p>
 								<h2>No encontramos coincidencias</h2>
-								<p>Prueba con otra palabra o vuelve a ver todo el catálogo.</p>
-								<Button onClick={() => setSearch('')}>Ver todos los productos</Button>
+								<p>Prueba con otra búsqueda o categoría, o vuelve a ver todo el catálogo.</p>
+								<Button onClick={clearFilters}>Ver todos los productos</Button>
 							</div>
 						)}
 					</div>
