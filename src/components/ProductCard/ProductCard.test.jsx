@@ -21,7 +21,7 @@ function LoginDestination() {
 	return <h1>Iniciar sesión para {location.state?.authIntent}</h1>
 }
 
-function renderProductCard() {
+function renderProductCard(productData = product) {
 	const store = configureStore({
 		reducer: {
 			auth: () => ({ user: null }),
@@ -33,7 +33,7 @@ function renderProductCard() {
 		<Provider store={store}>
 			<MemoryRouter initialEntries={['/products']}>
 				<Routes>
-					<Route path="/products" element={<ProductCard product={product} />} />
+					<Route path="/products" element={<ProductCard product={productData} />} />
 					<Route path="/login" element={<LoginDestination />} />
 				</Routes>
 			</MemoryRouter>
@@ -49,5 +49,11 @@ describe('ProductCard', () => {
 		await user.click(screen.getByRole('button', { name: 'Añadir al carrito' }))
 
 		expect(screen.getByRole('heading', { name: 'Iniciar sesión para cart' })).toBeInTheDocument()
+	})
+
+	it('mantiene una etiqueta clara cuando todavía no hay datos de stock', () => {
+		renderProductCard({ ...product, stock: null })
+
+		expect(screen.getByText('Stock por confirmar')).toBeInTheDocument()
 	})
 })

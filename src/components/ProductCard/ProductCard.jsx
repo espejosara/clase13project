@@ -18,10 +18,15 @@ function ProductCard({ product, onAddToCart }) {
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
 	const stock = Number(product.stock)
-	const isOutOfStock = Number.isFinite(stock) && stock <= 0
-	const stockLabel = isOutOfStock
-		? 'Agotado'
-		: `${stock} ${stock === 1 ? 'unidad disponible' : 'unidades disponibles'}`
+	const hasStockData = product.stock !== null
+		&& product.stock !== undefined
+		&& Number.isFinite(stock)
+	const isOutOfStock = hasStockData && stock <= 0
+	const stockLabel = !hasStockData
+		? 'Stock por confirmar'
+		: isOutOfStock
+			? 'Agotado'
+			: `${stock} ${stock === 1 ? 'unidad disponible' : 'unidades disponibles'}`
 
 	const handleAddToCart = async () => {
 		if (isAddingToCart || isOutOfStock) return

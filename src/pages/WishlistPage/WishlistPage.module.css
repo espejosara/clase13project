@@ -171,6 +171,7 @@
 
 .category {
 	justify-self: start;
+	max-width: 100%;
 	margin: 0;
 	padding: 0.22rem 0.5rem;
 	border-radius: 999px;
@@ -180,12 +181,21 @@
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .name {
+	display: -webkit-box;
+	min-height: 2.8rem;
+	overflow: hidden;
 	margin: 0;
 	font-size: 1.08rem;
 	line-height: 1.3;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
 }
 
 .name a:hover {
@@ -199,6 +209,7 @@
 	color: var(--color-text-soft);
 	font-size: 0.9rem;
 	line-height: 1.45;
+	min-height: 2.65rem;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
@@ -210,6 +221,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 0.5rem;
+	min-height: 2.2rem;
 	padding-top: 0.75rem;
 	border-top: 1px solid var(--color-border-subtle);
 }
@@ -344,6 +356,11 @@
 
 	.image {
 		aspect-ratio: 16 / 10;
+	}
+
+	.name,
+	.description {
+		min-height: 0;
 	}
 }
 
