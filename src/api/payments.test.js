@@ -44,7 +44,14 @@ describe('API de pagos', () => {
 
 		const result = await getCheckoutOrderRequest('cs_test_123')
 
-		expect(api.get).toHaveBeenCalledWith('/payments/checkout-session/cs_test_123/order')
+		expect(api.get).toHaveBeenCalledWith(
+			'/payments/checkout-session/cs_test_123/order',
+			{
+				params: { _: expect.any(Number) },
+				signal: undefined,
+				timeout: 8000,
+			},
+		)
 		expect(result).toEqual(confirmation)
 	})
 

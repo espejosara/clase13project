@@ -36,6 +36,24 @@ describe('formularios de autenticación', () => {
 		expect(screen.getByText('La contraseña es obligatoria')).toBeInTheDocument()
 	})
 
+	it('permite mostrar y volver a ocultar la contraseña del login', async () => {
+		const user = userEvent.setup()
+		renderAuthPage(<LoginPage />)
+		const passwordInput = screen.getByLabelText('Contraseña')
+
+		expect(passwordInput).toHaveAttribute('type', 'password')
+
+		await user.click(screen.getByRole('button', { name: 'Mostrar contraseña' }))
+
+		expect(passwordInput).toHaveAttribute('type', 'text')
+		expect(screen.getByRole('button', { name: 'Ocultar contraseña' }))
+			.toHaveAttribute('aria-pressed', 'true')
+
+		await user.click(screen.getByRole('button', { name: 'Ocultar contraseña' }))
+
+		expect(passwordInput).toHaveAttribute('type', 'password')
+	})
+
 	it('valida la longitud mínima de la contraseña de registro', async () => {
 		const user = userEvent.setup()
 		renderAuthPage(<RegisterPage />)

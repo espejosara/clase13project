@@ -8,6 +8,12 @@ import styles from './CheckoutSuccessPage.module.css'
 const POLL_INTERVAL_MS = 1500
 const MAX_CONFIRMATION_ATTEMPTS = 8
 
+function isCanceledRequest(error) {
+	return error?.code === 'ERR_CANCELED'
+		|| error?.name === 'AbortError'
+		|| error?.name === 'CanceledError'
+}
+
 function CheckoutSuccessPage() {
 	const [searchParams] = useSearchParams()
 	const sessionId = searchParams.get('session_id')
@@ -23,41 +29,87 @@ function CheckoutSuccessPage() {
 		let isActive = true
 		let timeoutId
 		let attempts = 0
+		let requestController = null
+
+		const scheduleNextCheck = (exhaustedStatus) => {
+			attempts += 1
+
+			if (attempts >= MAX_CONFIRMATION_ATTEMPTS) {
+				setConfirmation({ status: exhaustedStatus, order: null })
+				return
+			}
+
+			timeoutId = window.setTimeout(checkConfirmation, POLL_INTERVAL_MS)
+		}
 
 		const checkConfirmation = async () => {
-			try {
-				const result = await getCheckoutOrderRequest(sessionId)
+			if (!isActive) return
 
-				if (!isActive) return
+			window.clearTimeout(timeoutId)
+			requestController?.abort()
+
+			const currentController = new AbortController()
+			requestController = currentController
+
+			try {
+				const result = await getCheckoutOrderRequest(sessionId, {
+					signal: currentController.signal,
+				})
+
+				if (!isActive || requestController !== currentController) return
 
 				if (result.confirmed && result.order) {
 					setConfirmation({ status: 'confirmed', order: result.order })
 					return
 				}
 
-				attempts += 1
+				scheduleNextCheck('pending')
+			} catch (error) {
+				if (
+					!isActive
+					|| requestController !== currentController
+					|| isCanceledRequest(error)
+				) return
 
-				if (attempts >= MAX_CONFIRMATION_ATTEMPTS) {
-					setConfirmation({ status: 'pending', order: null })
-					return
+				scheduleNextCheck('error')
+			} finally {
+				if (requestController === currentController) {
+					requestController = null
 				}
-
-				timeoutId = window.setTimeout(checkConfirmation, POLL_INTERVAL_MS)
-			} catch {
-				if (!isActive) return
-
-				setConfirmation({
-					status: 'error',
-					order: null,
-				})
 			}
 		}
 
+		const restartConfirmation = () => {
+			if (!isActive || document.visibilityState === 'hidden') return
+
+			setConfirmation((currentConfirmation) => (
+				currentConfirmation.status === 'confirmed'
+					? currentConfirmation
+					: { status: 'checking', order: null }
+			))
+			checkConfirmation()
+		}
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'hidden') {
+				window.clearTimeout(timeoutId)
+				requestController?.abort()
+				return
+			}
+
+			restartConfirmation()
+		}
+
 		checkConfirmation()
+		window.addEventListener('pageshow', restartConfirmation)
+		document.addEventListener('visibilitychange', handleVisibilityChange)
 
 		return () => {
 			isActive = false
 			window.clearTimeout(timeoutId)
+			requestController?.abort()
+			window.removeEventListener('pageshow', restartConfirmation)
+			document.removeEventListener('visibilitychange', handleVisibilityChange)
 		}
 	}, [retryCount, sessionId])
 
