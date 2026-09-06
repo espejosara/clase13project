@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation } from 'react-router-dom'
 import Spinner from '../../components/Spinner/Spinner'
+import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchRecommendationsRequest } from '../../api/recommendations'
 import { fetchCurrentUserThunk } from '../../store/slices/authSlice'
@@ -427,7 +428,7 @@ function ProfilePage() {
 				</header>
 
 				{recommendations.loading ? (
-					<Spinner label="Calculando recomendaciones..." />
+					<ProductListSkeleton count={4} variant="compact" label="Calculando recomendaciones..." />
 				) : recommendations.error ? (
 					<StatusMessage
 						title="No pudimos cargar las recomendaciones"

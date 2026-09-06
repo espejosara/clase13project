@@ -3,7 +3,7 @@ import { getProducts } from '../../api/products'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
-import Spinner from '../../components/Spinner/Spinner'
+import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import styles from './ProductsPage.module.css'
 
 function ProductsPage() {
@@ -81,7 +81,7 @@ function ProductsPage() {
 
 			{loading ? (
 				<div className={styles.statePanel}>
-					<Spinner label="Cargando productos..." />
+					<ProductListSkeleton count={6} label="Cargando productos..." />
 				</div>
 			) : null}
 

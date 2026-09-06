@@ -6,11 +6,11 @@ function useRequireAuthentication() {
 	const location = useLocation()
 	const navigate = useNavigate()
 
-	return () => {
+	return (intent) => {
 		if (authenticatedUser) return true
 
 		navigate('/login', {
-			state: { from: location },
+			state: { from: location, authIntent: intent },
 		})
 		return false
 	}

@@ -72,8 +72,9 @@
 
 @media (max-width: 560px) {
 	.toast {
+		top: calc(4.4rem + env(safe-area-inset-top));
 		right: 50%;
-		bottom: max(5.25rem, calc(env(safe-area-inset-bottom) + 4.5rem));
+		bottom: auto;
 		transform: translateX(50%);
 		animation-name: toast-enter-mobile;
 	}

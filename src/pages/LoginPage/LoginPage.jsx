@@ -14,6 +14,12 @@ function LoginPage() {
 	const navigate = useNavigate()
 	const location = useLocation()
 	const { loading, error: serverError } = useSelector((state) => state.auth)
+	const authIntent = location.state?.authIntent
+	const intentMessage = authIntent === 'cart'
+		? 'Inicia sesión para añadir productos al carrito.'
+		: authIntent === 'wishlist'
+			? 'Inicia sesión para guardar productos en favoritos.'
+			: ''
 
 	const [formData, setFormData] = useState({ email: '', password: '' })
 	const [errors, setErrors] = useState({})
@@ -74,6 +80,7 @@ function LoginPage() {
 	return (
 		<section className={styles.authPage}>
 			<h1>Iniciar sesión</h1>
+			{intentMessage ? <p className={styles.authContext}>{intentMessage}</p> : null}
 			<form className={styles.authForm} onSubmit={handleSubmit}>
 				<FormInput
 					autoFocus

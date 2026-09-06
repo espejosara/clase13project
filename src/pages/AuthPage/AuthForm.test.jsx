@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import LoginPage from '../LoginPage/LoginPage'
 import RegisterPage from '../RegisterPage/RegisterPage'
 
-function renderAuthPage(page, { serverError = null } = {}) {
+function renderAuthPage(page, { serverError = null, initialEntries = ['/'] } = {}) {
 	const store = configureStore({
 		reducer: {
 			auth: (state = { loading: false, error: serverError }) => state,
@@ -16,7 +16,7 @@ function renderAuthPage(page, { serverError = null } = {}) {
 
 	return render(
 		<Provider store={store}>
-			<MemoryRouter>{page}</MemoryRouter>
+			<MemoryRouter initialEntries={initialEntries}>{page}</MemoryRouter>
 		</Provider>,
 	)
 }
@@ -53,6 +53,17 @@ describe('formularios de autenticación', () => {
 		await user.click(screen.getByRole('button', { name: 'Ocultar contraseña' }))
 
 		expect(passwordInput).toHaveAttribute('type', 'password')
+	})
+
+	it('explica por qué se necesita iniciar sesión', () => {
+		renderAuthPage(<LoginPage />, {
+			initialEntries: [{
+				pathname: '/login',
+				state: { authIntent: 'cart' },
+			}],
+		})
+
+		expect(screen.getByText('Inicia sesión para añadir productos al carrito.')).toBeInTheDocument()
 	})
 
 	it('valida la longitud mínima de la contraseña de registro', async () => {

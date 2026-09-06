@@ -110,6 +110,10 @@
 	flex-wrap: wrap;
 }
 
+.mobilePurchaseBar {
+	display: none;
+}
+
 .reviewsSection {
 	display: grid;
 	gap: 1rem;
@@ -226,6 +230,7 @@
 @media (max-width: 640px) {
 	.productDetailPage {
 		gap: 1.25rem;
+		padding-bottom: 4.75rem;
 	}
 
 	.title {
@@ -249,5 +254,46 @@
 	.actions :global(.app-action-link) {
 		width: 100%;
 		min-height: 2.75rem;
+	}
+
+	.mobilePurchaseBar {
+		position: fixed;
+		right: 0;
+		bottom: calc(4.6rem + env(safe-area-inset-bottom));
+		left: 0;
+		z-index: 850;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		min-height: 4.4rem;
+		padding: 0.65rem max(0.85rem, env(safe-area-inset-right)) 0.65rem max(0.85rem, env(safe-area-inset-left));
+		border-top: 1px solid var(--color-border);
+		background: var(--color-surface-translucent);
+		box-shadow: 0 -8px 24px color-mix(in srgb, var(--color-text) 10%, transparent);
+		backdrop-filter: blur(16px) saturate(135%);
+	}
+
+	.mobilePurchaseInfo {
+		display: grid;
+		min-width: 0;
+	}
+
+	.mobilePurchaseInfo span {
+		overflow: hidden;
+		color: var(--color-text-soft);
+		font-size: 0.72rem;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.mobilePurchaseInfo strong {
+		color: var(--color-primary);
+		font-size: 0.95rem;
+	}
+
+	.mobilePurchaseBar button {
+		flex: 0 0 auto;
+		min-height: var(--size-touch-target);
 	}
 }

@@ -38,7 +38,7 @@ function ProductDetailPage() {
 
 	const handleAddToCart = async () => {
 		if (!product || isAddingToCart) return
-		if (!requireAuthentication()) return
+		if (!requireAuthentication('cart')) return
 
 		setCartError('')
 		setIsAddingToCart(true)
@@ -62,6 +62,13 @@ function ProductDetailPage() {
 	if (!product) {
 		return <NotFoundPage />
 	}
+
+	const isOutOfStock = Number(product.stock) <= 0
+	const addButtonText = isOutOfStock
+		? 'No disponible'
+		: isAddingToCart
+			? 'Añadiendo...'
+			: 'Añadir al carrito'
 
 	return (
 		<section className={styles.productDetailPage} aria-labelledby="product-title">
@@ -109,16 +116,16 @@ function ProductDetailPage() {
 							type="button"
 							variant="primary"
 							onClick={handleAddToCart}
-							disabled={isAddingToCart}
+							disabled={isAddingToCart || isOutOfStock}
 							aria-busy={isAddingToCart}
 							className={`${styles.addButton} ${isAddingToCart ? styles.isLoading : ''}`}
 						>
-							{isAddingToCart ? (
+							{isAddingToCart && !isOutOfStock ? (
 								<>
 									<span className={styles.buttonDot} aria-hidden="true" /> Añadiendo...
 								</>
 							) : (
-								'Añadir al carrito'
+								addButtonText
 							)}
 						</Button>
 						<WishlistButton
@@ -130,6 +137,22 @@ function ProductDetailPage() {
 						{cartError ? <p className={styles.actionError} role="alert">{cartError}</p> : null}
 					</div>
 				</div>
+			</div>
+
+			<div className={styles.mobilePurchaseBar} aria-label="Compra rápida">
+				<div className={styles.mobilePurchaseInfo}>
+					<span>{product.name}</span>
+					<strong>{product.price.toFixed(2)} EUR</strong>
+				</div>
+				<Button
+					type="button"
+					variant="primary"
+					onClick={handleAddToCart}
+					disabled={isAddingToCart || isOutOfStock}
+					aria-busy={isAddingToCart}
+				>
+					{addButtonText}
+				</Button>
 			</div>
 
 			<section className={styles.reviewsSection} aria-labelledby="reviews-title">

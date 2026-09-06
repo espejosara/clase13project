@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import ProductCard from './ProductCard'
 
@@ -14,6 +14,11 @@ const product = {
 	price: 24.99,
 	stock: 3,
 	imageUrl: 'https://example.com/figura.jpg',
+}
+
+function LoginDestination() {
+	const location = useLocation()
+	return <h1>Iniciar sesión para {location.state?.authIntent}</h1>
 }
 
 function renderProductCard() {
@@ -29,7 +34,7 @@ function renderProductCard() {
 			<MemoryRouter initialEntries={['/products']}>
 				<Routes>
 					<Route path="/products" element={<ProductCard product={product} />} />
-					<Route path="/login" element={<h1>Iniciar sesión</h1>} />
+					<Route path="/login" element={<LoginDestination />} />
 				</Routes>
 			</MemoryRouter>
 		</Provider>,
@@ -43,6 +48,6 @@ describe('ProductCard', () => {
 
 		await user.click(screen.getByRole('button', { name: 'Añadir al carrito' }))
 
-		expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument()
+		expect(screen.getByRole('heading', { name: 'Iniciar sesión para cart' })).toBeInTheDocument()
 	})
 })

@@ -23,7 +23,7 @@ function WishlistButton({ productId, className = '', activeClassName = '' }) {
 	// Toggle optimista: actualiza la UI primero y luego sincroniza con backend.
 	const handleToggleWishlist = async () => {
 		if (loading) return
-		if (!requireAuthentication()) return
+		if (!requireAuthentication('wishlist')) return
 
 		const previousWishlistIds = [...wishlistIds]
 

@@ -1,7 +1,7 @@
 import styles from './HomePage.module.css'
 import { Link } from 'react-router-dom'
 import FeaturedProductsRail from '../../components/FeaturedProductsRail/FeaturedProductsRail'
-import Spinner from '../../components/Spinner/Spinner'
+import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
 import { useProducts } from '../../hooks/useProducts'
@@ -59,7 +59,7 @@ function HomePage() {
 					</Link>
 				</div>
 
-				{loading ? <Spinner label="Cargando productos destacados..." /> : null}
+				{loading ? <ProductListSkeleton count={4} variant="rail" label="Cargando productos destacados..." /> : null}
 
 				{error ? (
 					<div className={styles.featuredStatus}>

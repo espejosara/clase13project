@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
-import Spinner from '../../components/Spinner/Spinner'
+import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
@@ -163,7 +163,7 @@ function WishlistPage() {
 				</div>
 			</header>
 
-			{isLoading ? <Spinner label="Cargando favoritos..." /> : null}
+			{isLoading ? <ProductListSkeleton count={4} label="Cargando favoritos..." /> : null}
 
 			{hasFetchError ? (
 				<div className={styles.messageRow}>

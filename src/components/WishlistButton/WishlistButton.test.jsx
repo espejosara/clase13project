@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { toggleWishlistRequest } from '../../api/wishlist'
 import notificationReducer from '../../store/slices/notificationSlice'
@@ -12,6 +12,11 @@ import WishlistButton from './WishlistButton'
 vi.mock('../../api/wishlist', () => ({
 	toggleWishlistRequest: vi.fn(),
 }))
+
+function LoginDestination() {
+	const location = useLocation()
+	return <h1>Iniciar sesión para {location.state?.authIntent}</h1>
+}
 
 function renderWishlistButton({ authenticated = true } = {}) {
 	const store = configureStore({
@@ -27,7 +32,7 @@ function renderWishlistButton({ authenticated = true } = {}) {
 			<MemoryRouter initialEntries={['/products/7']}>
 				<Routes>
 					<Route path="/products/:productId" element={<WishlistButton productId={7} />} />
-					<Route path="/login" element={<h1>Iniciar sesión</h1>} />
+					<Route path="/login" element={<LoginDestination />} />
 				</Routes>
 			</MemoryRouter>
 		</Provider>,
@@ -69,7 +74,7 @@ describe('WishlistButton', () => {
 
 		await user.click(screen.getByRole('button', { name: 'Añadir a favoritos' }))
 
-		expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument()
+		expect(screen.getByRole('heading', { name: 'Iniciar sesión para wishlist' })).toBeInTheDocument()
 		expect(toggleWishlistRequest).not.toHaveBeenCalled()
 	})
 })

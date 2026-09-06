@@ -25,7 +25,7 @@ function ProductCard({ product, onAddToCart }) {
 
 	const handleAddToCart = async () => {
 		if (isAddingToCart || isOutOfStock) return
-		if (!requireAuthentication()) return
+		if (!requireAuthentication('cart')) return
 
 		setCartError('')
 		setIsAddingToCart(true)
