@@ -1,6 +1,6 @@
 import styles from './HomePage.module.css'
 import { Link } from 'react-router-dom'
-import ProductGrid from '../../components/ProductGrid/ProductGrid'
+import FeaturedProductsRail from '../../components/FeaturedProductsRail/FeaturedProductsRail'
 import Spinner from '../../components/Spinner/Spinner'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
@@ -72,7 +72,7 @@ function HomePage() {
 					</div>
 				) : null}
 
-				{!loading && !error ? <ProductGrid products={featuredProducts} /> : null}
+				{!loading && !error ? <FeaturedProductsRail products={featuredProducts} /> : null}
 			</section>
 		</section>
 	)
