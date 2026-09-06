@@ -255,42 +255,6 @@
 	color: var(--color-danger-hover);
 }
 
-.menuButton {
-	display: none;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	gap: 0.24rem;
-	width: var(--size-touch-target);
-	height: var(--size-touch-target);
-	padding: 0;
-	border: 1px solid var(--color-border);
-	border-radius: 0.6rem;
-	background: var(--color-surface);
-	box-shadow: var(--shadow-soft);
-	cursor: pointer;
-}
-
-.menuLine {
-	display: block;
-	width: 1.05rem;
-	height: 2px;
-	background: var(--color-text);
-	transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.menuButton.isOpen .menuLine:nth-child(1) {
-	transform: translateY(6px) rotate(45deg);
-}
-
-.menuButton.isOpen .menuLine:nth-child(2) {
-	opacity: 0;
-}
-
-.menuButton.isOpen .menuLine:nth-child(3) {
-	transform: translateY(-6px) rotate(-45deg);
-}
-
 .link {
 	display: inline-flex;
 	align-items: center;
@@ -358,107 +322,8 @@
 		font-size: 1.15rem;
 	}
 
-	.menuButton {
-		display: inline-flex;
-	}
-
 	.nav {
 		display: none;
-		width: 100%;
-		padding-top: 0.7rem;
-		border-top: 1px solid var(--color-border-muted);
-	}
-
-	.navOpen {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 0.55rem;
-	}
-
-	.navLeft,
-	.navRight {
-		justify-content: flex-start;
-		align-items: stretch;
-		width: 100%;
-	}
-
-	.navRight {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.45rem;
-	}
-
-	.navLeft .link,
-	.navRight .link {
-		width: 100%;
-	}
-
-	.profile {
-		width: 100%;
-	}
-
-	.link {
-		padding: 0.55rem 0.7rem;
-		justify-content: flex-start;
-		border-radius: var(--radius-control);
-		border-color: var(--color-border-muted);
-		background: var(--color-surface);
-		text-align: left;
-		font-size: 0.9rem;
-	}
-
-	.linkActive {
-		border-color: var(--color-primary);
-		background: linear-gradient(95deg, var(--color-primary) 0%, var(--color-accent-2) 100%);
-	}
-
-	.navRight .iconLink,
-	.profileButton,
-	.themeButton {
-		justify-content: flex-start;
-		gap: 0.55rem;
-		width: 100%;
-		height: auto;
-		min-height: var(--size-touch-target);
-		padding: 0.55rem 0.7rem;
-		border-radius: var(--radius-control);
-	}
-
-	.navRight .icon {
-		display: none;
-	}
-
-	.profileInitials {
-		display: none;
-	}
-
-	.navRight .srOnly {
-		position: static;
-		width: auto;
-		height: auto;
-		padding: 0;
-		margin: 0;
-		overflow: visible;
-		clip: auto;
-		white-space: normal;
-	}
-
-	.navRight .badge {
-		position: static;
-		margin-left: auto;
-	}
-
-	.iconOnly::after {
-		display: none;
-	}
-
-	.dropdown {
-		position: static;
-		width: 100%;
-		min-width: 0;
-		max-width: none;
-		margin-top: 0.4rem;
-		box-shadow: var(--shadow-soft);
 	}
 }
 

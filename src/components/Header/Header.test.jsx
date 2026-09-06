@@ -72,43 +72,9 @@ function renderHeader({ authenticated = false, route = '/products' } = {}) {
 }
 
 describe('Header', () => {
-	it('permite abrir el menú móvil con teclado y cerrarlo con Escape devolviendo el foco', async () => {
-		const user = userEvent.setup()
-		renderHeader()
-		const menuButton = screen.getByRole('button', { name: 'Abrir menú de navegación' })
-
-		menuButton.focus()
-		await user.keyboard('{Enter}')
-
-		expect(menuButton).toHaveAttribute('aria-expanded', 'true')
-		expect(screen.getByRole('navigation', { name: 'Navegación principal' })).toBeInTheDocument()
-
-		await user.keyboard('{Escape}')
-
-		expect(menuButton).toHaveAttribute('aria-expanded', 'false')
-		expect(menuButton).toHaveFocus()
-	})
-
-	it('cierra el menú al elegir la ruta actual o al pulsar fuera', async () => {
-		const user = userEvent.setup()
-		renderHeader()
-		const menuButton = screen.getByRole('button', { name: 'Abrir menú de navegación' })
-
-		await user.click(menuButton)
-		await user.click(screen.getByRole('link', { name: 'Catálogo' }))
-		expect(menuButton).toHaveAttribute('aria-expanded', 'false')
-
-		await user.click(menuButton)
-		await user.click(screen.getByRole('button', { name: 'Contenido exterior' }))
-		expect(menuButton).toHaveAttribute('aria-expanded', 'false')
-	})
-
-	it('cierra primero el menú de usuario con Escape y devuelve el foco a su botón', async () => {
+	it('cierra el menú de usuario con Escape y devuelve el foco a su botón', async () => {
 		const user = userEvent.setup()
 		renderHeader({ authenticated: true })
-		const menuButton = screen.getByRole('button', { name: 'Abrir menú de navegación' })
-
-		await user.click(menuButton)
 		const profileButton = screen.getByRole('button', { name: 'Abrir menú de usuario' })
 		expect(within(profileButton).getByText('AP')).toHaveAttribute('aria-hidden', 'true')
 		await user.click(profileButton)
@@ -121,12 +87,6 @@ describe('Header', () => {
 
 		expect(profileButton).toHaveAttribute('aria-expanded', 'false')
 		expect(profileButton).toHaveFocus()
-		expect(menuButton).toHaveAttribute('aria-expanded', 'true')
-
-		await user.keyboard('{Escape}')
-
-		expect(menuButton).toHaveAttribute('aria-expanded', 'false')
-		expect(menuButton).toHaveFocus()
 	})
 
 	it('mantiene el cambio de aspecto dentro del menú de perfil cuando hay sesión', async () => {

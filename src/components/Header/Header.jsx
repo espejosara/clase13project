@@ -15,12 +15,9 @@ const HEADER_SYNC_TTL_MS = 12000
 const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788527218/Gemini_Generated_Image_9p1rhd9p1rhd9p1r-removebg-preview_uqida1.png'
 
 function Header() {
-	const [openMenuPath, setOpenMenuPath] = useState(null)
 	const [openProfileMenuPath, setOpenProfileMenuPath] = useState(null)
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const menuButtonRef = useRef(null)
-	const navigationRef = useRef(null)
 	const profileMenuRef = useRef(null)
 	const profileButtonRef = useRef(null)
 	const lastHeaderSyncRef = useRef(0)
@@ -31,7 +28,6 @@ function Header() {
 	const { theme, toggleTheme } = useTheme()
 	const location = useLocation()
 	const isAuthenticated = Boolean(authenticatedUser)
-	const isMenuOpen = openMenuPath === location.pathname
 	const isProfileMenuOpen = openProfileMenuPath === location.pathname
 	const isDarkTheme = theme === 'dark'
 	const nextThemeLabel = isDarkTheme ? 'claro' : 'oscuro'
@@ -132,52 +128,10 @@ function Header() {
 		}
 	}, [isProfileMenuOpen])
 
-	useEffect(() => {
-		if (!isMenuOpen) return undefined
-
-		const handleOutsideClick = (event) => {
-			const clickedMenuButton = menuButtonRef.current?.contains(event.target)
-			const clickedNavigation = navigationRef.current?.contains(event.target)
-
-			if (!clickedMenuButton && !clickedNavigation) {
-				setOpenMenuPath(null)
-			}
-		}
-
-		const handleEscape = (event) => {
-			if (event.key === 'Escape' && !isProfileMenuOpen) {
-				setOpenMenuPath(null)
-				menuButtonRef.current?.focus()
-			}
-		}
-
-		document.addEventListener('mousedown', handleOutsideClick)
-		document.addEventListener('keydown', handleEscape)
-
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick)
-			document.removeEventListener('keydown', handleEscape)
-		}
-	}, [isMenuOpen, isProfileMenuOpen])
-
-	const handleToggleMenu = () => {
-		setOpenProfileMenuPath(null)
-		setOpenMenuPath((previousPath) => (
-			previousPath === location.pathname ? null : location.pathname
-		))
-	}
-
 	const handleToggleProfileMenu = () => {
 		setOpenProfileMenuPath((previousPath) => (
 			previousPath === location.pathname ? null : location.pathname
 		))
-	}
-
-	const handleNavigationClick = (event) => {
-		if (!event.target.closest?.('a')) return
-
-		setOpenMenuPath(null)
-		setOpenProfileMenuPath(null)
 	}
 
 	const handleLogout = async () => {
@@ -203,7 +157,6 @@ function Header() {
 						className={styles.brand}
 						aria-label="Ir al inicio"
 						onClick={() => {
-							setOpenMenuPath(null)
 							setOpenProfileMenuPath(null)
 						}}
 					>
@@ -219,29 +172,11 @@ function Header() {
 							<span className={styles.title}>NeoKensei Chronicles</span>
 						</span>
 					</Link>
-
-					<Button
-						ref={menuButtonRef}
-						type="button"
-						variant="outline"
-						className={`${styles.menuButton} ${isMenuOpen ? styles.isOpen : ''}`}
-						onClick={handleToggleMenu}
-						aria-expanded={isMenuOpen}
-						aria-controls="main-navigation"
-						aria-label={isMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
-					>
-						<span className={styles.menuLine} />
-						<span className={styles.menuLine} />
-						<span className={styles.menuLine} />
-					</Button>
 				</div>
 
 				<nav
-					ref={navigationRef}
-					id="main-navigation"
-					className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}
+					className={styles.nav}
 					aria-label="Navegación principal"
-					onClick={handleNavigationClick}
 				>
 					<div className={styles.navLeft}>
 						<NavLink to="/products" className={getNavLinkClass}>

@@ -14,3 +14,9 @@
 	max-width: var(--container-shell-width);
 	margin: 0 auto;
 }
+
+@media (max-width: 720px) {
+	.layout {
+		padding-bottom: calc(4.6rem + env(safe-area-inset-bottom));
+	}
+}
