@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import Button from '../../components/Button/Button'
+import ProductImageZoom from '../../components/ProductImageZoom/ProductImageZoom'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
 import Spinner from '../../components/Spinner/Spinner'
@@ -78,10 +79,10 @@ function ProductDetailPage() {
 
 			<div className={styles.productLayout}>
 				<div className={styles.mediaPanel}>
-					<img
-						className={styles.image}
+					<ProductImageZoom
 						src={product.imageUrl}
 						alt={product.name}
+						imageClassName={styles.image}
 					/>
 				</div>
 
