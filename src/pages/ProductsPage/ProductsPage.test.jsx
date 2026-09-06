@@ -86,4 +86,18 @@ describe('ProductsPage', () => {
 		expect(screen.getByText('Goku')).toBeInTheDocument()
 		expect(screen.queryByText('Vegeta')).not.toBeInTheDocument()
 	})
+
+	it('permite ejecutar la búsqueda desde el botón de la lupa', async () => {
+		const user = userEvent.setup()
+		renderPage()
+		await screen.findByRole('list', { name: 'Productos filtrados' })
+
+		await user.type(screen.getByLabelText('Buscar en el catálogo'), 'goku')
+		await user.click(screen.getByRole('button', { name: 'Buscar productos' }))
+
+		const grid = screen.getByRole('list', { name: 'Productos filtrados' })
+		expect(screen.getByRole('region', { name: 'Resultados del catálogo' })).toHaveFocus()
+		expect(within(grid).getByText('Goku')).toBeInTheDocument()
+		expect(within(grid).queryByText('Naruto')).not.toBeInTheDocument()
+	})
 })

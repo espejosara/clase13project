@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useLocation, useParams, Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import Button from '../../components/Button/Button'
 import ProductImageZoom from '../../components/ProductImageZoom/ProductImageZoom'
+import RecentlyViewedProducts from '../../components/RecentlyViewedProducts/RecentlyViewedProducts'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
 import Spinner from '../../components/Spinner/Spinner'
@@ -19,6 +20,7 @@ function ProductDetailPage() {
 	const { productId } = useParams()
 	const location = useLocation()
 	const dispatch = useDispatch()
+	const authenticatedUser = useSelector((state) => state.auth.user)
 	const requireAuthentication = useRequireAuthentication()
 	const [createdReviews, setCreatedReviews] = useState([])
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
@@ -144,6 +146,15 @@ function ProductDetailPage() {
 					</div>
 				</div>
 			</div>
+
+			{authenticatedUser ? (
+				<RecentlyViewedProducts
+					key={`${authenticatedUser.id ?? authenticatedUser.email}-${product.id}`}
+					currentProduct={product}
+					userKey={authenticatedUser.id ?? authenticatedUser.email}
+					catalogSearch={catalogSearch}
+				/>
+			) : null}
 
 			<div className={styles.mobilePurchaseBar} aria-label="Compra rápida">
 				<div className={styles.mobilePurchaseInfo}>

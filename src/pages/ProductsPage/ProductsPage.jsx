@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getProducts } from '../../api/products'
 import ProductGrid from '../../components/ProductGrid/ProductGrid'
@@ -14,6 +14,7 @@ function ProductsPage() {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
+	const resultsHeaderRef = useRef(null)
 	const search = searchParams.get('search') ?? ''
 	const category = searchParams.get('category') ?? ''
 	const requestedSort = searchParams.get('sort') ?? 'name-asc'
@@ -97,6 +98,11 @@ function ProductsPage() {
 			return nextParams
 		})
 	}
+	const handleSearchSubmit = (event) => {
+		event.preventDefault()
+		updateSearchParam('search', search.trim(), { replace: true })
+		resultsHeaderRef.current?.focus()
+	}
 
 	return (
 		<section className={styles.page} aria-labelledby="products-title">
@@ -132,11 +138,16 @@ function ProductsPage() {
 
 			{!loading && !error ? (
 				<>
-					<form className={styles.toolbar} role="search" onSubmit={(event) => event.preventDefault()}>
+					<form className={styles.toolbar} role="search" onSubmit={handleSearchSubmit}>
 						<div className={styles.searchField}>
 							<label className={styles.label} htmlFor="product-search">Buscar en el catálogo</label>
 							<div className={styles.searchControl}>
-								<span className={styles.searchIcon} aria-hidden="true">⌕</span>
+								<button className={styles.searchButton} type="submit" aria-label="Buscar productos">
+									<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+										<circle cx="10.8" cy="10.8" r="6.3" />
+										<path d="m15.5 15.5 4 4" />
+									</svg>
+								</button>
 								<input
 									id="product-search"
 									className={styles.input}
@@ -181,7 +192,13 @@ function ProductsPage() {
 						</div>
 					</form>
 
-					<div className={styles.resultsHeader}>
+					<div
+						ref={resultsHeaderRef}
+						className={styles.resultsHeader}
+						role="region"
+						aria-label="Resultados del catálogo"
+						tabIndex="-1"
+					>
 						<p className={styles.resultsText} aria-live="polite" aria-atomic="true">
 							<strong>{resultText}</strong>
 							{hasSearch ? ` para “${search.trim()}”` : ''}
