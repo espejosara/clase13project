@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
 import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import SafeImage from '../../components/SafeImage/SafeImage'
+import UndoToast from '../../components/UndoToast/UndoToast'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
@@ -13,6 +14,8 @@ import {
 	toggleLocalWishlist,
 } from '../../store/slices/wishlistSlice'
 import styles from './WishlistPage.module.css'
+
+const UNDO_WINDOW_MS = 6000
 
 function formatPrice(value) {
 	return new Intl.NumberFormat('es-ES', {
@@ -37,6 +40,9 @@ function WishlistPage() {
 	const [actionError, setActionError] = useState('')
 	const [togglingWishlist, setTogglingWishlist] = useState(null)
 	const [addingToCart, setAddingToCart] = useState(null)
+	const [removedFavorite, setRemovedFavorite] = useState(null)
+	const [isRestoring, setIsRestoring] = useState(false)
+	const undoTimeoutRef = useRef(null)
 	const dispatch = useDispatch()
 	const wishlistIds = useSelector((state) => state.wishlist.ids)
 	const {
@@ -74,6 +80,8 @@ function WishlistPage() {
 		}
 	}, [dispatch])
 
+	useEffect(() => () => window.clearTimeout(undoTimeoutRef.current), [])
+
 	const productsById = useMemo(() => {
 		return products.reduce((lookup, product) => {
 			lookup.set(String(product.id), product)
@@ -87,8 +95,17 @@ function WishlistPage() {
 			.filter(Boolean)
 	}, [wishlistIds, productsById])
 
-	const handleToggleWishlist = async (productId) => {
-		if (togglingWishlist === productId) return
+	const openUndoWindow = (product) => {
+		window.clearTimeout(undoTimeoutRef.current)
+		setRemovedFavorite({ id: product.id, name: product.name })
+		undoTimeoutRef.current = window.setTimeout(() => {
+			setRemovedFavorite(null)
+		}, UNDO_WINDOW_MS)
+	}
+
+	const handleToggleWishlist = async (product) => {
+		const productId = product.id
+		if (togglingWishlist === productId || isRestoring) return
 		const previousWishlistIds = [...wishlistIds]
 
 		try {
@@ -100,12 +117,38 @@ function WishlistPage() {
 			if (syncedWishlist) {
 				dispatch(setLocalWishlist(syncedWishlist))
 			}
+			openUndoWindow(product)
 		} catch (toggleError) {
 			dispatch(setLocalWishlist(previousWishlistIds))
 			setActionError('No pudimos quitar el producto de favoritos. Inténtalo de nuevo.')
 			console.error('No se pudo sincronizar la wishlist con el back', toggleError)
 		} finally {
 			setTogglingWishlist(null)
+		}
+	}
+
+	const handleUndoRemoval = async () => {
+		if (!removedFavorite || isRestoring) return
+
+		window.clearTimeout(undoTimeoutRef.current)
+		const previousWishlistIds = [...wishlistIds]
+		setActionError('')
+		setIsRestoring(true)
+		dispatch(toggleLocalWishlist(removedFavorite.id))
+
+		try {
+			const syncedWishlist = await toggleWishlistRequest(removedFavorite.id)
+			if (syncedWishlist) {
+				dispatch(setLocalWishlist(syncedWishlist))
+			}
+			setRemovedFavorite(null)
+		} catch (restoreError) {
+			dispatch(setLocalWishlist(previousWishlistIds))
+			setRemovedFavorite(null)
+			setActionError('No pudimos restaurar el producto en favoritos. Inténtalo de nuevo.')
+			console.error('No se pudo restaurar el favorito', restoreError)
+		} finally {
+			setIsRestoring(false)
 		}
 	}
 
@@ -180,6 +223,12 @@ function WishlistPage() {
 				<StatusMessage title="No pudimos completar la acción" description={actionError} variant="error" />
 			) : null}
 
+			{removedFavorite ? (
+				<UndoToast label="Favorito eliminado" onUndo={handleUndoRemoval} isUndoing={isRestoring}>
+					<strong>{removedFavorite.name}</strong> se ha quitado de favoritos.
+				</UndoToast>
+			) : null}
+
 			{!isLoading && !hasFetchError && !wishlistIds.length ? (
 				<section className={styles.emptyState} aria-labelledby="empty-wishlist-title">
 					<span className={styles.emptyIcon} aria-hidden="true">♡</span>
@@ -211,8 +260,8 @@ function WishlistPage() {
 										<button
 											type="button"
 											className={styles.favoriteButton}
-											onClick={() => handleToggleWishlist(product.id)}
-											disabled={isRemoving || isAdding}
+											onClick={() => handleToggleWishlist(product)}
+											disabled={isRemoving || isAdding || isRestoring}
 											aria-label={`Quitar ${product.name} de favoritos`}
 										>
 											<span aria-hidden="true">{isRemoving ? '…' : '♥'}</span>

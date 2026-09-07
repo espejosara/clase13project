@@ -7,6 +7,7 @@ import CartSummary from '../../components/CartSummary/CartSummary'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import SafeImage from '../../components/SafeImage/SafeImage'
+import UndoToast from '../../components/UndoToast/UndoToast'
 import {
 	addCartItemThunk,
 	fetchCartThunk,
@@ -219,18 +220,9 @@ function CartPage() {
 			) : null}
 
 			{removedItem ? (
-				<aside className={styles.undoBar} role="status" aria-label="Producto eliminado">
-					<span className={styles.undoIcon} aria-hidden="true">✓</span>
-					<p><strong>{removedItem.name}</strong> se ha eliminado del carrito.</p>
-					<button
-						type="button"
-						className={styles.undoButton}
-						onClick={handleUndoRemoval}
-						disabled={isRestoring}
-					>
-						{isRestoring ? 'Restaurando…' : 'Deshacer'}
-					</button>
-				</aside>
+				<UndoToast label="Producto eliminado" onUndo={handleUndoRemoval} isUndoing={isRestoring}>
+					<strong>{removedItem.name}</strong> se ha eliminado del carrito.
+				</UndoToast>
 			) : null}
 
 			{loading && !items.length ? <Spinner label="Cargando carrito..." /> : null}

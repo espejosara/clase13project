@@ -60,8 +60,11 @@ describe('WishlistPage', () => {
 		toggleWishlistRequest.mockResolvedValue([])
 	})
 
-	it('añade al carrito sin eliminar el favorito y permite quitarlo con el corazón', async () => {
+	it('añade al carrito y permite deshacer al quitar el favorito', async () => {
 		const user = userEvent.setup()
+		toggleWishlistRequest
+			.mockResolvedValueOnce([])
+			.mockResolvedValueOnce([7])
 		renderWishlist()
 
 		expect(await screen.findByRole('heading', { name: 'Figura favorita' })).toBeInTheDocument()
@@ -79,5 +82,14 @@ describe('WishlistPage', () => {
 			expect(screen.queryByRole('heading', { name: 'Figura favorita' })).not.toBeInTheDocument()
 		})
 		expect(toggleWishlistRequest).toHaveBeenCalledWith(7)
+		expect(screen.getByRole('status', { name: 'Favorito eliminado' }))
+			.toHaveTextContent('Figura favorita se ha quitado de favoritos.')
+
+		await user.click(screen.getByRole('button', { name: 'Deshacer' }))
+
+		expect(await screen.findByRole('heading', { name: 'Figura favorita' })).toBeInTheDocument()
+		expect(toggleWishlistRequest).toHaveBeenCalledTimes(2)
+		expect(toggleWishlistRequest).toHaveBeenLastCalledWith(7)
+		expect(screen.queryByRole('status', { name: 'Favorito eliminado' })).not.toBeInTheDocument()
 	})
 })
