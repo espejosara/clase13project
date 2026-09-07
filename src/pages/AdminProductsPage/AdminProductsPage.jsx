@@ -24,22 +24,36 @@ function getErrorMessage(error, fallback) {
 	return error.response?.data?.error || fallback
 }
 
+function normalizeSearchTerm(value) {
+	return String(value ?? '')
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLocaleLowerCase('es')
+		.trim()
+}
+
 function AdminProductsPage() {
 	const [products, setProducts] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
 	const [deletingId, setDeletingId] = useState(null)
 	const [stockFilter, setStockFilter] = useState('all')
+	const [searchTerm, setSearchTerm] = useState('')
 	const stockCounts = products.reduce((counts, product) => {
 		const status = getStockStatus(product.stock)
 		if (status.type === 'low') counts.low += 1
 		if (status.type === 'out') counts.out += 1
 		return counts
 	}, { low: 0, out: 0 })
+	const normalizedSearch = normalizeSearchTerm(searchTerm)
 	const visibleProducts = products.filter((product) => {
-		if (stockFilter === 'all') return true
-		return getStockStatus(product.stock).type === stockFilter
+		const matchesStock = stockFilter === 'all'
+			|| getStockStatus(product.stock).type === stockFilter
+		const searchableText = normalizeSearchTerm(`${product.name ?? ''} ${product.category ?? ''}`)
+
+		return matchesStock && searchableText.includes(normalizedSearch)
 	})
+	const hasActiveFilters = stockFilter !== 'all' || Boolean(normalizedSearch)
 
 	const loadProducts = async () => {
 		try {
@@ -99,6 +113,11 @@ function AdminProductsPage() {
 		}
 	}
 
+	const clearFilters = () => {
+		setSearchTerm('')
+		setStockFilter('all')
+	}
+
 	return (
 		<section className={styles.page} aria-labelledby="admin-products-title">
 			<header className={styles.header}>
@@ -113,38 +132,69 @@ function AdminProductsPage() {
 			</header>
 
 			{!loading && !error && products.length ? (
-				<section className={styles.stockOverview} aria-label="Resumen de existencias">
-					<button
-						type="button"
-						className={`${styles.stockFilter} ${stockFilter === 'all' ? styles.stockFilterActive : ''}`}
-						onClick={() => setStockFilter('all')}
-						aria-pressed={stockFilter === 'all'}
-						aria-label={`Todos los productos: ${products.length}`}
-					>
-						<span>Todos</span>
-						<strong>{products.length}</strong>
-					</button>
-					<button
-						type="button"
-						className={`${styles.stockFilter} ${styles.stockFilterLow} ${stockFilter === 'low' ? styles.stockFilterActive : ''}`}
-						onClick={() => setStockFilter('low')}
-						aria-pressed={stockFilter === 'low'}
-						aria-label={`Productos con stock bajo: ${stockCounts.low}`}
-					>
-						<span>Stock bajo</span>
-						<strong>{stockCounts.low}</strong>
-					</button>
-					<button
-						type="button"
-						className={`${styles.stockFilter} ${styles.stockFilterOut} ${stockFilter === 'out' ? styles.stockFilterActive : ''}`}
-						onClick={() => setStockFilter('out')}
-						aria-pressed={stockFilter === 'out'}
-						aria-label={`Productos agotados: ${stockCounts.out}`}
-					>
-						<span>Agotados</span>
-						<strong>{stockCounts.out}</strong>
-					</button>
-				</section>
+				<div className={styles.controls}>
+					<section className={styles.stockOverview} aria-label="Resumen de existencias">
+						<button
+							type="button"
+							className={`${styles.stockFilter} ${stockFilter === 'all' ? styles.stockFilterActive : ''}`}
+							onClick={() => setStockFilter('all')}
+							aria-pressed={stockFilter === 'all'}
+							aria-label={`Todos los productos: ${products.length}`}
+						>
+							<span>Todos</span>
+							<strong>{products.length}</strong>
+						</button>
+						<button
+							type="button"
+							className={`${styles.stockFilter} ${styles.stockFilterLow} ${stockFilter === 'low' ? styles.stockFilterActive : ''}`}
+							onClick={() => setStockFilter('low')}
+							aria-pressed={stockFilter === 'low'}
+							aria-label={`Productos con stock bajo: ${stockCounts.low}`}
+						>
+							<span>Stock bajo</span>
+							<strong>{stockCounts.low}</strong>
+						</button>
+						<button
+							type="button"
+							className={`${styles.stockFilter} ${styles.stockFilterOut} ${stockFilter === 'out' ? styles.stockFilterActive : ''}`}
+							onClick={() => setStockFilter('out')}
+							aria-pressed={stockFilter === 'out'}
+							aria-label={`Productos agotados: ${stockCounts.out}`}
+						>
+							<span>Agotados</span>
+							<strong>{stockCounts.out}</strong>
+						</button>
+					</section>
+
+					<div className={styles.searchRow} role="search">
+						<label className={styles.searchField} htmlFor="admin-product-search">
+							<span className="visually-hidden">Buscar productos por nombre o categoría</span>
+							<span className={styles.searchIcon} aria-hidden="true">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+									<circle cx="11" cy="11" r="7" />
+									<path d="m20 20-4-4" />
+								</svg>
+							</span>
+							<input
+								id="admin-product-search"
+								type="search"
+								value={searchTerm}
+								onChange={(event) => setSearchTerm(event.target.value)}
+								placeholder="Buscar por nombre o categoría"
+								autoComplete="off"
+								aria-describedby="admin-products-results"
+							/>
+						</label>
+						{searchTerm ? (
+							<button type="button" className={styles.clearSearch} onClick={() => setSearchTerm('')}>
+								Limpiar búsqueda
+							</button>
+						) : null}
+						<p id="admin-products-results" className={styles.resultsCount} role="status" aria-live="polite">
+							{visibleProducts.length} de {products.length} productos
+						</p>
+					</div>
+				</div>
 			) : null}
 
 			{error ? (
@@ -167,8 +217,15 @@ function AdminProductsPage() {
 
 			{!loading && products.length > 0 && visibleProducts.length === 0 ? (
 				<div className={styles.filterEmpty} role="status">
-					<strong>No hay productos en este estado</strong>
-					<span>Selecciona otro filtro para consultar el inventario.</span>
+					<strong>{normalizedSearch ? 'No encontramos productos' : 'No hay productos en este estado'}</strong>
+					<span>{normalizedSearch
+						? 'Prueba con otro nombre, categoría o estado de stock.'
+						: 'Selecciona otro filtro para consultar el inventario.'}</span>
+					{hasActiveFilters ? (
+						<button type="button" className={styles.clearFilters} onClick={clearFilters}>
+							Limpiar filtros
+						</button>
+					) : null}
 				</div>
 			) : null}
 

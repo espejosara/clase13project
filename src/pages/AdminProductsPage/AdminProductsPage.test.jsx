@@ -81,4 +81,39 @@ describe('AdminProductsPage', () => {
 		expect(screen.getByText('Figura agotada')).toBeInTheDocument()
 		expect(screen.queryByText('Figura limitada')).not.toBeInTheDocument()
 	})
+
+	it('busca por nombre o categoría y permite combinar la búsqueda con el stock', async () => {
+		const user = userEvent.setup()
+		getProducts.mockResolvedValue([
+			{ ...product, id: 1, name: 'Héroe clásico', category: 'Acción', stock: 8 },
+			{ ...product, id: 2, name: 'Ninja limitado', category: 'Colección', stock: 2 },
+			{ ...product, id: 3, name: 'Ninja agotado', category: 'Colección', stock: 0 },
+		])
+
+		render(
+			<MemoryRouter>
+				<AdminProductsPage />
+			</MemoryRouter>,
+		)
+
+		const searchInput = await screen.findByRole('searchbox', {
+			name: 'Buscar productos por nombre o categoría',
+		})
+		await user.type(searchInput, 'coleccion')
+
+		expect(screen.getByText('2 de 3 productos')).toBeInTheDocument()
+		expect(screen.getByText('Ninja limitado')).toBeInTheDocument()
+		expect(screen.getByText('Ninja agotado')).toBeInTheDocument()
+		expect(screen.queryByText('Héroe clásico')).not.toBeInTheDocument()
+
+		await user.click(screen.getByRole('button', { name: 'Productos agotados: 1' }))
+		expect(screen.getByText('1 de 3 productos')).toBeInTheDocument()
+		expect(screen.getByText('Ninja agotado')).toBeInTheDocument()
+		expect(screen.queryByText('Ninja limitado')).not.toBeInTheDocument()
+
+		await user.click(screen.getByRole('button', { name: 'Limpiar búsqueda' }))
+		expect(searchInput).toHaveValue('')
+		expect(screen.getByText('Ninja agotado')).toBeInTheDocument()
+		expect(screen.queryByText('Héroe clásico')).not.toBeInTheDocument()
+	})
 })
