@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import Button from '../../components/Button/Button'
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs'
 import ProductImageZoom from '../../components/ProductImageZoom/ProductImageZoom'
 import QuantitySelector from '../../components/QuantitySelector/QuantitySelector'
 import RecentlyViewedProducts from '../../components/RecentlyViewedProducts/RecentlyViewedProducts'
@@ -98,12 +99,20 @@ function ProductDetailPage() {
 	const catalogSearch = typeof savedCatalogSearch === 'string' && savedCatalogSearch.startsWith('?')
 		? savedCatalogSearch
 		: ''
+	const categoryParams = new URLSearchParams(catalogSearch)
+	categoryParams.delete('search')
+	categoryParams.set('category', product.category)
+	const categoryPath = `/products?${categoryParams.toString()}`
+	const breadcrumbItems = [
+		{ label: 'Inicio', to: '/' },
+		{ label: 'Catálogo', to: `/products${catalogSearch}` },
+		{ label: product.category, to: categoryPath },
+		{ label: product.name },
+	]
 
 	return (
 		<section className={styles.productDetailPage} aria-labelledby="product-title">
-			<Link to={`/products${catalogSearch}`} className={`app-action-link ${styles.back}`}>
-				← Volver al catálogo
-			</Link>
+			<Breadcrumbs items={breadcrumbItems} />
 
 			<div className={styles.productLayout}>
 				<div className={styles.mediaPanel}>

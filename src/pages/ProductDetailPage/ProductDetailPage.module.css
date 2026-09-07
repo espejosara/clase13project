@@ -3,10 +3,6 @@
 	gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.back {
-	justify-self: start;
-}
-
 .productLayout {
 	display: grid;
 	grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);

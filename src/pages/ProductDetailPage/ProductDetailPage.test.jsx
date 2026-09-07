@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -54,7 +54,10 @@ function renderPage() {
 
 	return render(
 		<Provider store={store}>
-			<MemoryRouter initialEntries={['/products/7']}>
+			<MemoryRouter initialEntries={[{
+				pathname: '/products/7',
+				state: { catalogSearch: '?search=figura&sort=price-desc' },
+			}]}>
 				<Routes>
 					<Route path="/products/:productId" element={<ProductDetailPage />} />
 				</Routes>
@@ -87,5 +90,16 @@ describe('ProductDetailPage', () => {
 		await waitFor(() => {
 			expect(addCartItemRequest).toHaveBeenCalledWith({ productId: 7, quantity: 3 })
 		})
+	})
+
+	it('muestra una ruta navegable y conserva los filtros del catálogo', () => {
+		renderPage()
+		const breadcrumbs = screen.getByRole('navigation', { name: 'Migas de pan' })
+
+		expect(within(breadcrumbs).getByRole('link', { name: 'Catálogo' }))
+			.toHaveAttribute('href', '/products?search=figura&sort=price-desc')
+		expect(within(breadcrumbs).getByRole('link', { name: 'Colección' }))
+			.toHaveAttribute('href', '/products?sort=price-desc&category=Colecci%C3%B3n')
+		expect(within(breadcrumbs).getByText('Figura de prueba')).toHaveAttribute('aria-current', 'page')
 	})
 })
