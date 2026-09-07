@@ -7,14 +7,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import notificationReducer, { showNotification } from '../../store/slices/notificationSlice'
 import ActionToast from './ActionToast'
 
-function renderActionToast() {
+function renderActionToast(initialEntry = '/') {
 	const store = configureStore({
 		reducer: { notification: notificationReducer },
 	})
 
 	render(
 		<Provider store={store}>
-			<MemoryRouter>
+			<MemoryRouter initialEntries={[initialEntry]}>
 				<ActionToast />
 			</MemoryRouter>
 		</Provider>,
@@ -71,5 +71,27 @@ describe('ActionToast', () => {
 		await user.click(screen.getByRole('link', { name: 'Ver carrito' }))
 
 		expect(screen.queryByRole('status')).not.toBeInTheDocument()
+	})
+
+	it.each([
+		{
+			page: '/cart',
+			message: 'Producto añadido al carrito',
+			actionLabel: 'Ver carrito',
+			actionTo: '/cart',
+		},
+		{
+			page: '/wishlist',
+			message: 'Producto añadido a favoritos',
+			actionLabel: 'Ver favoritos',
+			actionTo: '/wishlist',
+		},
+	])('mantiene el aviso pero oculta la acción redundante dentro de $page', ({ page, message, actionLabel, actionTo }) => {
+		const store = renderActionToast(page)
+
+		act(() => store.dispatch(showNotification({ message, actionLabel, actionTo })))
+
+		expect(screen.getByRole('status')).toHaveTextContent(message)
+		expect(screen.queryByRole('link', { name: actionLabel })).not.toBeInTheDocument()
 	})
 })

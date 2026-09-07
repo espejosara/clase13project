@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styles from './ActionToast.module.css'
 
 const AUTO_HIDE_MS = 2800
 
+function normalizePath(path = '') {
+	const pathname = path.split(/[?#]/)[0].replace(/\/+$/, '')
+	return pathname || '/'
+}
+
 function ActionToast() {
 	const notification = useSelector((state) => state.notification)
+	const location = useLocation()
 	const [dismissedNoticeId, setDismissedNoticeId] = useState(0)
 	const isVisible = notification.id > dismissedNoticeId
+	const isActionCurrentPage = normalizePath(location.pathname) === normalizePath(notification.actionTo)
+	const shouldShowAction = notification.actionLabel && notification.actionTo && !isActionCurrentPage
 
 	useEffect(() => {
 		if (!isVisible) return undefined
@@ -29,7 +37,7 @@ function ActionToast() {
 				<p className={styles.message} role="status" aria-live="polite" aria-atomic="true">
 					{notification.message}
 				</p>
-				{notification.actionLabel && notification.actionTo ? (
+				{shouldShowAction ? (
 					<Link
 						to={notification.actionTo}
 						className={styles.actionLink}
