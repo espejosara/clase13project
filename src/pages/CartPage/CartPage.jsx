@@ -6,6 +6,7 @@ import Spinner from '../../components/Spinner/Spinner'
 import CartSummary from '../../components/CartSummary/CartSummary'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import {
 	addCartItemThunk,
 	fetchCartThunk,
@@ -14,8 +15,6 @@ import {
 } from '../../store/slices/cartSlice'
 import styles from './CartPage.module.css'
 
-const FALLBACK_IMAGE =
-	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="160" height="160" fill="%23eff6ff"/><text x="50%25" y="52%25" text-anchor="middle" font-size="14" fill="%2364748b" font-family="Arial">Sin imagen</text></svg>'
 const UNDO_WINDOW_MS = 6000
 
 function getItemId(item) {
@@ -39,7 +38,7 @@ function getItemPrice(item) {
 }
 
 function getItemImage(item) {
-	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
+	return item.product?.imageUrl || item.imageUrl
 }
 
 function getItemQuantity(item) {
@@ -279,7 +278,7 @@ function CartPage() {
 								return (
 									<li className={`${styles.item} ${hasItemStockConflict ? styles.itemStockConflict : ''}`} key={`${itemId}-${index}`}>
 										<Link to={`/products/${productId}`} className={styles.imageLink}>
-											<img src={getItemImage(item)} alt={itemName} className={styles.thumb} />
+										<SafeImage src={getItemImage(item)} alt={itemName} className={styles.thumb} />
 										</Link>
 
 										<div className={styles.itemInfo}>

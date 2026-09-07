@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
 import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import { fetchWishlistRequest, toggleWishlistRequest } from '../../api/wishlist'
 import { useProducts } from '../../hooks/useProducts'
 import { addCartItemThunk } from '../../store/slices/cartSlice'
@@ -12,9 +13,6 @@ import {
 	toggleLocalWishlist,
 } from '../../store/slices/wishlistSlice'
 import styles from './WishlistPage.module.css'
-
-const FALLBACK_IMAGE =
-	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="%23eff6ff"/><text x="50%25" y="52%25" text-anchor="middle" font-size="18" fill="%2364748b" font-family="Arial">Sin imagen</text></svg>'
 
 function formatPrice(value) {
 	return new Intl.NumberFormat('es-ES', {
@@ -204,8 +202,8 @@ function WishlistPage() {
 								<article className={styles.productCard}>
 									<div className={styles.media}>
 										<Link to={`/products/${product.id}`} className={styles.imageLink}>
-											<img
-												src={product.imageUrl || FALLBACK_IMAGE}
+											<SafeImage
+												src={product.imageUrl}
 												alt={product.name}
 												className={styles.image}
 											/>

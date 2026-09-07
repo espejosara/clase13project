@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import SafeImage from '../SafeImage/SafeImage'
 import {
 	readRecentlyViewedProducts,
 	rememberViewedProduct,
@@ -47,7 +48,7 @@ function RecentlyViewedProducts({ currentProduct, userKey, catalogSearch = '' })
 								state={{ catalogSearch }}
 								className={styles.card}
 							>
-								<img
+								<SafeImage
 									className={styles.image}
 									src={product.imageUrl}
 									alt=""

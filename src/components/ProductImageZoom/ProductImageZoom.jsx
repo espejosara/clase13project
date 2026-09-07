@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import SafeImage from '../SafeImage/SafeImage'
 import styles from './ProductImageZoom.module.css'
 
 function ProductImageZoom({ src, alt, imageClassName = '' }) {
@@ -48,7 +49,7 @@ function ProductImageZoom({ src, alt, imageClassName = '' }) {
 				onClick={() => setIsOpen(true)}
 				aria-label={`Ampliar imagen de ${alt}`}
 			>
-				<img className={imageClassName} src={src} alt={alt} />
+				<SafeImage className={imageClassName} src={src} alt={alt} />
 				<span className={styles.zoomHint} aria-hidden="true">
 					<svg viewBox="0 0 24 24" focusable="false">
 						<circle cx="10.8" cy="10.8" r="6.3" />
@@ -82,7 +83,7 @@ function ProductImageZoom({ src, alt, imageClassName = '' }) {
 							>
 								<span aria-hidden="true">×</span>
 							</button>
-							<img className={styles.expandedImage} src={src} alt={alt} />
+							<SafeImage className={styles.expandedImage} src={src} alt={alt} />
 						</div>
 					</div>,
 					document.body,

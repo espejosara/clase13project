@@ -6,11 +6,9 @@ import CartSummary from '../../components/CartSummary/CartSummary'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import { checkoutThunk, fetchCartThunk } from '../../store/slices/cartSlice'
 import styles from './CheckoutPage.module.css'
-
-const FALLBACK_IMAGE =
-	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="%23fff7ed"/><text x="50%25" y="54%25" text-anchor="middle" font-size="10" fill="%23c2410c" font-family="Arial">IMG</text></svg>'
 
 function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
@@ -21,7 +19,7 @@ function getItemName(item) {
 }
 
 function getItemImage(item) {
-	return item.product?.imageUrl || item.imageUrl || FALLBACK_IMAGE
+	return item.product?.imageUrl || item.imageUrl
 }
 
 function getItemQuantity(item) {
@@ -121,7 +119,7 @@ function CheckoutPage() {
 							return (
 								<li key={getItemId(item)} className={styles.item}>
 									<div className={styles.itemTop}>
-										<img
+										<SafeImage
 											src={getItemImage(item)}
 											alt={getItemName(item)}
 											className={styles.thumb}

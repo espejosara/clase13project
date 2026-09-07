@@ -4,15 +4,13 @@ import { Link, useLocation } from 'react-router-dom'
 import Spinner from '../../components/Spinner/Spinner'
 import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import { fetchRecommendationsRequest } from '../../api/recommendations'
 import { fetchCurrentUserThunk } from '../../store/slices/authSlice'
 import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import { formatOrderItemSummary } from '../../utils/orderSummary'
 import { getInitials } from '../../utils/user'
 import styles from './ProfilePage.module.css'
-
-const FALLBACK_PRODUCT_IMAGE =
-	'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" fill="%23f8fafc"/><text x="50%25" y="54%25" text-anchor="middle" font-size="11" fill="%2364748b" font-family="Arial">Sin imagen</text></svg>'
 
 function formatDate(value) {
 	if (!value) return 'No disponible'
@@ -59,11 +57,11 @@ function getOrderProducts(order) {
 }
 
 function getOrderProductImage(item) {
-	if (!item || typeof item === 'string') return FALLBACK_PRODUCT_IMAGE
+	if (!item || typeof item === 'string') return null
 	return item.imageUrl
 		|| item.product?.imageUrl
 		|| item.productDetails?.imageUrl
-		|| FALLBACK_PRODUCT_IMAGE
+		|| null
 }
 
 function getOrderProductId(item) {
@@ -107,7 +105,7 @@ function OrderProductItem({ item, index }) {
 
 	return (
 		<li className={styles.productItem}>
-			<img src={imageUrl} alt={itemName} className={styles.productThumb} />
+		<SafeImage src={imageUrl} alt={itemName} className={styles.productThumb} />
 			<div className={styles.productMeta}>
 				<div className={styles.productHeading}>
 					<p className={styles.productName}>{itemName}</p>
@@ -440,8 +438,8 @@ function ProfilePage() {
 						{recommendations.items.map((product) => (
 							<li key={product.id} className={styles.recommendationItem}>
 								<Link to={`/products/${product.id}`} className={styles.recommendationLink}>
-									<img
-										src={product.imageUrl || FALLBACK_PRODUCT_IMAGE}
+									<SafeImage
+										src={product.imageUrl}
 										alt={product.name}
 										className={styles.recommendationImage}
 									/>

@@ -4,6 +4,7 @@ import FeaturedProductsRail from '../../components/FeaturedProductsRail/Featured
 import ProductListSkeleton from '../../components/ProductListSkeleton/ProductListSkeleton'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import Button from '../../components/Button/Button'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import { useProducts } from '../../hooks/useProducts'
 
 const HERO_IMAGE_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788436270/Gemini_Generated_Image_u5pka3u5pka3u5pk_bddoer.png'
@@ -16,7 +17,7 @@ function HomePage() {
 		<section className={styles.homePage}>
 			<article className={styles.hero}>
 				<div className={styles.heroMedia}>
-					<img
+					<SafeImage
 						className={styles.heroImage}
 						src={HERO_IMAGE_URL}
 						alt="Universo de fantasía tecnológica de NeoKensei Chronicles"

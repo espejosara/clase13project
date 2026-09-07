@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SafeImage from '../SafeImage/SafeImage'
 import styles from './Footer.module.css'
 
 const BRAND_MARK_URL = 'https://res.cloudinary.com/dm1w4w1o8/image/upload/v1788527218/Gemini_Generated_Image_9p1rhd9p1rhd9p1r-removebg-preview_uqida1.png'
@@ -10,9 +11,10 @@ function Footer() {
 			<div className={styles.inner}>
 				<div className={styles.brandBlock}>
 					<Link to="/" className={styles.brand} aria-label="NeoKensei Chronicles, ir al inicio">
-						<img
+						<SafeImage
 							className={styles.brandMark}
 							src={BRAND_MARK_URL}
+							fallbackSrc="/favicon.svg"
 							alt=""
 							width="32"
 							height="32"

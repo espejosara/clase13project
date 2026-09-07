@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../Button/Button'
+import SafeImage from '../SafeImage/SafeImage'
 import { fetchCartThunk } from '../../store/slices/cartSlice'
 import { logoutThunk, selectIsAdmin } from '../../store/slices/authSlice'
 import { clearWishlist, setLocalWishlist } from '../../store/slices/wishlistSlice'
@@ -176,9 +177,10 @@ function Header() {
 							setOpenProfileMenuPath(null)
 						}}
 					>
-						<img
+						<SafeImage
 							className={styles.brandMark}
 							src={BRAND_MARK_URL}
+							fallbackSrc="/favicon.svg"
 							alt=""
 							width="32"
 							height="32"

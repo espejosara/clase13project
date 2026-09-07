@@ -8,6 +8,7 @@ import {
 import Button from '../../components/Button/Button'
 import FormInput from '../../components/FormInput/FormInput'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import { buildProductFormData } from '../../utils/productFormData'
 import styles from './AdminProductFormPage.module.css'
 
@@ -275,7 +276,7 @@ function AdminProductFormPage() {
 
 					{isEditing && existingImageUrl ? (
 						<figure className={`${styles.currentImage} ${styles.fullWidth}`}>
-							<img src={existingImageUrl} alt={`Imagen actual de ${formData.name || 'producto'}`} />
+							<SafeImage src={existingImageUrl} alt={`Imagen actual de ${formData.name || 'producto'}`} />
 							<figcaption>Imagen actual; se conservará si no seleccionas otra.</figcaption>
 						</figure>
 					) : null}

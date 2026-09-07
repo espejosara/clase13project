@@ -5,6 +5,7 @@ import { addCartItemThunk } from '../../store/slices/cartSlice'
 import useRequireAuthentication from '../../hooks/useRequireAuthentication'
 import WishlistButton from '../WishlistButton/WishlistButton'
 import Button from '../Button/Button'
+import SafeImage from '../SafeImage/SafeImage'
 import styles from './ProductCard.module.css'
 
 const priceFormatter = new Intl.NumberFormat('es-ES', {
@@ -62,7 +63,7 @@ function ProductCard({ product, onAddToCart }) {
 				className={styles.link}
 			>
 				<div className={styles.imageWrapper}>
-					<img
+					<SafeImage
 						className={styles.image}
 						src={product.imageUrl}
 						alt={product.name}

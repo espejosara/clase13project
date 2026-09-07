@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { deleteProduct, getProducts } from '../../api/products'
 import Button from '../../components/Button/Button'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
+import SafeImage from '../../components/SafeImage/SafeImage'
 import styles from './AdminProductsPage.module.css'
 
 const priceFormatter = new Intl.NumberFormat('es-ES', {
@@ -133,7 +134,7 @@ function AdminProductsPage() {
 								<tr key={product.id}>
 									<td>
 										<div className={styles.product}>
-											<img src={product.imageUrl} alt="" className={styles.thumbnail} />
+											<SafeImage src={product.imageUrl} alt="" className={styles.thumbnail} />
 											<span>{product.name}</span>
 										</div>
 									</td>
