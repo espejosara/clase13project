@@ -5,6 +5,7 @@ import { useProduct } from '../../hooks/useProduct'
 import { useReviews } from '../../hooks/useReviews'
 import Button from '../../components/Button/Button'
 import ProductImageZoom from '../../components/ProductImageZoom/ProductImageZoom'
+import QuantitySelector from '../../components/QuantitySelector/QuantitySelector'
 import RecentlyViewedProducts from '../../components/RecentlyViewedProducts/RecentlyViewedProducts'
 import ReviewList from '../../components/ReviewList/ReviewList'
 import ReviewForm from '../../components/ReviewForm/ReviewForm'
@@ -25,12 +26,19 @@ function ProductDetailPage() {
 	const [createdReviews, setCreatedReviews] = useState([])
 	const [isAddingToCart, setIsAddingToCart] = useState(false)
 	const [cartError, setCartError] = useState('')
+	const [quantitySelection, setQuantitySelection] = useState({ productId: null, value: 1 })
 	const { data: product, loading, error } = useProduct(productId)
 	const {
 		data: reviews,
 		loading: reviewsLoading,
 		error: reviewsError,
 	} = useReviews(productId)
+	const productKey = product?.id === null || product?.id === undefined ? null : String(product.id)
+	const numericStock = Number(product?.stock)
+	const availableStock = Number.isInteger(numericStock) && numericStock > 0 ? numericStock : 0
+	const quantity = quantitySelection.productId === productKey
+		? Math.min(Math.max(quantitySelection.value, 1), Math.max(availableStock, 1))
+		: 1
 
 	const allReviews = useMemo(() => {
 		return [...createdReviews, ...reviews]
@@ -47,7 +55,7 @@ function ProductDetailPage() {
 		setCartError('')
 		setIsAddingToCart(true)
 		try {
-			await dispatch(addCartItemThunk({ productId: product.id, quantity: 1 })).unwrap()
+			await dispatch(addCartItemThunk({ productId: product.id, quantity })).unwrap()
 		} catch {
 			setCartError('No se pudo añadir el producto al carrito. Inténtalo de nuevo.')
 		} finally {
@@ -67,12 +75,14 @@ function ProductDetailPage() {
 		return <NotFoundPage />
 	}
 
-	const isOutOfStock = Number(product.stock) <= 0
+	const isOutOfStock = availableStock <= 0
 	const addButtonText = isOutOfStock
 		? 'No disponible'
 		: isAddingToCart
 			? 'Añadiendo...'
-			: 'Añadir al carrito'
+			: quantity > 1
+				? `Añadir ${quantity} al carrito`
+				: 'Añadir al carrito'
 	const savedCatalogSearch = location.state?.catalogSearch
 	const catalogSearch = typeof savedCatalogSearch === 'string' && savedCatalogSearch.startsWith('?')
 		? savedCatalogSearch
@@ -119,6 +129,16 @@ function ProductDetailPage() {
 						</div>
 					</dl>
 
+					{!isOutOfStock ? (
+						<QuantitySelector
+							value={quantity}
+							max={availableStock}
+							onChange={(value) => setQuantitySelection({ productId: productKey, value })}
+							label="Cantidad"
+							disabled={isAddingToCart}
+						/>
+					) : null}
+
 					<div className={styles.actions}>
 						<Button
 							type="button"
@@ -159,7 +179,9 @@ function ProductDetailPage() {
 			<div className={styles.mobilePurchaseBar} aria-label="Compra rápida">
 				<div className={styles.mobilePurchaseInfo}>
 					<span>{product.name}</span>
-					<strong>{product.price.toFixed(2)} EUR</strong>
+					<strong>
+						{quantity > 1 ? `${quantity} uds. · ` : ''}{(product.price * quantity).toFixed(2)} EUR
+					</strong>
 				</div>
 				<Button
 					type="button"
@@ -168,7 +190,7 @@ function ProductDetailPage() {
 					disabled={isAddingToCart || isOutOfStock}
 					aria-busy={isAddingToCart}
 				>
-					{addButtonText}
+					{isOutOfStock ? 'No disponible' : isAddingToCart ? 'Añadiendo...' : quantity > 1 ? `Añadir ${quantity}` : 'Añadir'}
 				</Button>
 			</div>
 
