@@ -22,4 +22,19 @@ describe('CartSummary', () => {
 			screen.getByRole('button', { name: /Pagar con Stripe.*25,00/ }),
 		).toBeInTheDocument()
 	})
+
+	it('permite bloquear el checkout sin mostrar un estado de carga', () => {
+		render(
+			<MemoryRouter>
+				<CartSummary
+					items={[{ id: 1, quantity: 1, price: 25 }]}
+					onCheckout={vi.fn()}
+					checkoutDisabled
+					checkoutLabel="Revisar pedido"
+				/>
+			</MemoryRouter>,
+		)
+
+		expect(screen.getByRole('button', { name: 'Revisar pedido' })).toBeDisabled()
+	})
 })

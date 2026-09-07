@@ -3,7 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
 	addCartItemThunk,
 	fetchCartThunk,
@@ -36,6 +36,10 @@ function renderCart(cartState) {
 }
 
 describe('CartPage', () => {
+	beforeEach(() => {
+		vi.clearAllMocks()
+	})
+
 	it('muestra enlaces, precio unitario, subtotal y controles claros', async () => {
 		const user = userEvent.setup()
 		renderCart({
@@ -87,5 +91,47 @@ describe('CartPage', () => {
 
 		expect(screen.getByRole('heading', { name: 'Tu carrito está vacío' })).toBeInTheDocument()
 		expect(screen.getByRole('link', { name: 'Explorar catálogo' })).toHaveAttribute('href', '/products')
+	})
+
+	it('bloquea el aumento al alcanzar todas las unidades disponibles', () => {
+		renderCart({
+			items: [{
+				id: 44,
+				productId: 7,
+				name: 'Figura limitada',
+				price: 24.99,
+				quantity: 2,
+				stock: 2,
+			}],
+			loading: false,
+			isCheckingOut: false,
+			error: null,
+		})
+
+		expect(screen.getByRole('button', { name: 'Añadir una unidad de Figura limitada' })).toBeDisabled()
+		expect(screen.getByRole('status')).toHaveTextContent('Has añadido todas las unidades disponibles.')
+		expect(screen.getByRole('button', { name: 'Revisar pedido' })).toBeEnabled()
+	})
+
+	it('impide continuar si un producto del carrito se ha agotado', () => {
+		renderCart({
+			items: [{
+				id: 44,
+				product: {
+					id: 7,
+					name: 'Figura agotada',
+					price: 24.99,
+					stock: 0,
+				},
+				quantity: 1,
+			}],
+			loading: false,
+			isCheckingOut: false,
+			error: null,
+		})
+
+		expect(screen.getByText('Producto agotado. Elimínalo para continuar.')).toBeInTheDocument()
+		expect(screen.getByRole('button', { name: 'Revisar pedido' })).toBeDisabled()
+		expect(screen.getByText('Corrige los productos sin stock antes de continuar.')).toBeInTheDocument()
 	})
 })

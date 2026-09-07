@@ -47,6 +47,11 @@ function getItemQuantity(item) {
 	return Number.isInteger(quantity) && quantity > 0 ? quantity : 1
 }
 
+function getItemStock(item) {
+	const stock = Number(item?.product?.stock ?? item?.stock)
+	return Number.isInteger(stock) && stock >= 0 ? stock : null
+}
+
 function formatPrice(value) {
 	return new Intl.NumberFormat('es-ES', {
 		style: 'currency',
@@ -95,6 +100,12 @@ function CartPage() {
 	const totalItems = useMemo(() => {
 		return items.reduce((total, item) => total + getItemQuantity(item), 0)
 	}, [items])
+	const hasStockConflict = useMemo(() => {
+		return items.some((item) => {
+			const stock = getItemStock(item)
+			return stock !== null && getItemQuantity(item) > stock
+		})
+	}, [items])
 
 	const openUndoWindow = (item) => {
 		window.clearTimeout(undoTimeoutRef.current)
@@ -122,6 +133,9 @@ function CartPage() {
 
 	const handleIncrease = (item) => {
 		const productId = getProductId(item)
+		const stock = getItemStock(item)
+		if (stock !== null && getItemQuantity(item) >= stock) return
+
 		if (productId != null) {
 			dispatch(addCartItemThunk({ productId, quantity: 1 }))
 		}
@@ -249,10 +263,21 @@ function CartPage() {
 								const quantity = getItemQuantity(item)
 								const unitPrice = getItemPrice(item)
 								const subtotal = quantity * unitPrice
+								const stock = getItemStock(item)
+								const isAtStockLimit = stock !== null && quantity >= stock
+								const hasItemStockConflict = stock !== null && quantity > stock
+								const stockMessage = hasItemStockConflict
+									? stock === 0
+										? 'Producto agotado. Elimínalo para continuar.'
+										: `Solo quedan ${stock} ${stock === 1 ? 'unidad' : 'unidades'}. Reduce la cantidad para continuar.`
+									: isAtStockLimit
+										? 'Has añadido todas las unidades disponibles.'
+										: ''
+								const stockMessageId = `cart-stock-message-${index}`
 								const controlsDisabled = loading || isCheckingOut
 
 								return (
-									<li key={`${itemId}-${index}`} className={styles.item}>
+									<li className={`${styles.item} ${hasItemStockConflict ? styles.itemStockConflict : ''}`} key={`${itemId}-${index}`}>
 										<Link to={`/products/${productId}`} className={styles.imageLink}>
 											<img src={getItemImage(item)} alt={itemName} className={styles.thumb} />
 										</Link>
@@ -262,6 +287,15 @@ function CartPage() {
 												<Link to={`/products/${productId}`}>{itemName}</Link>
 											</h3>
 											<p className={styles.unitPrice}>{formatPrice(unitPrice)} por unidad</p>
+											{stockMessage ? (
+												<p
+													id={stockMessageId}
+													className={`${styles.stockMessage} ${hasItemStockConflict ? styles.stockError : ''}`}
+													role="status"
+												>
+													{stockMessage}
+												</p>
+											) : null}
 											<div className={styles.subtotalRow}>
 												<span>Subtotal</span>
 												<strong>{formatPrice(subtotal)}</strong>
@@ -288,8 +322,9 @@ function CartPage() {
 													type="button"
 													className={styles.quantityButton}
 													onClick={() => handleIncrease(item)}
-													disabled={controlsDisabled}
+													disabled={controlsDisabled || isAtStockLimit}
 													aria-label={`Añadir una unidad de ${itemName}`}
+													aria-describedby={stockMessage ? stockMessageId : undefined}
 												>
 													+
 												</button>
@@ -315,8 +350,11 @@ function CartPage() {
 							items={items}
 							onCheckout={handleGoToCheckout}
 							loading={loading || isCheckingOut}
+							checkoutDisabled={hasStockConflict}
 							checkoutLabel="Revisar pedido"
-							note="Comprueba los artículos y el total antes de continuar."
+							note={hasStockConflict
+								? 'Corrige los productos sin stock antes de continuar.'
+								: 'Comprueba los artículos y el total antes de continuar.'}
 						/>
 					</div>
 				</section>

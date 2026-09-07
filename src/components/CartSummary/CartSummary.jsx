@@ -23,6 +23,7 @@ function CartSummary({
 	items = [],
 	onCheckout,
 	loading = false,
+	checkoutDisabled = false,
 	checkoutLabel = 'Ir a checkout',
 	loadingLabel = 'Procesando...',
 	showCheckoutTotal = false,
@@ -62,7 +63,7 @@ function CartSummary({
 					type="button"
 					variant="primary"
 					onClick={onCheckout}
-					disabled={loading || isEmpty}
+					disabled={loading || checkoutDisabled || isEmpty}
 					className={styles.checkoutButton}
 				>
 					{loading ? loadingLabel : finalCheckoutLabel}
