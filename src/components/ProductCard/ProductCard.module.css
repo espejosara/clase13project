@@ -28,13 +28,44 @@
 	text-decoration: none;
 }
 
+.imageWrapper {
+	position: relative;
+	overflow: hidden;
+	background: var(--color-surface-muted);
+}
+
 .image {
+	display: block;
 	width: 100%;
 	height: auto;
 	aspect-ratio: 4 / 3;
 	object-fit: cover;
 	background: var(--color-surface-muted);
 	transition: transform 0.35s ease;
+}
+
+.stockBadge {
+	position: absolute;
+	top: 0.75rem;
+	right: 0.75rem;
+	padding: 0.35rem 0.6rem;
+	border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+	border-radius: 999px;
+	box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
+	font-size: 0.72rem;
+	font-weight: 850;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.stockBadgeLow {
+	background: var(--color-warning-soft);
+	color: var(--color-warning);
+}
+
+.stockBadgeOut {
+	background: var(--color-danger-soft);
+	color: var(--color-danger-hover);
 }
 
 .productCard:hover .image,
@@ -116,6 +147,11 @@
 
 .outOfStock {
 	color: var(--color-danger-hover);
+	font-weight: 700;
+}
+
+.lowStock {
+	color: var(--color-warning);
 	font-weight: 700;
 }
 

@@ -75,6 +75,8 @@ describe('ProductDetailPage', () => {
 		const user = userEvent.setup()
 		renderPage()
 		const increaseButton = screen.getByRole('button', { name: 'Aumentar cantidad' })
+		expect(screen.getByText('Últimas 3 unidades')).toBeInTheDocument()
+		expect(screen.getByText('¡Últimas 3!')).toBeInTheDocument()
 
 		await user.click(increaseButton)
 		await user.click(increaseButton)

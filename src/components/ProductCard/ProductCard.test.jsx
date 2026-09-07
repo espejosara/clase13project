@@ -63,6 +63,20 @@ describe('ProductCard', () => {
 		expect(screen.getByText('Stock por confirmar')).toBeInTheDocument()
 	})
 
+	it('destaca visualmente las últimas unidades disponibles', () => {
+		renderProductCard({ ...product, stock: 2 })
+
+		expect(screen.getByText('¡Últimas 2!')).toBeInTheDocument()
+		expect(screen.getByText('2 unidades disponibles')).toBeInTheDocument()
+	})
+
+	it('marca los productos agotados y desactiva su compra', () => {
+		renderProductCard({ ...product, stock: 0 })
+
+		expect(screen.getAllByText('Agotado')).toHaveLength(2)
+		expect(screen.getByRole('button', { name: 'No disponible' })).toBeDisabled()
+	})
+
 	it('conserva los filtros del catálogo al abrir el detalle', async () => {
 		const user = userEvent.setup()
 		renderProductCard(product, '/products?category=Colecci%C3%B3n&sort=price-asc')

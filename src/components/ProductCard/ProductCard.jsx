@@ -23,11 +23,17 @@ function ProductCard({ product, onAddToCart }) {
 		&& product.stock !== undefined
 		&& Number.isFinite(stock)
 	const isOutOfStock = hasStockData && stock <= 0
+	const isLowStock = hasStockData && stock > 0 && stock <= 3
 	const stockLabel = !hasStockData
 		? 'Stock por confirmar'
 		: isOutOfStock
 			? 'Agotado'
 			: `${stock} ${stock === 1 ? 'unidad disponible' : 'unidades disponibles'}`
+	const stockBadge = isOutOfStock
+		? 'Agotado'
+		: isLowStock
+			? stock === 1 ? '¡Última unidad!' : `¡Últimas ${stock}!`
+			: ''
 
 	const handleAddToCart = async () => {
 		if (isAddingToCart || isOutOfStock) return
@@ -55,13 +61,23 @@ function ProductCard({ product, onAddToCart }) {
 				state={{ catalogSearch: location.pathname === '/products' ? location.search : '' }}
 				className={styles.link}
 			>
-				<img
-					className={styles.image}
-					src={product.imageUrl}
-					alt={product.name}
-					loading="lazy"
-					decoding="async"
-				/>
+				<div className={styles.imageWrapper}>
+					<img
+						className={styles.image}
+						src={product.imageUrl}
+						alt={product.name}
+						loading="lazy"
+						decoding="async"
+					/>
+					{stockBadge ? (
+						<span
+							className={`${styles.stockBadge} ${isOutOfStock ? styles.stockBadgeOut : styles.stockBadgeLow}`}
+							aria-hidden="true"
+						>
+							{stockBadge}
+						</span>
+					) : null}
+				</div>
 				<div className={styles.content}>
 					<p className={styles.category}>{product.category}</p>
 					<h2 className={styles.title}>{product.name}</h2>
@@ -70,7 +86,7 @@ function ProductCard({ product, onAddToCart }) {
 						<span className={styles.price}>
 							{priceFormatter.format(product.price)}
 						</span>
-						<span className={`${styles.stock} ${isOutOfStock ? styles.outOfStock : ''}`}>
+						<span className={`${styles.stock} ${isOutOfStock ? styles.outOfStock : isLowStock ? styles.lowStock : ''}`}>
 							{stockLabel}
 						</span>
 					</div>

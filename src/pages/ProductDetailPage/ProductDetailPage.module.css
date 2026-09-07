@@ -24,6 +24,32 @@
 	box-shadow: var(--shadow-soft);
 }
 
+.stockBadge {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	z-index: 2;
+	padding: 0.4rem 0.7rem;
+	border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+	border-radius: 999px;
+	box-shadow: 0 4px 14px rgb(0 0 0 / 20%);
+	font-size: 0.75rem;
+	font-weight: 850;
+	letter-spacing: 0.04em;
+	pointer-events: none;
+	text-transform: uppercase;
+}
+
+.stockBadgeLow {
+	background: var(--color-warning-soft);
+	color: var(--color-warning);
+}
+
+.stockBadgeOut {
+	background: var(--color-danger-soft);
+	color: var(--color-danger-hover);
+}
+
 .detailsPanel {
 	display: grid;
 	gap: 1rem;
@@ -100,6 +126,14 @@
 .price {
 	color: var(--color-primary);
 	font-size: 1.05rem;
+}
+
+.lowStock {
+	color: var(--color-warning);
+}
+
+.outOfStock {
+	color: var(--color-danger-hover);
 }
 
 .actions {
@@ -219,7 +253,7 @@
 	}
 
 	.mediaPanel {
-		position: static;
+		position: relative;
 	}
 
 	.image {

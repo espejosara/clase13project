@@ -76,6 +76,17 @@ function ProductDetailPage() {
 	}
 
 	const isOutOfStock = availableStock <= 0
+	const isLowStock = availableStock > 0 && availableStock <= 3
+	const availabilityText = isOutOfStock
+		? 'Agotado'
+		: isLowStock
+			? availableStock === 1 ? 'Última unidad' : `Últimas ${availableStock} unidades`
+			: `${availableStock} unidades`
+	const stockBadge = isOutOfStock
+		? 'Agotado'
+		: isLowStock
+			? availableStock === 1 ? '¡Última unidad!' : `¡Últimas ${availableStock}!`
+			: ''
 	const addButtonText = isOutOfStock
 		? 'No disponible'
 		: isAddingToCart
@@ -101,6 +112,14 @@ function ProductDetailPage() {
 						alt={product.name}
 						imageClassName={styles.image}
 					/>
+					{stockBadge ? (
+						<span
+							className={`${styles.stockBadge} ${isOutOfStock ? styles.stockBadgeOut : styles.stockBadgeLow}`}
+							aria-hidden="true"
+						>
+							{stockBadge}
+						</span>
+					) : null}
 				</div>
 
 				<div className={styles.detailsPanel}>
@@ -125,7 +144,9 @@ function ProductDetailPage() {
 						</div>
 						<div className={styles.metaItem}>
 							<dt className={styles.metaLabel}>Disponibilidad</dt>
-							<dd className={styles.metaValue}>{product.stock} unidades</dd>
+							<dd className={`${styles.metaValue} ${isOutOfStock ? styles.outOfStock : isLowStock ? styles.lowStock : ''}`}>
+								{availabilityText}
+							</dd>
 						</div>
 					</dl>
 
