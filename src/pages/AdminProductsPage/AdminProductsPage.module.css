@@ -51,6 +51,77 @@
 	justify-items: start;
 }
 
+.stockOverview {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.stockFilter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	min-height: var(--size-touch-target);
+	padding: 0.7rem 0.85rem;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-control);
+	background: var(--color-surface);
+	color: var(--color-text-soft);
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.85rem;
+	font-weight: 750;
+}
+
+.stockFilter strong {
+	display: grid;
+	place-items: center;
+	min-width: 1.8rem;
+	height: 1.8rem;
+	border-radius: 999px;
+	background: var(--color-surface-muted);
+	color: var(--color-text);
+}
+
+.stockFilter:hover,
+.stockFilterActive {
+	border-color: var(--color-primary);
+	box-shadow: var(--focus-ring);
+}
+
+.stockFilterLow strong {
+	background: var(--color-warning-soft);
+	color: var(--color-warning);
+}
+
+.stockFilterOut strong {
+	background: var(--color-danger-soft);
+	color: var(--color-danger-hover);
+}
+
+.stockFilter:focus-visible {
+	outline: 3px solid var(--color-primary-outline);
+	outline-offset: 2px;
+}
+
+.filterEmpty {
+	display: grid;
+	place-items: center;
+	gap: 0.35rem;
+	min-height: 9rem;
+	padding: 1.5rem;
+	border: 1px dashed var(--color-border-strong);
+	border-radius: var(--radius-card);
+	background: var(--color-surface);
+	color: var(--color-text-soft);
+	text-align: center;
+}
+
+.filterEmpty strong {
+	color: var(--color-text);
+}
+
 .tableWrapper {
 	overflow-x: auto;
 	border: 1px solid var(--color-border-subtle);
@@ -85,6 +156,14 @@
 	border-bottom: 0;
 }
 
+.rowLowStock {
+	background: color-mix(in srgb, var(--color-warning-soft) 62%, transparent);
+}
+
+.rowOutOfStock {
+	background: color-mix(in srgb, var(--color-danger-soft) 52%, transparent);
+}
+
 .product {
 	display: flex;
 	align-items: center;
@@ -112,6 +191,32 @@
 	font-weight: 800;
 }
 
+.inventoryBadge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 5rem;
+	padding: 0.28rem 0.5rem;
+	border-radius: 999px;
+	font-size: 0.76rem;
+	font-weight: 800;
+}
+
+.inventoryAvailable {
+	background: var(--color-success-soft);
+	color: var(--color-success);
+}
+
+.inventoryLow {
+	background: var(--color-warning-soft);
+	color: var(--color-warning);
+}
+
+.inventoryOut {
+	background: var(--color-danger-soft);
+	color: var(--color-danger-hover);
+}
+
 .featuredBadge {
 	background: var(--color-primary-soft);
 	color: var(--color-primary);
@@ -136,5 +241,9 @@
 
 	.primaryLink {
 		align-self: start;
+	}
+
+	.stockOverview {
+		grid-template-columns: 1fr;
 	}
 }

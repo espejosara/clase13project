@@ -11,6 +11,15 @@ const priceFormatter = new Intl.NumberFormat('es-ES', {
 	currency: 'EUR',
 })
 
+function getStockStatus(rawStock) {
+	const stock = Number(rawStock)
+
+	if (!Number.isInteger(stock) || stock < 0) return { type: 'unknown', stock: null }
+	if (stock === 0) return { type: 'out', stock }
+	if (stock <= 3) return { type: 'low', stock }
+	return { type: 'available', stock }
+}
+
 function getErrorMessage(error, fallback) {
 	return error.response?.data?.error || fallback
 }
@@ -20,6 +29,17 @@ function AdminProductsPage() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
 	const [deletingId, setDeletingId] = useState(null)
+	const [stockFilter, setStockFilter] = useState('all')
+	const stockCounts = products.reduce((counts, product) => {
+		const status = getStockStatus(product.stock)
+		if (status.type === 'low') counts.low += 1
+		if (status.type === 'out') counts.out += 1
+		return counts
+	}, { low: 0, out: 0 })
+	const visibleProducts = products.filter((product) => {
+		if (stockFilter === 'all') return true
+		return getStockStatus(product.stock).type === stockFilter
+	})
 
 	const loadProducts = async () => {
 		try {
@@ -92,6 +112,41 @@ function AdminProductsPage() {
 				</Link>
 			</header>
 
+			{!loading && !error && products.length ? (
+				<section className={styles.stockOverview} aria-label="Resumen de existencias">
+					<button
+						type="button"
+						className={`${styles.stockFilter} ${stockFilter === 'all' ? styles.stockFilterActive : ''}`}
+						onClick={() => setStockFilter('all')}
+						aria-pressed={stockFilter === 'all'}
+						aria-label={`Todos los productos: ${products.length}`}
+					>
+						<span>Todos</span>
+						<strong>{products.length}</strong>
+					</button>
+					<button
+						type="button"
+						className={`${styles.stockFilter} ${styles.stockFilterLow} ${stockFilter === 'low' ? styles.stockFilterActive : ''}`}
+						onClick={() => setStockFilter('low')}
+						aria-pressed={stockFilter === 'low'}
+						aria-label={`Productos con stock bajo: ${stockCounts.low}`}
+					>
+						<span>Stock bajo</span>
+						<strong>{stockCounts.low}</strong>
+					</button>
+					<button
+						type="button"
+						className={`${styles.stockFilter} ${styles.stockFilterOut} ${stockFilter === 'out' ? styles.stockFilterActive : ''}`}
+						onClick={() => setStockFilter('out')}
+						aria-pressed={stockFilter === 'out'}
+						aria-label={`Productos agotados: ${stockCounts.out}`}
+					>
+						<span>Agotados</span>
+						<strong>{stockCounts.out}</strong>
+					</button>
+				</section>
+			) : null}
+
 			{error ? (
 				<div className={styles.feedback}>
 					<StatusMessage title="No se pudo completar la operación" description={error} variant="error" />
@@ -110,7 +165,14 @@ function AdminProductsPage() {
 				/>
 			) : null}
 
-			{!loading && products.length > 0 ? (
+			{!loading && products.length > 0 && visibleProducts.length === 0 ? (
+				<div className={styles.filterEmpty} role="status">
+					<strong>No hay productos en este estado</strong>
+					<span>Selecciona otro filtro para consultar el inventario.</span>
+				</div>
+			) : null}
+
+			{!loading && visibleProducts.length > 0 ? (
 				<div
 					className={styles.tableWrapper}
 					role="region"
@@ -130,8 +192,23 @@ function AdminProductsPage() {
 							</tr>
 						</thead>
 						<tbody>
-							{products.map((product) => (
-								<tr key={product.id}>
+							{visibleProducts.map((product) => {
+								const stockStatus = getStockStatus(product.stock)
+								const stockLabel = stockStatus.type === 'out'
+									? 'Agotado'
+									: stockStatus.type === 'low'
+										? `Últimas ${stockStatus.stock}`
+										: stockStatus.type === 'available'
+											? `${stockStatus.stock} uds.`
+											: 'Sin datos'
+
+								return (
+								<tr
+									key={product.id}
+									className={stockStatus.type === 'out'
+										? styles.rowOutOfStock
+										: stockStatus.type === 'low' ? styles.rowLowStock : ''}
+								>
 									<td>
 										<div className={styles.product}>
 											<SafeImage src={product.imageUrl} alt="" className={styles.thumbnail} />
@@ -140,7 +217,14 @@ function AdminProductsPage() {
 									</td>
 									<td>{product.category}</td>
 									<td>{priceFormatter.format(Number(product.price) || 0)}</td>
-									<td>{product.stock}</td>
+									<td>
+										<span className={`${styles.inventoryBadge} ${stockStatus.type === 'out'
+											? styles.inventoryOut
+											: stockStatus.type === 'low' ? styles.inventoryLow : styles.inventoryAvailable}`}
+										>
+											{stockLabel}
+										</span>
+									</td>
 									<td>
 										<span className={product.isFeatured ? styles.featuredBadge : styles.regularBadge}>
 											{product.isFeatured ? 'Sí' : 'No'}
@@ -161,7 +245,8 @@ function AdminProductsPage() {
 										</div>
 									</td>
 								</tr>
-							))}
+								)
+							})}
 						</tbody>
 					</table>
 				</div>

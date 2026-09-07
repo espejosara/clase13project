@@ -52,4 +52,33 @@ describe('AdminProductsPage', () => {
 			expect(screen.queryByText('Figura de prueba')).not.toBeInTheDocument()
 		})
 	})
+
+	it('resume el inventario y permite filtrar productos con stock bajo o agotado', async () => {
+		const user = userEvent.setup()
+		getProducts.mockResolvedValue([
+			{ ...product, id: 1, name: 'Figura disponible', stock: 8 },
+			{ ...product, id: 2, name: 'Figura limitada', stock: 2 },
+			{ ...product, id: 3, name: 'Figura agotada', stock: 0 },
+		])
+
+		render(
+			<MemoryRouter>
+				<AdminProductsPage />
+			</MemoryRouter>,
+		)
+
+		expect(await screen.findByRole('button', { name: 'Productos con stock bajo: 1' })).toBeInTheDocument()
+		expect(screen.getByRole('button', { name: 'Productos agotados: 1' })).toBeInTheDocument()
+		expect(screen.getByText('Últimas 2')).toBeInTheDocument()
+		expect(screen.getByText('Agotado')).toBeInTheDocument()
+
+		await user.click(screen.getByRole('button', { name: 'Productos con stock bajo: 1' }))
+		expect(screen.getByText('Figura limitada')).toBeInTheDocument()
+		expect(screen.queryByText('Figura disponible')).not.toBeInTheDocument()
+		expect(screen.queryByText('Figura agotada')).not.toBeInTheDocument()
+
+		await user.click(screen.getByRole('button', { name: 'Productos agotados: 1' }))
+		expect(screen.getByText('Figura agotada')).toBeInTheDocument()
+		expect(screen.queryByText('Figura limitada')).not.toBeInTheDocument()
+	})
 })
