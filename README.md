@@ -1,337 +1,280 @@
-# clase13project
+# NeoKensei Chronicles · Frontend
 
-Frontend de e-commerce en React + Vite conectado a un backend real con autenticación JWT en cookie HttpOnly, Redux Toolkit y estado global para carrito y wishlist.
+Proyecto final de **Full Stack Developer + IA · Módulo 3**. NeoKensei Chronicles es una tienda de figuras y coleccionables ambientada en un universo ficticio de acción, magia y tecnología.
 
-## Repositorios del proyecto
+Este repositorio contiene la aplicación web en React: catálogo, favoritos, carrito, pago con Stripe Checkout y administración de productos. La API, PostgreSQL y las integraciones privadas se encuentran en el repositorio de backend.
 
-- Frontend: [espejosara/clase13project](https://github.com/espejosara/clase13project)
-- Backend: [espejosara/backend-lite-sprint13](https://github.com/espejosara/backend-lite-sprint13)
+## Acceso al proyecto
 
-## Objetivo de esta feature
+| Recurso | Enlace |
+| --- | --- |
+| Tienda en Netlify | [neokenseichronicles.netlify.app](https://neokenseichronicles.netlify.app) |
+| API en Render | [backend-lite-sprint13.onrender.com](https://backend-lite-sprint13.onrender.com) |
+| Estado de API y base de datos | [GET /health](https://backend-lite-sprint13.onrender.com/health) |
+| Repositorio frontend | [espejosara/clase13project](https://github.com/espejosara/clase13project) |
+| Repositorio y documentación backend | [espejosara/backend-lite-sprint13](https://github.com/espejosara/backend-lite-sprint13) |
 
-- Centralizar el estado global con Redux Toolkit.
-- Gestionar autenticación real con cookie JWT HttpOnly.
-- Proteger rutas privadas.
-- Sincronizar carrito y wishlist con el backend.
-- Restaurar la sesión tras recargar consultando el backend.
-- Permitir checkout y creación de reseñas autenticadas.
+**Nota para la evaluación:** el backend utiliza el plan gratuito de Render. Tras 15 minutos sin tráfico, el servicio puede suspenderse; la siguiente petición necesita arrancarlo de nuevo. Conviene esperar aproximadamente un minuto antes de reintentar si el catálogo o el login tardan en responder. No es un plazo garantizado. [Documentación de Render](https://render.com/docs/free#spinning-down-on-idle).
 
-## Stack
+## Contenido
 
-- React + Vite
-- React Router
-- Axios
-- Redux Toolkit
-- React Redux
+- [Credenciales de prueba para evaluación](#credenciales-de-prueba-para-evaluación)
+- [Objetivos y funcionalidades](#objetivos-y-funcionalidades)
+- [Arquitectura y decisiones técnicas](#arquitectura-y-decisiones-técnicas)
+- [Instalación y ejecución local](#instalación-y-ejecución-local)
+- [Variables de entorno](#variables-de-entorno)
+- [Rutas de la aplicación](#rutas-de-la-aplicación)
+- [Flujos principales](#flujos-principales)
+- [Pruebas y scripts](#pruebas-y-scripts)
+- [Despliegue en Netlify](#despliegue-en-netlify)
+- [Estado de dependencias](#estado-de-dependencias)
+- [Resolución de problemas](#resolución-de-problemas)
+- [Mejoras futuras](#mejoras-futuras)
+- [Limitaciones actuales](#limitaciones-actuales)
+- [Alcance de la entrega y aprendizaje](#alcance-de-la-entrega-y-aprendizaje)
 
-## Estructura relevante
+## Credenciales de prueba para evaluación
+
+Cuentas facilitadas para revisar la aplicación desplegada:
+
+| Rol | Email | Contraseña |
+| --- | --- | --- |
+| Administrador | `sara@hotmail.com` | `123456` |
+| Usuario estándar | `saratest@mail.com` | `mR6KBdjpa6TTKSF` |
+
+La cuenta **ADMIN** puede entrar en `/admin`, crear y editar productos, subir imágenes a Cloudinary y eliminar productos que no estén vinculados a pedidos. La cuenta **USER** permite evaluar compras, favoritos y rutas privadas sin permisos de administración. Internamente, el backend guarda los roles como `admin` y `user`.
+
+Estas cuentas corresponden al entorno de evaluación; clonar los repositorios no las crea automáticamente en una base de datos local vacía. Para probar localmente, consulta la preparación de usuarios en el README del backend.
+
+### Pago de prueba con Stripe
+
+| Campo | Valor |
+| --- | --- |
+| Número de tarjeta | `4242 4242 4242 4242` |
+| Caducidad | Cualquier fecha futura |
+| CVC | `123` |
+
+Realiza la evaluación con Stripe en **modo de prueba**, usando claves `sk_test_...` en el backend y sin tarjetas reales. Estas operaciones simulan el pago sin mover dinero. [Tarjetas de prueba de Stripe](https://docs.stripe.com/testing#testing-interactively).
+
+## Objetivos y funcionalidades
+
+El proyecto aplica los requisitos de administración, autenticación por cookies, imágenes y pagos sobre una base de e-commerce con estado global.
+
+| Área del proyecto | Implementación |
+| --- | --- |
+| Frontend y Redux | Autenticación, carrito, wishlist, pedidos y notificaciones en [src/store](./src/store). |
+| Administración | CRUD y formulario compartido en [AdminProductFormPage](./src/pages/AdminProductFormPage/AdminProductFormPage.jsx). |
+| Protección de rutas | [PrivateRoute](./src/components/PrivateRoute/PrivateRoute.jsx) comprueba sesión; [AdminRoute](./src/components/AdminRoute/AdminRoute.jsx) comprueba rol. El servidor vuelve a autorizar las operaciones. |
+| Integración | [Axios con credenciales](./src/api/axios.js), productos con `FormData` y confirmación de pedidos desde la API. |
+| Repositorio y calidad | Componentes reutilizables, CSS Modules, pruebas, lockfile y plantilla de entorno sin secretos. |
+| Despliegue | [netlify.toml](./netlify.toml) configura build, proxy a Render y navegación SPA; [GitHub Actions](./.github/workflows/ci.yml) comprueba el frontend. |
+
+Funcionalidades disponibles:
+
+- Catálogo con búsqueda, filtros por categoría, ordenación y productos destacados.
+- Ficha de producto con zoom, migas de pan, selector de cantidad y reseñas.
+- Avisos de stock bajo y agotado; límites de compra y validación adicional en el backend.
+- Carrito con modificación de cantidades, eliminación y resumen de compra.
+- Wishlist sincronizada y productos vistos recientemente.
+- Registro, login, restauración de sesión al recargar y logout.
+- Perfil con historial de pedidos y recomendaciones por afinidad de categorías.
+- Checkout en Stripe y confirmación con espera, reintentos y mensajes de error.
+- Panel ADMIN con búsqueda, filtros de stock y alertas visuales de existencias.
+- Tema claro/oscuro, navegación móvil, imágenes de respaldo y estados de carga y vacío.
+
+## Arquitectura y decisiones técnicas
+
+**Tecnologías:** React 19, React Router 7, Redux Toolkit, React Redux, Axios, Vite 8 y CSS Modules. Las pruebas utilizan Vitest, React Testing Library y jsdom; ESLint revisa el código.
+
+```mermaid
+flowchart LR
+    UI[React y React Router] --> State[Redux Toolkit]
+    UI --> API[Servicios Axios]
+    State --> API
+    API --> Proxy[Netlify /api]
+    Proxy --> Backend[Express en Render]
+    Backend --> DB[PostgreSQL con Prisma]
+    Backend --> Images[Cloudinary]
+    Backend --> Stripe[Stripe Checkout]
+```
+
+En desarrollo, Axios conecta directamente con `http://localhost:3000`. En el build de producción utiliza `/api`, servido por el proxy de Netlify.
 
 ```text
 src/
-	api/
-		axios.js
-		auth.js
-		cart.js
-		wishlist.js
-		products.js
-		reviews.js
-	store/
-		index.js
-		slices/
-			authSlice.js
-			cartSlice.js
-			wishlistSlice.js
-	components/
-		AdminRoute/
-		PrivateRoute/
-		Spinner/
-		WishlistButton/
-		ReviewForm/
-	pages/
-		AdminPage/
-		AdminProductsPage/
-		AdminProductFormPage/
-		HomePage/
-		ProductsPage/
-		ProductDetailPage/
-		LoginPage/
-		RegisterPage/
-		CartPage/
-		WishlistPage/
-		ProfilePage/
-		CheckoutPage/
-		CheckoutSuccessPage/
+  api/          Peticiones HTTP y adaptación de respuestas
+  components/   Controles, layout y componentes reutilizables
+  hooks/        Lógica de productos, reseñas, autenticación y tema
+  pages/        Pantallas públicas, privadas y administrativas
+  router/       Rutas y carga diferida de páginas
+  store/        Store y slices de Redux
+  utils/        FormData, identificadores, historial local y resúmenes
+  test/         Configuración compartida de pruebas
+public/         Recursos estáticos e imagen de respaldo
+.github/        Workflow de integración continua
 ```
 
-## Requisitos previos
+Las peticiones se concentran en `src/api` para no repetir URLs y configuración. Redux conserva datos compartidos; los campos de formulario y otras interacciones puntuales utilizan estado local. Filtros, totales y listas derivadas se calculan a partir de los datos existentes, con `useMemo` cuando conviene, sin duplicarlos en otro estado.
 
-- Node.js 22.12+ (también compatible con la rama 20 desde 20.19).
-- npm
-- Backend corriendo en http://localhost:3000
-- Base de datos ya conectada en backend
+Crear y editar productos comparte pantalla y componentes de formulario. El router carga las páginas de forma diferida y muestra `Suspense` durante la espera. `SafeImage` sustituye una imagen ausente o fallida por un recurso local.
 
-## Configuración del frontend
+El JWT está en una cookie **HttpOnly** del backend. No se guarda en Redux, `localStorage` ni `sessionStorage`. El almacenamiento local se limita a preferencias y productos recientes; `sessionStorage` guarda un indicador para el aviso de sesión expirada.
 
-1. Crear archivo `.env` en la raíz del proyecto:
+## Instalación y ejecución local
 
-```env
-VITE_API_BASE_URL=http://localhost:3000
-```
+### Requisitos
 
-Los archivos `.env` y todas sus variantes (incluido `.env.production`) se
-mantienen fuera de Git. Solo se versiona `.env.example` como plantilla sin secretos.
+- **Node.js 22.22.2 o superior dentro de la rama 22**, para cumplir los requisitos de las herramientas instaladas, incluido jsdom. Entorno de verificación: Node.js `22.22.3`.
+- npm y Git.
+- Backend configurado con PostgreSQL disponible. Para imágenes y pagos también se necesitan las credenciales de Cloudinary y Stripe del backend.
 
-### Configuración de producción en Netlify
+### Preparar ambos repositorios
 
-El build de producción utiliza `/api`. La primera regla de `netlify.toml`
-actúa como proxy hacia Render:
-
-```text
-/api/* → https://backend-lite-sprint13.onrender.com/*
-```
-
-El navegador solo se comunica con el dominio de Netlify, por lo que la cookie
-`HttpOnly` se trata como first-party también en Safari/iOS. No es necesario
-configurar `VITE_API_BASE_URL` en el panel de Netlify; si existe una variable
-antigua con la URL directa de Render, puede eliminarse o cambiarse a `/api`.
-Después del cambio hay que volver a desplegar el sitio.
-
-2. Instalar dependencias:
+Desde una carpeta de trabajo:
 
 ```bash
-npm install
+git clone https://github.com/espejosara/backend-lite-sprint13.git backend
+git clone https://github.com/espejosara/clase13project.git frontend
 ```
 
-3. Levantar frontend:
+La entrega se organiza en **dos repositorios independientes**, enlazados entre sí. Los nombres locales `frontend` y `backend` facilitan trabajar con ambos, pero no son obligatorios.
+
+Primero sigue el [README del backend](https://github.com/espejosara/backend-lite-sprint13#instalación-y-ejecución-local) para configurar PostgreSQL, generar Prisma Client y arrancar la API en el puerto 3000.
+
+En otra terminal, inicia este frontend:
 
 ```bash
+cd frontend
+npm ci
+cp .env.example .env
 npm run dev
 ```
 
-El frontend se abre en http://localhost:5173
+Abre `http://localhost:5173`. `npm ci` instala las versiones resueltas en `package-lock.json`; tanto ese archivo como `package.json` forman parte de la entrega.
 
-## Cómo ejecutar backend + frontend
+## Variables de entorno
 
-### 1) Backend
+| Variable | Desarrollo | Uso |
+| --- | --- | --- |
+| `VITE_API_BASE_URL` | `http://localhost:3000` | Dirección de la API en desarrollo. En producción el código fuerza `/api`. |
+| `VITE_ORDERS_ENDPOINT` | `/orders` | Ruta preferida para el historial. Opcional; la API del proyecto ofrece `/orders`. |
 
-En el repositorio del backend:
+La plantilla está en [.env.example](./.env.example). Tras modificar `.env`, reinicia Vite.
 
-```bash
-npm install
-npm run dev
-```
+**Todo valor `VITE_*` puede quedar expuesto en el navegador.** Las claves privadas de Stripe, Cloudinary, JWT y PostgreSQL pertenecen al backend. [.gitignore](./.gitignore) excluye `.env` y `.env.*`, incluida `.env.production`, y conserva `.env.example` como plantilla.
 
-Debe quedar activo en http://localhost:3000
+## Rutas de la aplicación
 
-### 2) Frontend
+| Ruta | Acceso | Pantalla |
+| --- | --- | --- |
+| `/` | Público | Portada y destacados |
+| `/products` | Público | Catálogo |
+| `/products/:productId` | Público | Ficha y reseñas |
+| `/login`, `/register` | Público | Autenticación |
+| `/cart`, `/wishlist` | Sesión iniciada | Carrito y favoritos |
+| `/profile` | Sesión iniciada | Perfil, pedidos y recomendaciones |
+| `/checkout`, `/checkout/success` | Sesión iniciada | Resumen y confirmación |
+| `/admin` | ADMIN | Panel administrativo |
+| `/admin/products` | ADMIN | Gestión del catálogo |
+| `/admin/products/new` | ADMIN | Crear producto |
+| `/admin/products/:id/edit` | ADMIN | Editar producto |
+| Cualquier otra ruta | Público | Página 404 |
 
-En este repositorio:
+## Flujos principales
 
-```bash
-npm install
-npm run dev
-```
+### Sesión y permisos
 
-Debe quedar activo en http://localhost:5173
+1. Login y registro llaman a `/auth/login` y `/auth/register`; el backend establece la cookie.
+2. Al arrancar se consulta `/auth/me`. Las rutas protegidas esperan a que termine la comprobación de sesión.
+3. Axios utiliza `withCredentials: true`. Un `401` en una petición protegida redirige al login y permite mostrar el aviso de sesión expirada.
+4. Logout llama a `/auth/logout`. Tras su éxito, Redux elimina los datos de sesión, carrito, favoritos y pedidos.
 
-## Endpoints esperados del backend
+### CRUD e imágenes
 
-### Públicas
+ADMIN utiliza un formulario compartido para altas y ediciones. Se validan campos obligatorios, precio positivo, stock entero no negativo e imagen. El archivo viaja en el campo `image` mediante `FormData`, dejando que el navegador establezca el encabezado multipart con su delimitador. Se admiten JPG, PNG, WebP, GIF y AVIF hasta **5 MB**; crear requiere imagen y editar permite conservar la anterior. El backend vuelve a validar y guarda la URL segura de Cloudinary.
 
-- GET /products
-- GET /products/:id
-- GET /products/:id/reviews
-- POST /auth/login
-- POST /auth/register
-- POST /auth/logout
+### Carrito, pago y pedido
 
-### Privadas
+1. Añadir o cambiar cantidades sincroniza Redux con `/cart`; el servidor comprueba existencias y propiedad del carrito.
+2. Checkout solicita `POST /payments/checkout-session`. El backend obtiene los precios de PostgreSQL y devuelve la URL de Stripe.
+3. Stripe vuelve a `/checkout/success?session_id=...` o, si se cancela, a `/checkout?canceled=true`.
+4. El webhook del backend verifica el pago y registra el pedido. **La URL de retorno no demuestra que el pago esté confirmado.**
+5. La pantalla de éxito consulta `/payments/checkout-session/:sessionId/order`, reintenta mientras esté pendiente y ofrece comprobación manual si tarda o falla.
+6. Al recibir el pedido confirmado, recarga carrito y pedidos en Redux. Conserva los artículos que sigan en el carrito del servidor.
 
-- GET /cart
-- GET /auth/me
-- POST /cart/items
-- PATCH /cart/items/:itemId
-- DELETE /cart/items/:itemId
-- GET /wishlist
-- POST /wishlist/:productId
-- POST /products/:id/reviews
-- POST /payments/checkout-session
-- GET /payments/checkout-session/:sessionId/order
+## Pruebas y scripts
 
-### Administración (rol ADMIN)
+| Comando | Función |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo Vite. |
+| `npm run lint` | Revisión estática con ESLint. |
+| `npm test` | Suite Vitest en una ejecución. |
+| `npm run test:watch` | Pruebas en modo observación. |
+| `npm run build` | Genera el frontend en `dist/`. |
+| `npm run preview` | Sirve el build localmente; no reproduce el proxy de Netlify. |
+| `npm run check` | Ejecuta lint, pruebas y build. |
 
-- POST /products
-- PUT /products/:id
-- DELETE /products/:id
+**Verificación local del 8 de septiembre de 2026:** `npm run check` completado, con **107 pruebas correctas en 39 archivos**, lint y build sin errores. La suite comprueba formularios, rutas, roles, cantidades, stock, imágenes de respaldo, perfil y confirmación del pago, incluida la actualización de Redux.
 
-Las peticiones incluyen credenciales para que el navegador envíe la cookie de sesión:
+Las llamadas de red se simulan en las pruebas. Estos resultados no sustituyen la comprobación manual de cookies, Cloudinary y Stripe en el despliegue.
 
-```js
-axios.create({ withCredentials: true })
-```
+## Despliegue en Netlify
 
-## Rutas del frontend
+1. Conectar el repositorio frontend a Netlify.
+2. Usar la raíz como directorio base, `npm run build` como comando y `dist` como carpeta publicada.
+3. Configurar Node.js de la rama 22 con una versión que cumpla los requisitos anteriores.
+4. Mantener las reglas de [netlify.toml](./netlify.toml): primero `/api/*` hacia Render y después `/*` hacia `/index.html`.
+5. En Render, establecer `FRONTEND_URL` y `ALLOWED_ORIGINS` con `https://neokenseichronicles.netlify.app`.
+6. Comprobar login, recarga de rutas, alta con imagen y pago de prueba en HTTPS.
 
-- /
-- /products
-- /products/:productId
-- /login
-- /register
-- /cart
-- /wishlist
-- /profile
-- /admin (solo rol ADMIN)
-- /admin/products (solo rol ADMIN)
-- /admin/products/new (solo rol ADMIN)
-- /admin/products/:id/edit (solo rol ADMIN)
-- /checkout
-- /checkout/success
-- * (404)
+El build usa `/api` incluso si existe otro valor de `VITE_API_BASE_URL`; no necesita `.env.production`. Para cambiar la API en producción hay que actualizar el proxy. Desde el navegador, las peticiones de la tienda van al dominio de Netlify, que las reenvía a Render.
 
-## Funcionalidades implementadas
+[GitHub Actions](./.github/workflows/ci.yml) ejecuta instalación, lint, pruebas y build en cada pull request y en los push a `main`. El workflow valida el código; la publicación la gestiona Netlify con su integración Git.
 
-- Login y registro con Redux Toolkit.
-- Cookie de sesión HttpOnly gestionada por el backend; el token no se expone a JavaScript.
-- Restauración de sesión mediante `GET /auth/me` al iniciar la aplicación.
-- Manejo global de `401` con redirección a login y aviso de sesión expirada.
-- Rutas privadas con `PrivateRoute`.
-- Panel `/admin` protegido por rol mediante `AdminRoute` y `selectIsAdmin`.
-- CRUD de productos con listado, creación, edición y eliminación confirmada.
-- Formulario único de alta y edición con validaciones de campos, precio, stock y archivo de imagen.
-- Carrito global con fetch, add, remove y redirección a Stripe Checkout.
-- Wishlist global con fetch y toggle.
-- Perfil con datos del usuario y logout.
-- ReviewForm autenticado para crear reseñas.
-- Spinner reutilizable para estados de carga visibles.
+## Estado de dependencias
 
-## Optimizacion de render y datos derivados
+Auditoría consultada el **8 de septiembre de 2026** sobre el lockfile de esta entrega:
 
-### useMemo aplicado en catalogo
+| Comando | Resultado |
+| --- | --- |
+| `npm audit` | 1 aviso alto asociado a `browserslist`. |
+| `npm audit --omit=dev` | 0 vulnerabilidades reportadas. |
 
-- En ProductsPage, la lista visible se calcula con `useMemo` para combinar filtro + orden sin recalcular en cada render.
-- El orden se aplica sobre copia del array (`slice().sort(...)`) para no mutar el estado base.
-- Dependencias del memo: products, selectedCategory, searchTerm y sortBy.
+Browserslist forma parte de las herramientas de desarrollo y compilación. El informe indica una corrección disponible; queda pendiente actualizarla y validar lint, pruebas y build. Excluir desarrollo del informe no elimina el riesgo en el proceso de construcción. Detalle: [GHSA-c83g-rgw3-j3cx](https://github.com/advisories/GHSA-c83g-rgw3-j3cx) y [GHSA-73wf-gq98-2v4g](https://github.com/advisories/GHSA-73wf-gq98-2v4g).
 
-### useMemo aplicado en wishlist
+`package-lock.json` conserva versiones reproducibles; no es una garantía de seguridad. Los recuentos pueden cambiar cuando npm incorpora avisos. El backend tiene una auditoría distinta, explicada en su README.
 
-- En WishlistPage se usa un mapa memoizado de productos por id para evitar `find` repetidos por cada favorito.
-- Los productos mostrados en favoritos se derivan con `useMemo` a partir de ids + mapa.
+## Resolución de problemas
 
-### Regla de datos derivados
+| Síntoma | Comprobación |
+| --- | --- |
+| Primer acceso lento | Esperar el arranque de Render y comprobar `/health`. |
+| Error de red local | Revisar backend en el puerto 3000 y `VITE_API_BASE_URL`; reiniciar Vite tras editar `.env`. |
+| Login no persiste | Revisar credenciales, CORS y atributos de cookie; producción requiere HTTPS. |
+| API falla con `npm run preview` | Preview no aplica `netlify.toml`; `/api` necesita el proxy de Netlify o uno equivalente. |
+| No aparece el panel | Cerrar sesión e iniciar con ADMIN; el backend requiere rol `admin`. |
+| Error al subir imagen | Revisar formato, tamaño y variables Cloudinary del backend. |
+| Pedido pendiente | Comprobar webhook y secreto en Render; esperar o pulsar «Volver a comprobar», sin repetir el pago. |
+| Node incompatible | Utilizar la versión indicada y volver a ejecutar `npm ci`. |
 
-- Estado base: products, cart.items, wishlist.ids.
-- Estado derivado: visibleProducts, wishlistProducts, totales.
-- Los derivados no se guardan en estado adicional; se calculan con memoizacion cuando corresponde.
+## Mejoras futuras
 
-## Criterio practico para usar useMemo
+Una vez completadas las funcionalidades principales, se plantean las siguientes líneas de evolución:
 
-Usar useMemo cuando:
+- Ampliar las pruebas de integración del flujo de compra.
+- Incorporar reservas temporales de stock durante el pago.
+- Completar el resumen desplegable del checkout en móvil.
+- Añadir facturas PDF y gestión de devoluciones.
+- Incorporar cupones y promociones validados por el backend.
 
-- Hay recorridos de arrays (filter/map/sort/reduce) que se ejecutan con frecuencia.
-- El componente re-renderiza mucho y el calculo no es trivial.
+## Limitaciones actuales
 
-No usar useMemo cuando:
+El resumen del checkout permanece fijo al hacer scroll en escritorio; en móvil se muestra dentro del contenido, sin desplegable. Las imágenes disponen de respaldo ante errores de carga, pero no de un tiempo límite específico para conexiones lentas.
 
-- El calculo es simple (booleanos o transformaciones pequeñas).
-- No hay impacto real de rendimiento o claridad.
+## Alcance de la entrega y aprendizaje
 
-## Contrato wishlist (toggle)
+Esta entrega es una aplicación académica de e-commerce con integración de servicios externos.
 
-- Endpoint: `POST /wishlist/:productId`.
-- Flujo frontend:
-	1. Toggle optimista local en Redux.
-	2. Sincronizacion con backend.
-	3. Reconciliacion con respuesta final del servidor.
+El desarrollo aplica separación de responsabilidades, estado global, reutilización, validación en ambas capas y autorización en servidor. La migración a cookies y la confirmación mediante webhook muestran cómo una funcionalidad afecta a frontend, backend y despliegue. Las recomendaciones actuales usan reglas de categorías; no dependen de un modelo de IA en ejecución.
 
-## Flujo de compra end-to-end
-
-1. Usuario navega por `/products`.
-2. Abre detalle en `/products/:productId`.
-3. Añade al carrito y revisa en `/cart`.
-4. Solicita una Checkout Session desde `/checkout` y paga en Stripe.
-5. Stripe vuelve a `/checkout/success?session_id=...` si completa el flujo.
-6. Si cancela, Stripe vuelve a `/checkout?canceled=true` sin vaciar el carrito.
-
-La URL de éxito no demuestra por sí sola que el pago esté confirmado. La creación
-definitiva del pedido debe depender de la confirmación segura recibida por el backend.
-
-Cuando el backend devuelve el pedido confirmado, el frontend vuelve a consultar
-el carrito y el historial de pedidos para actualizar Redux. Así, los contadores
-reflejan la compra y se conservan los artículos que sigan en el carrito del servidor.
-
-### UX de estados
-
-- Loading visible con Spinner en vistas principales.
-- Mensajes de error consistentes con accion `Reintentar` en catalogo, wishlist y carrito.
-- Estado separado de checkout (`isCheckingOut`) para evitar doble envio y mostrar feedback claro.
-
-## Verificación rápida
-
-1. Abrir http://localhost:5173/login y comprobar que puedes iniciar sesión.
-2. Recargar la página y comprobar que la sesión persiste.
-3. Abrir rutas privadas como /cart, /wishlist o /profile.
-4. Comprobar que un usuario USER no ve ni puede abrir `/admin` y que un ADMIN sí puede.
-5. Añadir un producto al carrito desde /products.
-6. Añadir o quitar un producto de favoritos.
-7. Ir a /cart, abrir checkout y continuar al pago de Stripe.
-8. Usar la tarjeta de prueba `4242 4242 4242 4242` con fecha futura y cualquier CVC.
-9. Comprobar el retorno a `/checkout/success?session_id=...`.
-10. Cancelar otro intento y comprobar el retorno a `/checkout?canceled=true`.
-11. Abrir un detalle de producto y crear una reseña autenticada.
-
-## Checklist de cierre de sprint
-
-- Filtros y ordenacion de productos funcionando correctamente.
-- Sin mutaciones directas de arrays de estado para ordenar/listar.
-- Wishlist estable al añadir/quitar desde catalogo y pagina de favoritos.
-- Carrito, checkout y confirmacion final operativos.
-- Navegacion fluida en el flujo catalogo → detalle → carrito → checkout → exito.
-- Estados de loading/error consistentes en pantallas clave.
-
-## Scripts disponibles
-
-```bash
-npm run dev
-npm run build
-npm run check
-npm run preview
-npm run lint
-npm test
-npm run test:watch
-```
-
-## Pruebas automatizadas
-
-El frontend utiliza Vitest, jsdom y React Testing Library. La suite está aislada del backend real y no modifica datos.
-
-Las pruebas cubren:
-
-- Incremento y actualización de cantidades en Redux.
-- Uso de `PATCH` para cambiar cantidad y `DELETE` para eliminar una línea del carrito.
-- Conservación del carrito cuando una actualización falla.
-- Redirección de usuarios no autenticados.
-- Protección de `/admin` para roles `USER` y `ADMIN`.
-- Campos obligatorios de login.
-- Longitud mínima de contraseña en registro.
-- Visualización de errores devueltos por el backend.
-
-Ejecutar una sola vez:
-
-```bash
-npm test
-```
-
-Ejecutar en modo observación:
-
-```bash
-npm run test:watch
-```
-
-## Notas
-
-- Si cambias `.env`, reinicia Vite.
-- Si hay errores de red, revisa que backend esté encendido y CORS permita http://localhost:5173.
-- Si la cookie de sesión expira, el frontend pedirá iniciar sesión de nuevo.
-- `netlify.toml` configura el build, publica `dist`, sirve el proxy `/api`
-  hacia Render y redirige las rutas de la SPA a `index.html`.
-- `.github/workflows/ci.yml` valida lint, pruebas y build en cada push y pull request.
+La documentación recoge las decisiones técnicas y las comprobaciones realizadas para facilitar la comprensión del proyecto. El uso de IA como apoyo no sustituye comprender y poder justificar el código entregado.
