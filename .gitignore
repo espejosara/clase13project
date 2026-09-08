@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.*
+!.env.example
+# Configuración pública del proxy de Netlify, sin secretos.
+!.env.production

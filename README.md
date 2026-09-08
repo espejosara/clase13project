@@ -65,7 +65,7 @@ src/
 
 ## Requisitos previos
 
-- Node.js 18+
+- Node.js 22.12+ (también compatible con la rama 20 desde 20.19).
 - npm
 - Backend corriendo en http://localhost:3000
 - Base de datos ya conectada en backend
@@ -251,6 +251,10 @@ No usar useMemo cuando:
 
 La URL de éxito no demuestra por sí sola que el pago esté confirmado. La creación
 definitiva del pedido debe depender de la confirmación segura recibida por el backend.
+
+Cuando el backend devuelve el pedido confirmado, el frontend vuelve a consultar
+el carrito y el historial de pedidos para actualizar Redux. Así, los contadores
+reflejan la compra y se conservan los artículos que sigan en el carrito del servidor.
 
 ### UX de estados
 

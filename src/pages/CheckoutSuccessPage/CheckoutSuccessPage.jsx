@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getCheckoutOrderRequest } from '../../api/payments'
+import { fetchCartThunk } from '../../store/slices/cartSlice'
+import { fetchOrdersThunk } from '../../store/slices/ordersSlice'
 import Button from '../../components/Button/Button'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import styles from './CheckoutSuccessPage.module.css'
@@ -15,6 +18,7 @@ function isCanceledRequest(error) {
 }
 
 function CheckoutSuccessPage() {
+	const dispatch = useDispatch()
 	const [searchParams] = useSearchParams()
 	const sessionId = searchParams.get('session_id')
 	const [retryCount, setRetryCount] = useState(0)
@@ -60,6 +64,8 @@ function CheckoutSuccessPage() {
 
 				if (result.confirmed && result.order) {
 					setConfirmation({ status: 'confirmed', order: result.order })
+					dispatch(fetchCartThunk())
+					dispatch(fetchOrdersThunk())
 					return
 				}
 
@@ -111,7 +117,7 @@ function CheckoutSuccessPage() {
 			window.removeEventListener('pageshow', restartConfirmation)
 			document.removeEventListener('visibilitychange', handleVisibilityChange)
 		}
-	}, [retryCount, sessionId])
+	}, [dispatch, retryCount, sessionId])
 
 	const retryConfirmation = () => {
 		setConfirmation({ status: 'checking', order: null })
