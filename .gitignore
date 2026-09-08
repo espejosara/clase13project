@@ -22,8 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Variables de entorno locales; solo se versiona la plantilla.
 .env
 .env.*
 !.env.example
-# Configuración pública del proxy de Netlify, sin secretos.
-!.env.production

@@ -78,6 +78,9 @@ src/
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
+Los archivos `.env` y todas sus variantes (incluido `.env.production`) se
+mantienen fuera de Git. Solo se versiona `.env.example` como plantilla sin secretos.
+
 ### Configuración de producción en Netlify
 
 El build de producción utiliza `/api`. La primera regla de `netlify.toml`
