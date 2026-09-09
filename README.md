@@ -30,8 +30,6 @@ Este repositorio contiene la aplicación web en React: catálogo, favoritos, car
 - [Estado de dependencias](#estado-de-dependencias)
 - [Resolución de problemas](#resolución-de-problemas)
 - [Mejoras futuras](#mejoras-futuras)
-- [Limitaciones actuales](#limitaciones-actuales)
-- [Alcance de la entrega y aprendizaje](#alcance-de-la-entrega-y-aprendizaje)
 
 ## Credenciales de prueba para evaluación
 
@@ -266,15 +264,3 @@ Una vez completadas las funcionalidades principales, se plantean las siguientes 
 - Completar el resumen desplegable del checkout en móvil.
 - Añadir facturas PDF y gestión de devoluciones.
 - Incorporar cupones y promociones validados por el backend.
-
-## Limitaciones actuales
-
-El resumen del checkout permanece fijo al hacer scroll en escritorio; en móvil se muestra dentro del contenido, sin desplegable. Las imágenes disponen de respaldo ante errores de carga, pero no de un tiempo límite específico para conexiones lentas.
-
-## Alcance de la entrega y aprendizaje
-
-Esta entrega es una aplicación académica de e-commerce con integración de servicios externos.
-
-El desarrollo aplica separación de responsabilidades, estado global, reutilización, validación en ambas capas y autorización en servidor. La migración a cookies y la confirmación mediante webhook muestran cómo una funcionalidad afecta a frontend, backend y despliegue. Las recomendaciones actuales usan reglas de categorías; no dependen de un modelo de IA en ejecución.
-
-La documentación recoge las decisiones técnicas y las comprobaciones realizadas para facilitar la comprensión del proyecto. El uso de IA como apoyo no sustituye comprender y poder justificar el código entregado.
