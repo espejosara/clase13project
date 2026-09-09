@@ -40,7 +40,7 @@ Cuentas facilitadas para revisar la aplicación desplegada:
 | Rol | Email | Contraseña |
 | --- | --- | --- |
 | Administrador | `sara@hotmail.com` | `123456` |
-| Usuario estándar | `saratest@mail.com` | `mR6KBdjpa6TTKSF` |
+| Usuario estándar | `sara@test.com` | `mR6KBdjpa6TTKSF` |
 
 La cuenta **ADMIN** puede entrar en `/admin`, crear y editar productos, subir imágenes a Cloudinary y eliminar productos que no estén vinculados a pedidos. La cuenta **USER** permite evaluar compras, favoritos y rutas privadas sin permisos de administración. Internamente, el backend guarda los roles como `admin` y `user`.
 
