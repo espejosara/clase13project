@@ -34,12 +34,12 @@ function normalizeComparableId(value) {
 	return String(value)
 }
 
-function itemMatchesById(item, rawId) {
+function itemMatchesByProductId(item, rawId) {
 	const comparableRawId = normalizeComparableId(rawId)
 	if (!comparableRawId) return false
 
-	const candidateIds = [item?.itemId, item?.id, item?.productId, item?.product?.id]
-	return candidateIds.some((candidateId) => normalizeComparableId(candidateId) === comparableRawId)
+	const productId = item?.productId ?? item?.product?.id ?? item?.id
+	return normalizeComparableId(productId) === comparableRawId
 }
 
 function cartItemMatchesById(item, rawId) {
@@ -86,7 +86,7 @@ function incrementOrAppendItem(items, payload) {
 
 	let hasChanged = false
 	const nextItems = items.map((item) => {
-		if (!hasChanged && itemMatchesById(item, comparableProductId)) {
+		if (!hasChanged && itemMatchesByProductId(item, comparableProductId)) {
 			hasChanged = true
 			const currentQuantity = Number(item.quantity ?? 1)
 			const safeCurrentQuantity = Number.isFinite(currentQuantity) && currentQuantity > 0 ? currentQuantity : 1
@@ -223,9 +223,21 @@ const cartSlice = createSlice({
 			.addCase(addCartItemThunk.fulfilled, (state, action) => {
 				state.loading = false
 
-				const backendItems = extractItems(action.payload)
-				if (backendItems.length) {
-					state.items = backendItems
+				if (isRecognizedCartPayload(action.payload)) {
+					state.items = extractItems(action.payload)
+					return
+				}
+
+				// POST /cart/items devuelve una línea con el producto completo.
+				const responseItem = action.payload
+				const productId = responseItem?.productId ?? responseItem?.product?.id
+				if (productId != null && responseItem?.product) {
+					const index = state.items.findIndex((item) => itemMatchesByProductId(item, productId))
+					if (index === -1) {
+						state.items.push(responseItem)
+					} else {
+						state.items[index] = responseItem
+					}
 					return
 				}
 

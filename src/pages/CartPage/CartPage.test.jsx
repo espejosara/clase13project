@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
@@ -11,9 +11,13 @@ import {
 	updateCartItemQuantityThunk,
 } from '../../store/slices/cartSlice'
 import CartPage from './CartPage'
+import ActionToast from '../../components/ActionToast/ActionToast'
+import notificationReducer from '../../store/slices/notificationSlice'
 
 vi.mock('../../store/slices/cartSlice', () => ({
-	addCartItemThunk: vi.fn(() => () => ({ unwrap: () => Promise.resolve() })),
+	addCartItemThunk: Object.assign(vi.fn(() => () => ({ unwrap: () => Promise.resolve() })), {
+		fulfilled: 'cart/addItem/fulfilled',
+	}),
 	fetchCartThunk: vi.fn(() => ({ type: 'cart/fetch' })),
 	removeCartItemThunk: vi.fn(() => () => ({ unwrap: () => Promise.resolve() })),
 	updateCartItemQuantityThunk: vi.fn(() => ({ type: 'cart/updateQuantity' })),
@@ -23,6 +27,7 @@ function renderCart(cartState) {
 	const store = configureStore({
 		reducer: {
 			cart: () => cartState,
+			notification: notificationReducer,
 		},
 	})
 
@@ -30,6 +35,7 @@ function renderCart(cartState) {
 		<Provider store={store}>
 			<MemoryRouter>
 				<CartPage />
+				<ActionToast />
 			</MemoryRouter>
 		</Provider>,
 	)
@@ -70,14 +76,11 @@ describe('CartPage', () => {
 
 		await user.click(screen.getByRole('button', { name: 'Eliminar Figura del carrito del carrito' }))
 		expect(removeCartItemThunk).toHaveBeenCalledWith({ itemId: 44 })
-		expect(await screen.findByRole('status', { name: 'Producto eliminado' }))
+		expect(await screen.findByRole('status'))
 			.toHaveTextContent('Figura del carrito se ha eliminado del carrito.')
 
-		await user.click(screen.getByRole('button', { name: 'Deshacer' }))
-		expect(addCartItemThunk).toHaveBeenLastCalledWith({ productId: 7, quantity: 2 })
-		await waitFor(() => {
-			expect(screen.queryByRole('status', { name: 'Producto eliminado' })).not.toBeInTheDocument()
-		})
+		expect(screen.queryByRole('button', { name: 'Deshacer' })).not.toBeInTheDocument()
+		expect(addCartItemThunk).toHaveBeenCalledTimes(1)
 		expect(fetchCartThunk).toHaveBeenCalled()
 	})
 

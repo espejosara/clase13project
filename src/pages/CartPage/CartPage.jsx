@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
@@ -7,7 +7,7 @@ import CartSummary from '../../components/CartSummary/CartSummary'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import SafeImage from '../../components/SafeImage/SafeImage'
-import UndoToast from '../../components/UndoToast/UndoToast'
+import { showNotification } from '../../store/slices/notificationSlice'
 import {
 	addCartItemThunk,
 	fetchCartThunk,
@@ -15,8 +15,6 @@ import {
 	updateCartItemQuantityThunk,
 } from '../../store/slices/cartSlice'
 import styles from './CartPage.module.css'
-
-const UNDO_WINDOW_MS = 6000
 
 function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
@@ -87,15 +85,10 @@ function CartPage() {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const { items, loading, isCheckingOut, error } = useSelector((state) => state.cart)
-	const [removedItem, setRemovedItem] = useState(null)
-	const [isRestoring, setIsRestoring] = useState(false)
-	const undoTimeoutRef = useRef(null)
 
 	useEffect(() => {
 		dispatch(fetchCartThunk())
 	}, [dispatch])
-
-	useEffect(() => () => window.clearTimeout(undoTimeoutRef.current), [])
 
 	const totalItems = useMemo(() => {
 		return items.reduce((total, item) => total + getItemQuantity(item), 0)
@@ -107,25 +100,13 @@ function CartPage() {
 		})
 	}, [items])
 
-	const openUndoWindow = (item) => {
-		window.clearTimeout(undoTimeoutRef.current)
-		setRemovedItem({
-			name: getItemName(item),
-			productId: getProductId(item),
-			quantity: getItemQuantity(item),
-		})
-		undoTimeoutRef.current = window.setTimeout(() => {
-			setRemovedItem(null)
-		}, UNDO_WINDOW_MS)
-	}
-
 	const handleRemoveLine = async (item) => {
 		const itemId = getBackendItemId(item)
 		if (itemId == null) return
 
 		try {
 			await dispatch(removeCartItemThunk({ itemId })).unwrap()
-			openUndoWindow(item)
+			dispatch(showNotification(`${getItemName(item)} se ha eliminado del carrito.`))
 		} catch {
 			// El error del backend ya queda reflejado en cart.error.
 		}
@@ -153,27 +134,6 @@ function CartPage() {
 		}
 
 		handleRemoveLine(item)
-	}
-
-	const handleUndoRemoval = async () => {
-		if (!removedItem || isRestoring) return
-
-		window.clearTimeout(undoTimeoutRef.current)
-		setIsRestoring(true)
-
-		try {
-			await dispatch(addCartItemThunk({
-				productId: removedItem.productId,
-				quantity: removedItem.quantity,
-			})).unwrap()
-			setRemovedItem(null)
-		} catch {
-			undoTimeoutRef.current = window.setTimeout(() => {
-				setRemovedItem(null)
-			}, UNDO_WINDOW_MS)
-		} finally {
-			setIsRestoring(false)
-		}
 	}
 
 	const handleGoToCheckout = () => {
@@ -217,12 +177,6 @@ function CartPage() {
 						Reintentar
 					</Button>
 				</div>
-			) : null}
-
-			{removedItem ? (
-				<UndoToast label="Producto eliminado" onUndo={handleUndoRemoval} isUndoing={isRestoring}>
-					<strong>{removedItem.name}</strong> se ha eliminado del carrito.
-				</UndoToast>
 			) : null}
 
 			{loading && !items.length ? <Spinner label="Cargando carrito..." /> : null}
