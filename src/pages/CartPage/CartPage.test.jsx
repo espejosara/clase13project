@@ -79,8 +79,10 @@ describe('CartPage', () => {
 		expect(await screen.findByRole('status'))
 			.toHaveTextContent('Figura del carrito se ha eliminado del carrito.')
 
+		await user.click(screen.getByRole('button', { name: 'Deshacer' }))
+		expect(addCartItemThunk).toHaveBeenLastCalledWith({ productId: 7, quantity: 2 })
 		expect(screen.queryByRole('button', { name: 'Deshacer' })).not.toBeInTheDocument()
-		expect(addCartItemThunk).toHaveBeenCalledTimes(1)
+		expect(addCartItemThunk).toHaveBeenCalledTimes(2)
 		expect(fetchCartThunk).toHaveBeenCalled()
 	})
 

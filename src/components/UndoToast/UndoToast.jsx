@@ -1,6 +1,6 @@
 import styles from './UndoToast.module.css'
 
-function UndoToast({ label, children, onUndo, isUndoing = false }) {
+function UndoToast({ label, children, onUndo, isUndoing = false, disabled = false }) {
 	return (
 		<aside className={styles.toast} role="status" aria-label={label}>
 			<span className={styles.icon} aria-hidden="true">✓</span>
@@ -9,7 +9,7 @@ function UndoToast({ label, children, onUndo, isUndoing = false }) {
 				type="button"
 				className={styles.undoButton}
 				onClick={onUndo}
-				disabled={isUndoing}
+				disabled={isUndoing || disabled}
 			>
 				{isUndoing ? 'Restaurando…' : 'Deshacer'}
 			</button>

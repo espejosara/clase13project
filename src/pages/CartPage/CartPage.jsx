@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Button from '../../components/Button/Button'
@@ -7,7 +7,7 @@ import CartSummary from '../../components/CartSummary/CartSummary'
 import CheckoutSteps from '../../components/CheckoutSteps/CheckoutSteps'
 import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import SafeImage from '../../components/SafeImage/SafeImage'
-import { showNotification } from '../../store/slices/notificationSlice'
+import UndoToast from '../../components/UndoToast/UndoToast'
 import {
 	addCartItemThunk,
 	fetchCartThunk,
@@ -15,6 +15,8 @@ import {
 	updateCartItemQuantityThunk,
 } from '../../store/slices/cartSlice'
 import styles from './CartPage.module.css'
+
+const UNDO_WINDOW_MS = 6000
 
 function getItemId(item) {
 	return item.id ?? item.itemId ?? item.productId
@@ -85,10 +87,19 @@ function CartPage() {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const { items, loading, isCheckingOut, error } = useSelector((state) => state.cart)
+	const [removedItem, setRemovedItem] = useState(null)
+	const [isRestoring, setIsRestoring] = useState(false)
 
 	useEffect(() => {
 		dispatch(fetchCartThunk())
 	}, [dispatch])
+
+	useEffect(() => {
+		if (!removedItem || isRestoring) return
+
+		const timeout = window.setTimeout(() => setRemovedItem(null), UNDO_WINDOW_MS)
+		return () => window.clearTimeout(timeout)
+	}, [removedItem, isRestoring])
 
 	const totalItems = useMemo(() => {
 		return items.reduce((total, item) => total + getItemQuantity(item), 0)
@@ -102,13 +113,34 @@ function CartPage() {
 
 	const handleRemoveLine = async (item) => {
 		const itemId = getBackendItemId(item)
-		if (itemId == null) return
+		if (itemId == null || loading || isCheckingOut || isRestoring) return
 
 		try {
 			await dispatch(removeCartItemThunk({ itemId })).unwrap()
-			dispatch(showNotification(`${getItemName(item)} se ha eliminado del carrito.`))
+			setRemovedItem({
+				productId: getProductId(item),
+				name: getItemName(item),
+				quantity: getItemQuantity(item),
+			})
 		} catch {
 			// El error del backend ya queda reflejado en cart.error.
+		}
+	}
+
+	const handleUndoRemoval = async () => {
+		if (!removedItem || loading || isCheckingOut || isRestoring) return
+
+		setIsRestoring(true)
+		try {
+			await dispatch(addCartItemThunk({
+				productId: removedItem.productId,
+				quantity: removedItem.quantity,
+			})).unwrap()
+			setRemovedItem(null)
+		} catch {
+			// Conservamos la opción de deshacer; cart.error muestra el error del backend.
+		} finally {
+			setIsRestoring(false)
 		}
 	}
 
@@ -160,6 +192,12 @@ function CartPage() {
 			</header>
 
 			<CheckoutSteps currentStep="cart" />
+
+			{removedItem ? (
+				<UndoToast label="Producto eliminado del carrito" onUndo={handleUndoRemoval} isUndoing={isRestoring} disabled={loading || isCheckingOut}>
+					<strong>{removedItem.name}</strong> se ha eliminado del carrito.
+				</UndoToast>
+			) : null}
 
 			{error ? (
 				<div className={styles.messageRow}>
@@ -219,7 +257,7 @@ function CartPage() {
 										? 'Has añadido todas las unidades disponibles.'
 										: ''
 								const stockMessageId = `cart-stock-message-${index}`
-								const controlsDisabled = loading || isCheckingOut
+								const controlsDisabled = loading || isCheckingOut || isRestoring
 
 								return (
 									<li className={`${styles.item} ${hasItemStockConflict ? styles.itemStockConflict : ''}`} key={`${itemId}-${index}`}>
