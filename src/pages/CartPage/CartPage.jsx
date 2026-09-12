@@ -194,7 +194,13 @@ function CartPage() {
 			<CheckoutSteps currentStep="cart" />
 
 			{removedItem ? (
-				<UndoToast label="Producto eliminado del carrito" onUndo={handleUndoRemoval} isUndoing={isRestoring} disabled={loading || isCheckingOut}>
+				<UndoToast
+					label="Producto eliminado del carrito"
+					onUndo={handleUndoRemoval}
+					isUndoing={isRestoring}
+					disabled={loading || isCheckingOut}
+					placement="top"
+				>
 					<strong>{removedItem.name}</strong> se ha eliminado del carrito.
 				</UndoToast>
 			) : null}

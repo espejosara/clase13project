@@ -171,7 +171,7 @@ function ProductsPage() {
 							>
 								<option value="">Todas las categorías</option>
 								{categories.map((item) => (
-									<option key={item} value={item}>{item}</option>
+									<option key={item} value={item}>{item.charAt(0).toLocaleUpperCase('es') + item.slice(1)}</option>
 								))}
 							</select>
 						</div>

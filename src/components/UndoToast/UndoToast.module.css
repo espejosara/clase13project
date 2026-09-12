@@ -88,6 +88,26 @@
 	}
 }
 
+.top {
+	top: calc(5.5rem + env(safe-area-inset-top));
+	bottom: auto;
+	left: 50%;
+	transform: translateX(-50%);
+	animation-name: undo-enter-top;
+}
+
+@keyframes undo-enter-top {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-0.6rem);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.toast {
 		animation: none;
